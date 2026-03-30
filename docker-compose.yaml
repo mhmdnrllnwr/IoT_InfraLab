@@ -1,0 +1,115 @@
+version: '3.8'
+
+services:
+  # ----------------------------------------
+  # THE TRUSTED ZONE (Core Infrastructure)
+  # ----------------------------------------
+  mosquitto:
+    image: eclipse-mosquitto:latest
+    container_name: iot_broker
+    networks:
+      - iot_infralab_net
+    ports:
+      - "1883:1883"
+      - "9001:9001"
+    volumes:
+      - ./infrastructure/mosquitto/config:/mosquitto/config
+      - ./infrastructure/mosquitto/data:/mosquitto/data
+      - ./infrastructure/mosquitto/log:/mosquitto/log
+    restart: unless-stopped
+
+  nodered:
+    image: nodered/node-red:latest
+    container_name: iot_nodered
+    user: "root"
+    networks:
+      - iot_infralab_net
+    ports:
+      - "1880:1880"
+    volumes:
+      - ./infrastructure/nodered/NodeRed_Data:/data
+      # NOTICE: We removed the direct docker.sock mount here for better security!
+    restart: unless-stopped
+    depends_on:
+      - mosquitto
+      - docker-proxy
+
+  # ----------------------------------------
+  # THE MANAGEMENT ZONE (Docker API Proxy)
+  # ----------------------------------------
+  docker-proxy:
+    image: tecnativa/docker-socket-proxy
+    container_name: docker_api_proxy
+    networks:
+      - iot_infralab_net
+    environment:
+      - CONTAINERS=1 # Allow Node-RED to manage containers
+      - POST=1       # Allow POST requests (needed to create/start/stop)
+      - DELETE=1     # Allows the "Kill Switch" to remove containers!
+      - NETWORKS=1   # Allows new sensors to connect to iot_infralab_net
+      - IMAGES=1     # Allows Node-RED to verify your general-iot-sensor image
+      - EXEC=1       # Allows Node-RED to launch exec commands inside containers
+      - GET=1
+      
+    volumes:
+      # The proxy safely holds the socket and translates HTTP requests to it
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    # Notice there are no external ports mapped here. 
+    # It is completely hidden from your Windows host, making it highly secure!
+    restart: unless-stopped
+
+  # ----------------------------------------
+  # THE ANALYTICS ZONE (Time-Series & Dashboard)
+  # ----------------------------------------
+  influxdb:
+    image: influxdb:2.7
+    container_name: influxdb
+    networks:
+      - iot_infralab_net
+    ports:
+      - "8086:8086"
+    volumes:
+      - ./infrastructure/influxdb/data:/var/lib/influxdb2
+      - ./infrastructure/influxdb/config:/etc/influxdb2
+    restart: unless-stopped
+
+  grafana:
+    image: grafana/grafana-oss:latest
+    container_name: grafana
+    networks:
+      - iot_infralab_net
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./infrastructure/grafana/data:/var/lib/grafana
+    restart: unless-stopped
+    depends_on:
+      - influxdb
+
+  # ----------------------------------------
+  # INTRUSION DETECTION SYSTEM (Suricata Sidecar)
+  # ----------------------------------------
+  suricata:
+    image: jasonish/suricata:latest
+    container_name: suricata-ids
+    # Share Mosquitto's network namespace (sidecar pattern)
+    network_mode: "service:mosquitto"
+    cap_add:
+      - NET_ADMIN
+      - NET_RAW
+      - SYS_NICE
+    volumes:
+      - ./infrastructure/suricata/suricata.yaml:/etc/suricata/suricata.yaml
+      - ./infrastructure/suricata/local.rules:/etc/suricata/rules/local.rules
+      - ./infrastructure/suricata/logs:/var/log/suricata
+    command: -i eth0
+    restart: unless-stopped
+    depends_on:
+      - mosquitto
+
+networks:
+  iot_infralab_net:
+    name: iot_infralab_net
+    driver: bridge
+    driver_opts:
+      com.docker.network.bridge.name: br-iotlab

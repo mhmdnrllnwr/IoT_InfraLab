@@ -1,0 +1,58 @@
+0 verbose cli /usr/local/bin/node /usr/local/bin/npm
+1 info using npm@10.8.2
+2 info using node@v20.20.0
+3 silly config load:file:/usr/local/lib/node_modules/npm/npmrc
+4 silly config load:file:/data/.npmrc
+5 silly config load:file:/usr/src/node-red/.npmrc
+6 silly config load:file:/usr/local/etc/npmrc
+7 verbose title npm remove node-red-dashboard
+8 verbose argv "remove" "--no-audit" "--no-update-notifier" "--no-fund" "--save" "node-red-dashboard"
+9 verbose logfile logs-max:10 dir:/data/.npm/_logs/2026-03-19T03_10_34_809Z-
+10 verbose logfile /data/.npm/_logs/2026-03-19T03_10_34_809Z-debug-0.log
+11 silly packumentCache heap:1962934272 maxSize:490733568 maxEntrySize:245366784
+12 silly logfile start cleaning logs, removing 1 files
+13 silly logfile done cleaning log files
+14 silly idealTree buildDeps
+15 silly reify mark retired [ '/data/node_modules/compressible' ]
+16 silly reify mark retired [ '/data/node_modules/compression' ]
+17 silly reify mark retired [ '/data/node_modules/gridstack' ]
+18 silly reify mark retired [ '/data/node_modules/jquery' ]
+19 silly reify mark retired [ '/data/node_modules/mime-db' ]
+20 silly reify mark retired [ '/data/node_modules/negotiator' ]
+21 silly reify mark retired [ '/data/node_modules/node-red-dashboard' ]
+22 silly reify mark retired [ '/data/node_modules/on-headers' ]
+23 silly reify moves {
+23 silly reify   '/data/node_modules/compressible': '/data/node_modules/.compressible-60RmNxZN',
+23 silly reify   '/data/node_modules/compression': '/data/node_modules/.compression-dOvaEpz8',
+23 silly reify   '/data/node_modules/gridstack': '/data/node_modules/.gridstack-RXsWsjrW',
+23 silly reify   '/data/node_modules/jquery': '/data/node_modules/.jquery-KXcqBnmR',
+23 silly reify   '/data/node_modules/mime-db': '/data/node_modules/.mime-db-Bc7q22S9',
+23 silly reify   '/data/node_modules/negotiator': '/data/node_modules/.negotiator-k7G8Mi8G',
+23 silly reify   '/data/node_modules/node-red-dashboard': '/data/node_modules/.node-red-dashboard-nLdcNL8A',
+23 silly reify   '/data/node_modules/on-headers': '/data/node_modules/.on-headers-RRm6SgPY'
+23 silly reify }
+24 warn cleanup Failed to remove some directories [
+24 warn cleanup   [
+24 warn cleanup     '/data/node_modules/.node-red-dashboard-nLdcNL8A',
+24 warn cleanup     [Error: EACCES: permission denied, rmdir '/data/node_modules/.node-red-dashboard-nLdcNL8A'] {
+24 warn cleanup       errno: -13,
+24 warn cleanup       code: 'EACCES',
+24 warn cleanup       syscall: 'rmdir',
+24 warn cleanup       path: '/data/node_modules/.node-red-dashboard-nLdcNL8A'
+24 warn cleanup     }
+24 warn cleanup   ]
+24 warn cleanup ]
+25 silly REMOVE node_modules/on-headers
+26 silly REMOVE node_modules/node-red-dashboard
+27 silly REMOVE node_modules/negotiator
+28 silly REMOVE node_modules/mime-db
+29 silly REMOVE node_modules/jquery
+30 silly REMOVE node_modules/gridstack
+31 silly REMOVE node_modules/compression
+32 silly REMOVE node_modules/compressible
+33 verbose cwd /data
+34 verbose os Linux 5.15.167.4-microsoft-standard-WSL2
+35 verbose node v20.20.0
+36 verbose npm  v10.8.2
+37 verbose exit 0
+38 info ok

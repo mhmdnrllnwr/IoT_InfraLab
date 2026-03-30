@@ -1,0 +1,198 @@
+0 verbose cli /usr/local/bin/node /usr/local/bin/npm
+1 info using npm@10.8.2
+2 info using node@v20.20.0
+3 silly config load:file:/usr/local/lib/node_modules/npm/npmrc
+4 silly config load:file:/data/.npmrc
+5 silly config load:file:/usr/src/node-red/.npmrc
+6 silly config load:file:/usr/local/etc/npmrc
+7 verbose title npm remove node-red-contrib-uibuilder
+8 verbose argv "remove" "--no-audit" "--no-update-notifier" "--no-fund" "--save" "node-red-contrib-uibuilder"
+9 verbose logfile logs-max:10 dir:/data/.npm/_logs/2026-03-17T00_48_09_347Z-
+10 verbose logfile /data/.npm/_logs/2026-03-17T00_48_09_347Z-debug-0.log
+11 silly packumentCache heap:1962934272 maxSize:490733568 maxEntrySize:245366784
+12 silly logfile start cleaning logs, removing 1 files
+13 silly logfile done cleaning log files
+14 silly idealTree buildDeps
+15 silly reify mark retired [ '/data/node_modules/@asamuzakjp/css-color' ]
+16 silly reify mark retired [ '/data/node_modules/@csstools/color-helpers' ]
+17 silly reify mark retired [ '/data/node_modules/@csstools/css-calc' ]
+18 silly reify mark retired [ '/data/node_modules/@csstools/css-color-parser' ]
+19 silly reify mark retired [ '/data/node_modules/@csstools/css-parser-algorithms' ]
+20 silly reify mark retired [ '/data/node_modules/@csstools/css-tokenizer' ]
+21 silly reify mark retired [ '/data/node_modules/@nodelib/fs.scandir' ]
+22 silly reify mark retired [ '/data/node_modules/@nodelib/fs.stat' ]
+23 silly reify mark retired [ '/data/node_modules/@nodelib/fs.walk' ]
+24 silly reify mark retired [ '/data/node_modules/agent-base' ]
+25 silly reify mark retired [ '/data/node_modules/braces' ]
+26 silly reify mark retired [ '/data/node_modules/cssstyle' ]
+27 silly reify mark retired [ '/data/node_modules/data-urls' ]
+28 silly reify mark retired [ '/data/node_modules/decimal.js' ]
+29 silly reify mark retired [ '/data/node_modules/degit', '/data/node_modules/.bin/degit' ]
+30 silly reify mark retired [ '/data/node_modules/fast-glob' ]
+31 silly reify mark retired [ '/data/node_modules/fastq' ]
+32 silly reify mark retired [ '/data/node_modules/fill-range' ]
+33 silly reify mark retired [ '/data/node_modules/fs-extra' ]
+34 silly reify mark retired [ '/data/node_modules/glob-parent' ]
+35 silly reify mark retired [ '/data/node_modules/graceful-fs' ]
+36 silly reify mark retired [ '/data/node_modules/html-encoding-sniffer' ]
+37 silly reify mark retired [ '/data/node_modules/http-proxy-agent' ]
+38 silly reify mark retired [ '/data/node_modules/https-proxy-agent' ]
+39 silly reify mark retired [ '/data/node_modules/is-extglob' ]
+40 silly reify mark retired [ '/data/node_modules/is-glob' ]
+41 silly reify mark retired [ '/data/node_modules/is-number' ]
+42 silly reify mark retired [ '/data/node_modules/is-potential-custom-element-name' ]
+43 silly reify mark retired [ '/data/node_modules/jsdom' ]
+44 silly reify mark retired [ '/data/node_modules/jsonfile' ]
+45 silly reify mark retired [ '/data/node_modules/lru-cache' ]
+46 silly reify mark retired [ '/data/node_modules/merge2' ]
+47 silly reify mark retired [ '/data/node_modules/micromatch' ]
+48 silly reify mark retired [ '/data/node_modules/node-red-contrib-uibuilder' ]
+49 silly reify mark retired [ '/data/node_modules/nwsapi' ]
+50 silly reify mark retired [ '/data/node_modules/parse5' ]
+51 silly reify mark retired [ '/data/node_modules/picomatch' ]
+52 silly reify mark retired [ '/data/node_modules/punycode' ]
+53 silly reify mark retired [ '/data/node_modules/queue-microtask' ]
+54 silly reify mark retired [ '/data/node_modules/reusify' ]
+55 silly reify mark retired [ '/data/node_modules/rrweb-cssom' ]
+56 silly reify mark retired [ '/data/node_modules/run-parallel' ]
+57 silly reify mark retired [ '/data/node_modules/saxes' ]
+58 silly reify mark retired [ '/data/node_modules/symbol-tree' ]
+59 silly reify mark retired [ '/data/node_modules/tldts', '/data/node_modules/.bin/tldts' ]
+60 silly reify mark retired [ '/data/node_modules/tldts-core' ]
+61 silly reify mark retired [ '/data/node_modules/to-regex-range' ]
+62 silly reify mark retired [ '/data/node_modules/tough-cookie' ]
+63 silly reify mark retired [ '/data/node_modules/universalify' ]
+64 silly reify mark retired [ '/data/node_modules/w3c-xmlserializer' ]
+65 silly reify mark retired [ '/data/node_modules/whatwg-encoding' ]
+66 silly reify mark retired [ '/data/node_modules/whatwg-mimetype' ]
+67 silly reify mark retired [ '/data/node_modules/xml-name-validator' ]
+68 silly reify mark retired [ '/data/node_modules/xmlchars' ]
+69 silly reify moves {
+69 silly reify   '/data/node_modules/@asamuzakjp/css-color': '/data/node_modules/@asamuzakjp/.css-color-Vq2EqEpd',
+69 silly reify   '/data/node_modules/@csstools/color-helpers': '/data/node_modules/@csstools/.color-helpers-CPG531FT',
+69 silly reify   '/data/node_modules/@csstools/css-calc': '/data/node_modules/@csstools/.css-calc-F24kLUHj',
+69 silly reify   '/data/node_modules/@csstools/css-color-parser': '/data/node_modules/@csstools/.css-color-parser-ZzvLfepm',
+69 silly reify   '/data/node_modules/@csstools/css-parser-algorithms': '/data/node_modules/@csstools/.css-parser-algorithms-AmlX21Q9',
+69 silly reify   '/data/node_modules/@csstools/css-tokenizer': '/data/node_modules/@csstools/.css-tokenizer-1yK532gJ',
+69 silly reify   '/data/node_modules/@nodelib/fs.scandir': '/data/node_modules/@nodelib/.fs.scandir-hgMMvJ9h',
+69 silly reify   '/data/node_modules/@nodelib/fs.stat': '/data/node_modules/@nodelib/.fs.stat-rV0UWmSu',
+69 silly reify   '/data/node_modules/@nodelib/fs.walk': '/data/node_modules/@nodelib/.fs.walk-etrtE1rq',
+69 silly reify   '/data/node_modules/agent-base': '/data/node_modules/.agent-base-YVqTSI8f',
+69 silly reify   '/data/node_modules/braces': '/data/node_modules/.braces-FNFCvozq',
+69 silly reify   '/data/node_modules/cssstyle': '/data/node_modules/.cssstyle-IyXSQolo',
+69 silly reify   '/data/node_modules/data-urls': '/data/node_modules/.data-urls-l7lKTxUj',
+69 silly reify   '/data/node_modules/decimal.js': '/data/node_modules/.decimal.js-I6uIPt9x',
+69 silly reify   '/data/node_modules/degit': '/data/node_modules/.degit-TCs8BvrV',
+69 silly reify   '/data/node_modules/.bin/degit': '/data/node_modules/.bin/.degit-ilQRgGC7',
+69 silly reify   '/data/node_modules/fast-glob': '/data/node_modules/.fast-glob-V367YMlI',
+69 silly reify   '/data/node_modules/fastq': '/data/node_modules/.fastq-khfcrHpE',
+69 silly reify   '/data/node_modules/fill-range': '/data/node_modules/.fill-range-zb7e3RXN',
+69 silly reify   '/data/node_modules/fs-extra': '/data/node_modules/.fs-extra-tBOSboDO',
+69 silly reify   '/data/node_modules/glob-parent': '/data/node_modules/.glob-parent-mjiH9oZh',
+69 silly reify   '/data/node_modules/graceful-fs': '/data/node_modules/.graceful-fs-k0znLUlP',
+69 silly reify   '/data/node_modules/html-encoding-sniffer': '/data/node_modules/.html-encoding-sniffer-Thw4X5b3',
+69 silly reify   '/data/node_modules/http-proxy-agent': '/data/node_modules/.http-proxy-agent-TD1ZYnma',
+69 silly reify   '/data/node_modules/https-proxy-agent': '/data/node_modules/.https-proxy-agent-BrVHzWxz',
+69 silly reify   '/data/node_modules/is-extglob': '/data/node_modules/.is-extglob-uR94slZa',
+69 silly reify   '/data/node_modules/is-glob': '/data/node_modules/.is-glob-VUFCATmx',
+69 silly reify   '/data/node_modules/is-number': '/data/node_modules/.is-number-kFOwx5IO',
+69 silly reify   '/data/node_modules/is-potential-custom-element-name': '/data/node_modules/.is-potential-custom-element-name-zC7KV5zn',
+69 silly reify   '/data/node_modules/jsdom': '/data/node_modules/.jsdom-DMMERCWz',
+69 silly reify   '/data/node_modules/jsonfile': '/data/node_modules/.jsonfile-P1qbuIOJ',
+69 silly reify   '/data/node_modules/lru-cache': '/data/node_modules/.lru-cache-WRlPNktf',
+69 silly reify   '/data/node_modules/merge2': '/data/node_modules/.merge2-VnDJdwAQ',
+69 silly reify   '/data/node_modules/micromatch': '/data/node_modules/.micromatch-bBD3czUQ',
+69 silly reify   '/data/node_modules/node-red-contrib-uibuilder': '/data/node_modules/.node-red-contrib-uibuilder-iOW7g4ax',
+69 silly reify   '/data/node_modules/nwsapi': '/data/node_modules/.nwsapi-49PdkugF',
+69 silly reify   '/data/node_modules/parse5': '/data/node_modules/.parse5-NCVczR81',
+69 silly reify   '/data/node_modules/picomatch': '/data/node_modules/.picomatch-Gw1fBX6k',
+69 silly reify   '/data/node_modules/punycode': '/data/node_modules/.punycode-gyQTLwWT',
+69 silly reify   '/data/node_modules/queue-microtask': '/data/node_modules/.queue-microtask-u9fvH8Av',
+69 silly reify   '/data/node_modules/reusify': '/data/node_modules/.reusify-EgRnzvtf',
+69 silly reify   '/data/node_modules/rrweb-cssom': '/data/node_modules/.rrweb-cssom-DZnxmygD',
+69 silly reify   '/data/node_modules/run-parallel': '/data/node_modules/.run-parallel-qdy7beui',
+69 silly reify   '/data/node_modules/saxes': '/data/node_modules/.saxes-jUejQSDZ',
+69 silly reify   '/data/node_modules/symbol-tree': '/data/node_modules/.symbol-tree-Hr1MGxLU',
+69 silly reify   '/data/node_modules/tldts': '/data/node_modules/.tldts-4kPArgZ5',
+69 silly reify   '/data/node_modules/.bin/tldts': '/data/node_modules/.bin/.tldts-sMnRw7z0',
+69 silly reify   '/data/node_modules/tldts-core': '/data/node_modules/.tldts-core-FZ7GOfvP',
+69 silly reify   '/data/node_modules/to-regex-range': '/data/node_modules/.to-regex-range-H8H2cGe0',
+69 silly reify   '/data/node_modules/tough-cookie': '/data/node_modules/.tough-cookie-vIsWCDtx',
+69 silly reify   '/data/node_modules/universalify': '/data/node_modules/.universalify-oE2Nbdzx',
+69 silly reify   '/data/node_modules/w3c-xmlserializer': '/data/node_modules/.w3c-xmlserializer-SmmSKY4I',
+69 silly reify   '/data/node_modules/whatwg-encoding': '/data/node_modules/.whatwg-encoding-c8kji7x2',
+69 silly reify   '/data/node_modules/whatwg-mimetype': '/data/node_modules/.whatwg-mimetype-7M8YdrTc',
+69 silly reify   '/data/node_modules/xml-name-validator': '/data/node_modules/.xml-name-validator-gtfwulHg',
+69 silly reify   '/data/node_modules/xmlchars': '/data/node_modules/.xmlchars-d0lso1aG'
+69 silly reify }
+70 silly REMOVE node_modules/xmlchars
+71 silly REMOVE node_modules/xml-name-validator
+72 silly REMOVE node_modules/whatwg-mimetype
+73 silly REMOVE node_modules/whatwg-encoding
+74 silly REMOVE node_modules/w3c-xmlserializer
+75 silly REMOVE node_modules/universalify
+76 silly REMOVE node_modules/tough-cookie
+77 silly REMOVE node_modules/to-regex-range
+78 silly REMOVE node_modules/tldts-core
+79 silly REMOVE node_modules/tldts
+80 silly REMOVE node_modules/symbol-tree
+81 silly REMOVE node_modules/saxes
+82 silly REMOVE node_modules/run-parallel
+83 silly REMOVE node_modules/rrweb-cssom
+84 silly REMOVE node_modules/reusify
+85 silly REMOVE node_modules/queue-microtask
+86 silly REMOVE node_modules/punycode
+87 silly REMOVE node_modules/picomatch
+88 silly REMOVE node_modules/parse5
+89 silly REMOVE node_modules/parse5/node_modules/entities
+90 silly REMOVE node_modules/nwsapi
+91 silly REMOVE node_modules/node-red-contrib-uibuilder
+92 silly REMOVE node_modules/micromatch
+93 silly REMOVE node_modules/merge2
+94 silly REMOVE node_modules/lru-cache
+95 silly REMOVE node_modules/jsonfile
+96 silly REMOVE node_modules/jsdom
+97 silly REMOVE node_modules/jsdom/node_modules/whatwg-url
+98 silly REMOVE node_modules/jsdom/node_modules/webidl-conversions
+99 silly REMOVE node_modules/jsdom/node_modules/tr46
+100 silly REMOVE node_modules/is-potential-custom-element-name
+101 silly REMOVE node_modules/is-number
+102 silly REMOVE node_modules/is-glob
+103 silly REMOVE node_modules/is-extglob
+104 silly REMOVE node_modules/https-proxy-agent
+105 silly REMOVE node_modules/https-proxy-agent/node_modules/ms
+106 silly REMOVE node_modules/https-proxy-agent/node_modules/debug
+107 silly REMOVE node_modules/http-proxy-agent
+108 silly REMOVE node_modules/http-proxy-agent/node_modules/ms
+109 silly REMOVE node_modules/http-proxy-agent/node_modules/debug
+110 silly REMOVE node_modules/html-encoding-sniffer
+111 silly REMOVE node_modules/graceful-fs
+112 silly REMOVE node_modules/glob-parent
+113 silly REMOVE node_modules/fs-extra
+114 silly REMOVE node_modules/fill-range
+115 silly REMOVE node_modules/fastq
+116 silly REMOVE node_modules/fast-glob
+117 silly REMOVE node_modules/degit
+118 silly REMOVE node_modules/decimal.js
+119 silly REMOVE node_modules/data-urls
+120 silly REMOVE node_modules/data-urls/node_modules/whatwg-url
+121 silly REMOVE node_modules/data-urls/node_modules/webidl-conversions
+122 silly REMOVE node_modules/data-urls/node_modules/tr46
+123 silly REMOVE node_modules/cssstyle
+124 silly REMOVE node_modules/braces
+125 silly REMOVE node_modules/agent-base
+126 silly REMOVE node_modules/@nodelib/fs.walk
+127 silly REMOVE node_modules/@nodelib/fs.stat
+128 silly REMOVE node_modules/@nodelib/fs.scandir
+129 silly REMOVE node_modules/@csstools/css-tokenizer
+130 silly REMOVE node_modules/@csstools/css-parser-algorithms
+131 silly REMOVE node_modules/@csstools/css-color-parser
+132 silly REMOVE node_modules/@csstools/css-calc
+133 silly REMOVE node_modules/@csstools/color-helpers
+134 silly REMOVE node_modules/@asamuzakjp/css-color
+135 verbose cwd /data
+136 verbose os Linux 5.15.167.4-microsoft-standard-WSL2
+137 verbose node v20.20.0
+138 verbose npm  v10.8.2
+139 verbose exit 0
+140 info ok

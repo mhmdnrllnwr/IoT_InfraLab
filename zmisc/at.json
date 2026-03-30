@@ -1,0 +1,713 @@
+[
+    {
+        "id": "ui_base_attacker",
+        "type": "ui-base",
+        "name": "Attacker Base",
+        "path": "/attacker"
+    },
+    {
+        "id": "ui_page_attacker",
+        "type": "ui-page",
+        "name": "Attacker Dashboard",
+        "ui": "ui_base_attacker",
+        "path": "/attacker-control",
+        "icon": "bug",
+        "layout": "grid",
+        "theme": "theme-dark"
+    },
+    {
+        "id": "ui_group_status",
+        "type": "ui-group",
+        "name": "System Status",
+        "page": "ui_page_attacker",
+        "width": "4",
+        "order": 1,
+        "showTitle": true
+    },
+    {
+        "id": "ui_group_control",
+        "type": "ui-group",
+        "name": "Node Control",
+        "page": "ui_page_attacker",
+        "width": "4",
+        "order": 2,
+        "showTitle": true
+    },
+    {
+        "id": "ui_group_attacks",
+        "type": "ui-group",
+        "name": "Launch Attacks",
+        "page": "ui_page_attacker",
+        "width": "4",
+        "order": 3,
+        "showTitle": true
+    },
+    {
+        "id": "ui_group_output",
+        "type": "ui-group",
+        "name": "Terminal Output",
+        "page": "ui_page_attacker",
+        "width": "12",
+        "order": 4,
+        "showTitle": true
+    },
+    {
+        "id": "inject_status",
+        "type": "inject",
+        "name": "Poll Status",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "3",
+        "crontab": "",
+        "once": true,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 100,
+        "y": 60,
+        "wires": [
+            [
+                "http_get_status"
+            ]
+        ]
+    },
+    {
+        "id": "http_get_status",
+        "type": "http request",
+        "method": "GET",
+        "ret": "obj",
+        "paytoqs": "ignore",
+        "url": "http://docker-proxy:2375/containers/iot_attacker_node/json",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "authType": "",
+        "senderr": false,
+        "x": 260,
+        "y": 60,
+        "wires": [
+            [
+                "fn_parse_status"
+            ]
+        ]
+    },
+    {
+        "id": "fn_parse_status",
+        "type": "function",
+        "func": "if(msg.statusCode===200&&msg.payload&&msg.payload.State&&msg.payload.State.Running) msg.payload='RUNNING'; else msg.payload='OFFLINE'; return msg;",
+        "x": 440,
+        "y": 60,
+        "wires": [
+            [
+                "ui_template_status"
+            ]
+        ]
+    },
+    {
+        "id": "ui_template_status",
+        "type": "ui-template",
+        "group": "ui_group_status",
+        "name": "Status Indicator",
+        "order": 1,
+        "width": 0,
+        "height": 0,
+        "format": "<div :style=\"{textAlign:'center',padding:'15px',fontSize:'20px',fontWeight:'bold',borderRadius:'8px',color:'white',backgroundColor:msg.payload==='RUNNING'?'#10b981':'#ef4444'}\">{{msg.payload==='RUNNING'?'?? RUNNING':'?? OFFLINE'}}</div>",
+        "storeOutMessages": true,
+        "fwdInMessages": true,
+        "resendOnRefresh": true,
+        "templateScope": "local",
+        "className": "",
+        "x": 620,
+        "y": 60,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "ui_template_output",
+        "type": "ui-template",
+        "group": "ui_group_output",
+        "name": "Terminal",
+        "order": 1,
+        "width": 0,
+        "height": 0,
+        "format": "<pre style=\"background:#1e1e1e;color:#0f0;padding:15px;height:300px;overflow-y:auto;font-family:monospace;margin:0;white-space:pre-wrap;\" v-text=\"msg.payload||'Awaiting command...' \"></pre>",
+        "storeOutMessages": true,
+        "fwdInMessages": true,
+        "resendOnRefresh": true,
+        "templateScope": "local",
+        "className": "",
+        "x": 1200,
+        "y": 340,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "fn_loading",
+        "type": "function",
+        "name": "Set Loading Msg",
+        "func": "let m = {payload: 'Executing task...\\nPlease wait for the terminal command to finish.'}; return m;",
+        "x": 800,
+        "y": 240,
+        "wires": [
+            [
+                "ui_template_output"
+            ]
+        ]
+    },
+    {
+        "id": "fn_format_out",
+        "type": "function",
+        "name": "Format JSON Output",
+        "func": "if(typeof msg.payload==='object') msg.payload=JSON.stringify(msg.payload,null,2); return msg;",
+        "x": 1000,
+        "y": 340,
+        "wires": [
+            [
+                "ui_template_output"
+            ]
+        ]
+    },
+    {
+        "id": "btn_start_node",
+        "type": "ui-button",
+        "name": "Start Node Btn",
+        "group": "ui_group_control",
+        "order": 1,
+        "width": 0,
+        "height": 0,
+        "passthru": false,
+        "label": "Start Attacker Node",
+        "tooltip": "",
+        "color": "",
+        "bgcolor": "#10b981",
+        "className": "",
+        "icon": "",
+        "payload": "",
+        "payloadType": "str",
+        "topic": "topic",
+        "topicType": "msg",
+        "x": 100,
+        "y": 140,
+        "wires": [
+            [
+                "fn_start_prep",
+                "fn_start_msg"
+            ]
+        ]
+    },
+    {
+        "id": "btn_kill_node",
+        "type": "ui-button",
+        "name": "Kill Node Btn",
+        "group": "ui_group_control",
+        "order": 2,
+        "width": 0,
+        "height": 0,
+        "passthru": false,
+        "label": "Kill Attacker Node",
+        "tooltip": "",
+        "color": "",
+        "bgcolor": "#ef4444",
+        "className": "",
+        "icon": "",
+        "payload": "",
+        "payloadType": "str",
+        "topic": "topic",
+        "topicType": "msg",
+        "x": 100,
+        "y": 200,
+        "wires": [
+            [
+                "fn_kill_prep",
+                "fn_kill_msg"
+            ]
+        ]
+    },
+    {
+        "id": "fn_start_msg",
+        "type": "function",
+        "name": "Deploying Msg",
+        "func": "msg.payload='Creating and starting container over Docker Socket...'; return msg;",
+        "x": 300,
+        "y": 120,
+        "wires": [
+            [
+                "ui_template_output"
+            ]
+        ]
+    },
+    {
+        "id": "fn_kill_msg",
+        "type": "function",
+        "name": "Killing Msg",
+        "func": "msg.payload='Stopping and terminating container...'; return msg;",
+        "x": 300,
+        "y": 220,
+        "wires": [
+            [
+                "ui_template_output"
+            ]
+        ]
+    },
+    {
+        "id": "fn_start_prep",
+        "type": "function",
+        "name": "Prep Create",
+        "func": "msg.url='http://docker-proxy:2375/containers/create?name=iot_attacker_node'; msg.payload={'Image':'iot-attacker','Tty':true,'OpenStdin':true,'HostConfig':{'NetworkMode':'iot_infralab_net','AutoRemove':true}}; return msg;",
+        "x": 300,
+        "y": 160,
+        "wires": [
+            [
+                "http_create_node"
+            ]
+        ]
+    },
+    {
+        "id": "http_create_node",
+        "type": "http request",
+        "name": "Create Request",
+        "method": "POST",
+        "ret": "obj",
+        "paytoqs": "ignore",
+        "url": "",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "authType": "",
+        "senderr": false,
+        "x": 480,
+        "y": 160,
+        "wires": [
+            [
+                "fn_start_trigger"
+            ]
+        ]
+    },
+    {
+        "id": "fn_start_trigger",
+        "type": "function",
+        "name": "Prep Start",
+        "func": "msg.url='http://docker-proxy:2375/containers/iot_attacker_node/start'; msg.payload={}; return msg;",
+        "x": 660,
+        "y": 160,
+        "wires": [
+            [
+                "http_start_node"
+            ]
+        ]
+    },
+    {
+        "id": "http_start_node",
+        "type": "http request",
+        "name": "Start Request",
+        "method": "POST",
+        "ret": "txt",
+        "paytoqs": "ignore",
+        "url": "",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "authType": "",
+        "senderr": false,
+        "x": 840,
+        "y": 160,
+        "wires": [
+            [
+                "fn_started_success"
+            ]
+        ]
+    },
+    {
+        "id": "fn_started_success",
+        "type": "function",
+        "name": "Success Msg",
+        "func": "msg.payload='Container Built & Started successfully.\\nAPI Response ID: ' + msg.statusCode; return msg;",
+        "x": 1000,
+        "y": 160,
+        "wires": [
+            [
+                "ui_template_output"
+            ]
+        ]
+    },
+    {
+        "id": "fn_kill_prep",
+        "type": "function",
+        "name": "Prep Kill",
+        "func": "msg.url='http://docker-proxy:2375/containers/iot_attacker_node?force=true'; return msg;",
+        "x": 300,
+        "y": 180,
+        "wires": [
+            [
+                "http_kill_node"
+            ]
+        ]
+    },
+    {
+        "id": "http_kill_node",
+        "type": "http request",
+        "name": "Kill Request",
+        "method": "DELETE",
+        "ret": "txt",
+        "paytoqs": "ignore",
+        "url": "",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "authType": "",
+        "senderr": false,
+        "x": 480,
+        "y": 180,
+        "wires": [
+            [
+                "fn_killed_success"
+            ]
+        ]
+    },
+    {
+        "id": "fn_killed_success",
+        "type": "function",
+        "name": "Killed Msg",
+        "func": "msg.payload='Container Destroyed and Garbage Collected.\\nAPI Response ID: ' + msg.statusCode; return msg;",
+        "x": 660,
+        "y": 180,
+        "wires": [
+            [
+                "ui_template_output"
+            ]
+        ]
+    },
+    {
+        "id": "btn_dos",
+        "type": "ui-button",
+        "name": "DoS Btn",
+        "group": "ui_group_attacks",
+        "order": 1,
+        "width": 0,
+        "height": 0,
+        "passthru": false,
+        "label": "Start DoS Attack",
+        "tooltip": "",
+        "color": "",
+        "bgcolor": "#ef4444",
+        "className": "",
+        "icon": "",
+        "payload": "",
+        "payloadType": "str",
+        "topic": "topic",
+        "topicType": "msg",
+        "x": 100,
+        "y": 300,
+        "wires": [
+            [
+                "fn_cmd_dos",
+                "fn_loading"
+            ]
+        ]
+    },
+    {
+        "id": "btn_nmap",
+        "type": "ui-button",
+        "name": "Nmap Btn",
+        "group": "ui_group_attacks",
+        "order": 2,
+        "width": 0,
+        "height": 0,
+        "passthru": false,
+        "label": "Start Port Scan",
+        "tooltip": "",
+        "color": "",
+        "bgcolor": "#f59e0b",
+        "className": "",
+        "icon": "",
+        "payload": "",
+        "payloadType": "str",
+        "topic": "topic",
+        "topicType": "msg",
+        "x": 100,
+        "y": 340,
+        "wires": [
+            [
+                "fn_cmd_nmap",
+                "fn_loading"
+            ]
+        ]
+    },
+    {
+        "id": "btn_inject",
+        "type": "ui-button",
+        "name": "Inject Btn",
+        "group": "ui_group_attacks",
+        "order": 3,
+        "width": 0,
+        "height": 0,
+        "passthru": false,
+        "label": "Inject Telemetry",
+        "tooltip": "",
+        "color": "",
+        "bgcolor": "#8b5cf6",
+        "className": "",
+        "icon": "",
+        "payload": "",
+        "payloadType": "str",
+        "topic": "topic",
+        "topicType": "msg",
+        "x": 100,
+        "y": 380,
+        "wires": [
+            [
+                "fn_cmd_inject",
+                "fn_loading"
+            ]
+        ]
+    },
+    {
+        "id": "fn_cmd_dos",
+        "type": "function",
+        "name": "Set DoS",
+        "func": "msg.cmd=['hping3','-S','-p','1883','-c','1500','-i','u1000','mosquitto']; return msg;",
+        "x": 280,
+        "y": 300,
+        "wires": [
+            [
+                "fn_exec_prep"
+            ]
+        ]
+    },
+    {
+        "id": "fn_cmd_nmap",
+        "type": "function",
+        "name": "Set Nmap",
+        "func": "let target = flow.get('nmap_target') || '172.18.0.0/16';\nmsg.cmd=['nmap','-sS','-p','1883,8086,1880,3000',target]; return msg;",
+        "outputs": 1,
+        "x": 280,
+        "y": 340,
+        "wires": [
+            [
+                "fn_exec_prep"
+            ]
+        ]
+    },
+    {
+        "id": "fn_cmd_inject",
+        "type": "function",
+        "name": "Set Inject",
+        "func": "msg.cmd=['python','mqtt_inject.py','--broker','mosquitto','--value','9000']; return msg;",
+        "x": 280,
+        "y": 380,
+        "wires": [
+            [
+                "fn_exec_prep"
+            ]
+        ]
+    },
+    {
+        "id": "fn_exec_prep",
+        "type": "function",
+        "name": "Prep Exec Create",
+        "func": "msg.url='http://docker-proxy:2375/containers/iot_attacker_node/exec'; msg.payload={'AttachStdout':true,'AttachStderr':true,'Tty':true,'Cmd':msg.cmd}; return msg;",
+        "x": 480,
+        "y": 340,
+        "wires": [
+            [
+                "http_exec_create"
+            ]
+        ]
+    },
+    {
+        "id": "http_exec_create",
+        "type": "http request",
+        "name": "Exec Create Req",
+        "method": "POST",
+        "ret": "obj",
+        "paytoqs": "ignore",
+        "url": "",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "authType": "",
+        "senderr": false,
+        "x": 640,
+        "y": 340,
+        "wires": [
+            [
+                "fn_exec_start_prep"
+            ]
+        ]
+    },
+    {
+        "id": "fn_exec_start_prep",
+        "type": "function",
+        "name": "Prep Exec Start",
+        "outputs": 2,
+        "func": "if(!msg.payload.Id){ msg.payload='Error: Failed to initiate attack. Is the Attacker Node actually running?\\n' + JSON.stringify(msg.payload); return [null, msg]; } msg.url='http://docker-proxy:2375/exec/'+msg.payload.Id+'/start'; msg.payload={'Detach':false,'Tty':true}; return [msg, null];",
+        "x": 820,
+        "y": 340,
+        "wires": [
+            [
+                "http_exec_start"
+            ],
+            [
+                "fn_format_out"
+            ]
+        ]
+    },
+    {
+        "id": "http_exec_start",
+        "type": "http request",
+        "name": "Exec Start Req",
+        "method": "POST",
+        "ret": "txt",
+        "paytoqs": "ignore",
+        "url": "",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "authType": "",
+        "senderr": false,
+        "x": 1000,
+        "y": 300,
+        "wires": [
+            [
+                "fn_format_out"
+            ]
+        ]
+    },
+    {
+        "id": "ui_group_targets",
+        "type": "ui-group",
+        "name": "Target Information",
+        "page": "ui_page_attacker",
+        "width": "4",
+        "order": 2,
+        "showTitle": true
+    },
+    {
+        "id": "inject_targets",
+        "type": "inject",
+        "name": "Poll Targets",
+        "props": [],
+        "repeat": "5",
+        "crontab": "",
+        "once": true,
+        "onceDelay": 0.5,
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 100,
+        "y": 500,
+        "wires": [
+            [
+                "http_get_targets"
+            ]
+        ]
+    },
+    {
+        "id": "http_get_targets",
+        "type": "http request",
+        "name": "Get Containers",
+        "method": "GET",
+        "ret": "obj",
+        "paytoqs": "ignore",
+        "url": "http://docker-proxy:2375/containers/json",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "authType": "",
+        "senderr": false,
+        "x": 280,
+        "y": 500,
+        "wires": [
+            [
+                "fn_parse_targets"
+            ]
+        ]
+    },
+    {
+        "id": "fn_parse_targets",
+        "type": "function",
+        "name": "Parse Target IPs",
+        "func": "let html = '<table style=\"width:100%; border-collapse: collapse; color: #fff;\"><tr style=\"border-bottom: 1px solid #444;\"><th style=\"text-align:left; padding: 4px;\">Container</th><th style=\"text-align:left; padding: 4px;\">IP Address</th></tr>';\nlet opts = [{label: '- All Targets (172.18.0.0/16) -', value: '172.18.0.0/16'}];\nif (msg.payload && Array.isArray(msg.payload)) {\n    msg.payload.forEach(c => {\n        let name = c.Names[0].replace('/', '');\n        let ip = 'N/A';\n        if (c.NetworkSettings && c.NetworkSettings.Networks) {\n            let net = Object.values(c.NetworkSettings.Networks)[0];\n            if (net) ip = net.IPAddress;\n        }\n        html += `<tr style=\"border-bottom: 1px solid #222;\"><td style=\"padding: 4px;\">${name}</td><td style=\"padding: 4px;font-family:monospace;color:#3b82f6;\">${ip}</td></tr>`;\n        if (ip !== 'N/A' && name !== 'iot_attacker_node') {\n            opts.push({label: name + ' (' + ip + ')', value: ip});\n        }\n    });\n}\nhtml += '</table>';\nlet msg1 = { payload: html };\nlet msg2 = { options: opts, payload: '172.18.0.0/16' };\nreturn [msg1, msg2];",
+        "outputs": 2,
+        "x": 480,
+        "y": 500,
+        "wires": [
+            [
+                "ui_template_targets"
+            ],
+            [
+                "dropdown_nmap_target"
+            ]
+        ]
+    },
+    {
+        "id": "ui_template_targets",
+        "type": "ui-template",
+        "group": "ui_group_targets",
+        "name": "Target List",
+        "order": 1,
+        "width": 0,
+        "height": 0,
+        "format": "<div style=\"padding: 10px; background: #1a1a1a; border-radius: 4px; overflow-x: auto;\" v-html=\"msg.payload\"></div>",
+        "storeOutMessages": true,
+        "fwdInMessages": true,
+        "resendOnRefresh": true,
+        "templateScope": "local",
+        "className": "",
+        "x": 680,
+        "y": 500,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "dropdown_nmap_target",
+        "type": "ui_dropdown",
+        "name": "Nmap Target Dropdown",
+        "label": "Target:",
+        "tooltip": "",
+        "place": "Select a container to scan",
+        "group": "ui_group_attacks",
+        "order": 1,
+        "width": 0,
+        "height": 0,
+        "passthru": true,
+        "multiple": false,
+        "options": [
+            {
+                "label": "- All Targets (172.18.0.0/16) -",
+                "value": "172.18.0.0/16",
+                "type": "str"
+            }
+        ],
+        "payload": "",
+        "topic": "topic",
+        "topicType": "msg",
+        "className": "",
+        "x": 680,
+        "y": 560,
+        "wires": [
+            [
+                "fn_save_nmap_target"
+            ]
+        ]
+    },
+    {
+        "id": "fn_save_nmap_target",
+        "type": "function",
+        "name": "Save Target",
+        "func": "if (msg.payload) { flow.set('nmap_target', msg.payload); }\nreturn msg;",
+        "outputs": 1,
+        "x": 880,
+        "y": 560,
+        "wires": [
+            []
+        ]
+    }
+]

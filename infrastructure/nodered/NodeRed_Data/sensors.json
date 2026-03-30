@@ -1,0 +1,20 @@
+[
+  {
+    "id": "sensor_285",
+    "types": "temperature",
+    "profile": "normal",
+    "interval": 5
+  },
+  {
+    "id": "sensor_501",
+    "types": "temperature",
+    "profile": "failing",
+    "interval": 5
+  },
+  {
+    "id": "sensor_141",
+    "types": "temperature",
+    "profile": "failing",
+    "interval": 5
+  }
+]

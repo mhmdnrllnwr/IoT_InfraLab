@@ -1,0 +1,126 @@
+[
+    {
+        "id": "inject_suricata_poll",
+        "type": "inject",
+        "name": "Poll Suricata Alerts",
+        "props": [],
+        "repeat": "1.5",
+        "crontab": "",
+        "once": true,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 120,
+        "y": 600,
+        "wires": [
+            [
+                "fn_create_exec"
+            ]
+        ]
+    },
+    {
+        "id": "fn_create_exec",
+        "type": "function",
+        "name": "Create Exec tail",
+        "func": "msg.url = 'http://docker-proxy:2375/containers/suricata-ids/exec';\nmsg.method = 'POST';\nmsg.headers = { 'Content-Type': 'application/json' };\n// Using Tty:true prevents Docker from adding 8-byte multiplex headers!\nmsg.payload = {\n    'AttachStdout': true,\n    'Tty': true,\n    'Cmd': ['tail', '-n', '15', '/var/log/suricata/eve.json']\n};\nreturn msg;",
+        "outputs": 1,
+        "x": 300,
+        "y": 600,
+        "wires": [
+            [
+                "http_create_exec"
+            ]
+        ]
+    },
+    {
+        "id": "http_create_exec",
+        "type": "http request",
+        "name": "POST Create Exec",
+        "method": "use",
+        "ret": "obj",
+        "paytoqs": "ignore",
+        "url": "",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "authType": "",
+        "senderr": false,
+        "x": 490,
+        "y": 600,
+        "wires": [
+            [
+                "fn_start_exec"
+            ]
+        ]
+    },
+    {
+        "id": "fn_start_exec",
+        "type": "function",
+        "name": "Start Exec",
+        "func": "if (msg.payload && msg.payload.Id) {\n    msg.url = 'http://docker-proxy:2375/exec/' + msg.payload.Id + '/start';\n    msg.method = 'POST';\n    msg.headers = { 'Content-Type': 'application/json' };\n    // Tty:true guarantees a clean text response stream\n    msg.payload = { 'Detach': false, 'Tty': true };\n    return msg;\n}",
+        "outputs": 1,
+        "x": 670,
+        "y": 600,
+        "wires": [
+            [
+                "http_start_exec"
+            ]
+        ]
+    },
+    {
+        "id": "http_start_exec",
+        "type": "http request",
+        "name": "POST Start Exec",
+        "method": "use",
+        "ret": "txt",
+        "paytoqs": "ignore",
+        "url": "",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "authType": "",
+        "senderr": false,
+        "x": 850,
+        "y": 600,
+        "wires": [
+            [
+                "fn_parse_suricata"
+            ]
+        ]
+    },
+    {
+        "id": "fn_parse_suricata",
+        "type": "function",
+        "name": "Parse Suricata eve.json",
+        "func": "let raw = msg.payload || '';\nlet lines = raw.split('\\n');\nlet alerts = [];\n\nfor (let i = 0; i < lines.length; i++) {\n    let line = lines[i].trim();\n    if (!line) continue;\n    \n    // Tty=true in exec ensures the text is clean, but let's be safe\n    let jsonStart = line.indexOf('{\"timestamp\"');\n    if (jsonStart !== -1) {\n        try {\n            let jsonStr = line.substring(jsonStart);\n            let evt = JSON.parse(jsonStr);\n            if (evt.event_type === 'alert') {\n                let time = new Date(evt.timestamp).toLocaleTimeString();\n                let sig = evt.alert.signature;\n                let src = evt.src_ip + (evt.src_port ? ':' + evt.src_port : '');\n                let dst = evt.dest_ip + (evt.dest_port ? ':' + evt.dest_port : '');\n                alerts.push(`[${time}] 🚨 DETECTED: ${sig}\\n    Target: ${src} -> ${dst}`);\n            }\n        } catch(e) {}\n    }\n}\n\nalerts = alerts.reverse().slice(0, 15);\n\nif (alerts.length === 0) {\n    msg.payload = '🟢 System Secure: Watching for active threats in eve.json...';\n} else {\n    msg.payload = alerts.join('\\n\\n');\n}\n\nreturn msg;",
+        "outputs": 1,
+        "x": 1050,
+        "y": 600,
+        "wires": [
+            [
+                "ui_template_suricata_alerts"
+            ]
+        ]
+    },
+    {
+        "id": "ui_template_suricata_alerts",
+        "type": "ui-template",
+        "group": "ui_group_output",
+        "name": "Live Suricata Alerts",
+        "order": 2,
+        "width": 0,
+        "height": 0,
+        "format": "<div><div style=\"color:#3b82f6;font-weight:bold;margin-top:15px;margin-bottom:5px;font-size:16px;\">Live IDS Alerts (Suricata):</div><pre style=\"background:#111;padding:15px;height:250px;overflow-y:auto;font-family:monospace;margin:0;white-space:pre-wrap;border:1px solid #3b82f6;border-radius:4px;\"><span :style=\"{color: msg.payload.includes('🚨') ? '#ef4444' : '#10b981'}\" v-text=\"msg.payload\"></span></pre></div>",
+        "storeOutMessages": true,
+        "fwdInMessages": true,
+        "resendOnRefresh": true,
+        "templateScope": "local",
+        "className": "",
+        "x": 1270,
+        "y": 600,
+        "wires": [
+            []
+        ]
+    }
+]

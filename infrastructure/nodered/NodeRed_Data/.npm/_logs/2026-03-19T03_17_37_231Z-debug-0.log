@@ -1,0 +1,123 @@
+0 verbose cli /usr/local/bin/node /usr/local/bin/npm
+1 info using npm@10.8.2
+2 info using node@v20.20.0
+3 silly config load:file:/usr/local/lib/node_modules/npm/npmrc
+4 silly config load:file:/data/.npmrc
+5 silly config load:file:/usr/src/node-red/.npmrc
+6 silly config load:file:/usr/local/etc/npmrc
+7 verbose title npm remove node-red-contrib-dockerode
+8 verbose argv "remove" "--no-audit" "--no-update-notifier" "--no-fund" "--save" "node-red-contrib-dockerode"
+9 verbose logfile logs-max:10 dir:/data/.npm/_logs/2026-03-19T03_17_37_231Z-
+10 verbose logfile /data/.npm/_logs/2026-03-19T03_17_37_231Z-debug-0.log
+11 silly packumentCache heap:1962934272 maxSize:490733568 maxEntrySize:245366784
+12 silly logfile start cleaning logs, removing 1 files
+13 silly logfile done cleaning log files
+14 silly idealTree buildDeps
+15 verbose shrinkwrap failed to load node_modules/.package-lock.json out of date, updated: node_modules
+16 silly reify mark retired [ '/data/node_modules/asn1' ]
+17 silly reify mark retired [ '/data/node_modules/bcrypt-pbkdf' ]
+18 silly reify mark retired [ '/data/node_modules/base64-js' ]
+19 silly reify mark retired [ '/data/node_modules/buffer' ]
+20 silly reify mark retired [ '/data/node_modules/bl' ]
+21 silly reify mark retired [ '/data/node_modules/buildcheck' ]
+22 silly reify mark retired [ '/data/node_modules/chownr' ]
+23 silly reify mark retired [ '/data/node_modules/cpu-features' ]
+24 silly reify mark retired [ '/data/node_modules/docker-modem' ]
+25 silly reify mark retired [ '/data/node_modules/dockerode' ]
+26 silly reify mark retired [ '/data/node_modules/emitter-component' ]
+27 silly reify mark retired [ '/data/node_modules/end-of-stream' ]
+28 silly reify mark retired [ '/data/node_modules/fs-constants' ]
+29 silly reify mark retired [ '/data/node_modules/ieee754' ]
+30 silly reify mark retired [ '/data/node_modules/node-red-contrib-dockerode' ]
+31 silly reify mark retired [ '/data/node_modules/mkdirp-classic' ]
+32 silly reify mark retired [ '/data/node_modules/nan' ]
+33 silly reify mark retired [ '/data/node_modules/once' ]
+34 silly reify mark retired [ '/data/node_modules/pump' ]
+35 silly reify mark retired [ '/data/node_modules/readable-stream' ]
+36 silly reify mark retired [ '/data/node_modules/split-ca' ]
+37 silly reify mark retired [ '/data/node_modules/ssh2' ]
+38 silly reify mark retired [ '/data/node_modules/stream' ]
+39 silly reify mark retired [ '/data/node_modules/tar-fs' ]
+40 silly reify mark retired [ '/data/node_modules/string_decoder' ]
+41 silly reify mark retired [ '/data/node_modules/tar-stream' ]
+42 silly reify mark retired [ '/data/node_modules/tweetnacl' ]
+43 silly reify mark retired [ '/data/node_modules/util-deprecate' ]
+44 silly reify mark retired [ '/data/node_modules/wrappy' ]
+45 silly reify mark retired [ '/data/node_modules/@balena/dockerignore' ]
+46 silly reify moves {
+46 silly reify   '/data/node_modules/asn1': '/data/node_modules/.asn1-e0bUEltG',
+46 silly reify   '/data/node_modules/bcrypt-pbkdf': '/data/node_modules/.bcrypt-pbkdf-ttTcMKMW',
+46 silly reify   '/data/node_modules/base64-js': '/data/node_modules/.base64-js-fM7Z0tn1',
+46 silly reify   '/data/node_modules/buffer': '/data/node_modules/.buffer-PnI8qWnd',
+46 silly reify   '/data/node_modules/bl': '/data/node_modules/.bl-PfU8Qu11',
+46 silly reify   '/data/node_modules/buildcheck': '/data/node_modules/.buildcheck-mjOdwIok',
+46 silly reify   '/data/node_modules/chownr': '/data/node_modules/.chownr-07v3qbUi',
+46 silly reify   '/data/node_modules/cpu-features': '/data/node_modules/.cpu-features-92RA4R1E',
+46 silly reify   '/data/node_modules/docker-modem': '/data/node_modules/.docker-modem-GWl2SPrJ',
+46 silly reify   '/data/node_modules/dockerode': '/data/node_modules/.dockerode-7b4yfEc1',
+46 silly reify   '/data/node_modules/emitter-component': '/data/node_modules/.emitter-component-e8LI8PVA',
+46 silly reify   '/data/node_modules/end-of-stream': '/data/node_modules/.end-of-stream-D9qGZpUB',
+46 silly reify   '/data/node_modules/fs-constants': '/data/node_modules/.fs-constants-IkU1lCys',
+46 silly reify   '/data/node_modules/ieee754': '/data/node_modules/.ieee754-LaYQfJUx',
+46 silly reify   '/data/node_modules/node-red-contrib-dockerode': '/data/node_modules/.node-red-contrib-dockerode-GxLmVNRA',
+46 silly reify   '/data/node_modules/mkdirp-classic': '/data/node_modules/.mkdirp-classic-m5g6EfUU',
+46 silly reify   '/data/node_modules/nan': '/data/node_modules/.nan-2PPZro5e',
+46 silly reify   '/data/node_modules/once': '/data/node_modules/.once-g0JU53BL',
+46 silly reify   '/data/node_modules/pump': '/data/node_modules/.pump-DsFDRkp1',
+46 silly reify   '/data/node_modules/readable-stream': '/data/node_modules/.readable-stream-VXKeHCl7',
+46 silly reify   '/data/node_modules/split-ca': '/data/node_modules/.split-ca-SFZKkjVD',
+46 silly reify   '/data/node_modules/ssh2': '/data/node_modules/.ssh2-qZpuCOEI',
+46 silly reify   '/data/node_modules/stream': '/data/node_modules/.stream-okHi7xSL',
+46 silly reify   '/data/node_modules/tar-fs': '/data/node_modules/.tar-fs-nqK4gnA6',
+46 silly reify   '/data/node_modules/string_decoder': '/data/node_modules/.string_decoder-3xV3GvlK',
+46 silly reify   '/data/node_modules/tar-stream': '/data/node_modules/.tar-stream-BbZjKMWW',
+46 silly reify   '/data/node_modules/tweetnacl': '/data/node_modules/.tweetnacl-FVDo8YcJ',
+46 silly reify   '/data/node_modules/util-deprecate': '/data/node_modules/.util-deprecate-vvLRni8j',
+46 silly reify   '/data/node_modules/wrappy': '/data/node_modules/.wrappy-aIryM6Ly',
+46 silly reify   '/data/node_modules/@balena/dockerignore': '/data/node_modules/@balena/.dockerignore-vHIEAPQZ'
+46 silly reify }
+47 verbose stack Error: EACCES: permission denied, rename '/data/node_modules/ssh2' -> '/data/node_modules/.ssh2-qZpuCOEI'
+47 verbose stack     at async Object.rename (node:internal/fs/promises:777:10)
+47 verbose stack     at async moveFile (/usr/local/lib/node_modules/npm/node_modules/@npmcli/fs/lib/move-file.js:30:5)
+47 verbose stack     at async Promise.allSettled (index 21)
+47 verbose stack     at async [reifyPackages] (/usr/local/lib/node_modules/npm/node_modules/@npmcli/arborist/lib/arborist/reify.js:325:11)
+47 verbose stack     at async Arborist.reify (/usr/local/lib/node_modules/npm/node_modules/@npmcli/arborist/lib/arborist/reify.js:142:5)
+47 verbose stack     at async Uninstall.exec (/usr/local/lib/node_modules/npm/lib/commands/uninstall.js:51:5)
+47 verbose stack     at async Npm.exec (/usr/local/lib/node_modules/npm/lib/npm.js:207:9)
+47 verbose stack     at async module.exports (/usr/local/lib/node_modules/npm/lib/cli/entry.js:74:5)
+48 error code EACCES
+49 error syscall rename
+50 error path /data/node_modules/ssh2
+51 error dest /data/node_modules/.ssh2-qZpuCOEI
+52 error errno -13
+53 error Error: EACCES: permission denied, rename '/data/node_modules/ssh2' -> '/data/node_modules/.ssh2-qZpuCOEI'
+53 error     at async Object.rename (node:internal/fs/promises:777:10)
+53 error     at async moveFile (/usr/local/lib/node_modules/npm/node_modules/@npmcli/fs/lib/move-file.js:30:5)
+53 error     at async Promise.allSettled (index 21)
+53 error     at async [reifyPackages] (/usr/local/lib/node_modules/npm/node_modules/@npmcli/arborist/lib/arborist/reify.js:325:11)
+53 error     at async Arborist.reify (/usr/local/lib/node_modules/npm/node_modules/@npmcli/arborist/lib/arborist/reify.js:142:5)
+53 error     at async Uninstall.exec (/usr/local/lib/node_modules/npm/lib/commands/uninstall.js:51:5)
+53 error     at async Npm.exec (/usr/local/lib/node_modules/npm/lib/npm.js:207:9)
+53 error     at async module.exports (/usr/local/lib/node_modules/npm/lib/cli/entry.js:74:5) {
+53 error   errno: -13,
+53 error   code: 'EACCES',
+53 error   syscall: 'rename',
+53 error   path: '/data/node_modules/ssh2',
+53 error   dest: '/data/node_modules/.ssh2-qZpuCOEI'
+53 error }
+54 error
+54 error The operation was rejected by your operating system.
+54 error It is likely you do not have the permissions to access this file as the current user
+54 error
+54 error If you believe this might be a permissions issue, please double-check the
+54 error permissions of the file and its containing directories, or try running
+54 error the command again as root/Administrator.
+55 silly unfinished npm timer reify 1773890257723
+56 silly unfinished npm timer reify:retireShallow 1773890258818
+57 verbose cwd /data
+58 verbose os Linux 5.15.167.4-microsoft-standard-WSL2
+59 verbose node v20.20.0
+60 verbose npm  v10.8.2
+61 verbose exit -13
+62 verbose code -13
+63 error A complete log of this run can be found in: /data/.npm/_logs/2026-03-19T03_17_37_231Z-debug-0.log

@@ -1,0 +1,605 @@
+[
+    {
+        "id": "60e143ae7deb52ac",
+        "type": "inject",
+        "z": "d8c6953bcf076db9",
+        "name": "Poll Network",
+        "props": [],
+        "repeat": "3",
+        "crontab": "",
+        "once": true,
+        "onceDelay": 0.5,
+        "topic": "",
+        "x": 180,
+        "y": 80,
+        "wires": [
+            [
+                "5e5b085da4afc78b"
+            ]
+        ]
+    },
+    {
+        "id": "5e5b085da4afc78b",
+        "type": "http request",
+        "z": "d8c6953bcf076db9",
+        "name": "GET Containers",
+        "method": "GET",
+        "ret": "obj",
+        "paytoqs": "ignore",
+        "url": "http://docker-proxy:2375/containers/json?all=true",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "authType": "",
+        "senderr": false,
+        "x": 380,
+        "y": 80,
+        "wires": [
+            [
+                "e3a1ba986fd6afe3"
+            ]
+        ]
+    },
+    {
+        "id": "e3a1ba986fd6afe3",
+        "type": "function",
+        "z": "d8c6953bcf076db9",
+        "name": "Parse IPs & Update Map",
+        "func": "let html = '<table style=\"width:100%; text-align:left; border-collapse:collapse; color:#e2e8f0;\"><tr style=\"border-bottom:1px solid #555;\"><th style=\"padding:6px;\">Node Name</th><th style=\"padding:6px;\">IP Address</th><th style=\"padding:6px;\">State</th></tr>';\nlet ipMap = {};\n\nif (msg.payload && Array.isArray(msg.payload)) {\n    msg.payload.forEach(c => {\n        let name = c.Names[0].replace('/','');\n        let nets = (c.NetworkSettings && c.NetworkSettings.Networks) ? c.NetworkSettings.Networks : {};\n        let netInfo = nets['iot_infralab_net'];\n        let ip = netInfo ? netInfo.IPAddress : null;\n        let state = c.State;\n        \n        if (ip) {\n            html += `<tr style=\"border-bottom:1px solid #333;\"><td style=\"padding:6px;\">${name}</td><td style=\"padding:6px;color:#3b82f6;font-family:monospace;font-weight:bold;\">${ip}</td><td style=\"padding:6px;color:#10b981;\">${state}</td></tr>`;\n            ipMap[ip] = name;\n        } else {\n            html += `<tr style=\"border-bottom:1px solid #333;\"><td style=\"padding:6px;color:#64748b;\">${name}</td><td style=\"padding:6px;color:#ef4444;font-family:monospace;\">Disconnected</td><td style=\"padding:6px;color:#64748b;\">${state}</td></tr>`;\n        }\n    });\n}\nhtml += '</table>';\n\n// Save the live active map globally so Suricata alerts can check against it\nflow.set('network_ip_map', ipMap);\n\nreturn { payload: html };",
+        "outputs": 1,
+        "x": 610,
+        "y": 80,
+        "wires": [
+            [
+                "eaae37d7edfdca09"
+            ]
+        ]
+    },
+    {
+        "id": "eaae37d7edfdca09",
+        "type": "ui-template",
+        "z": "d8c6953bcf076db9",
+        "group": "4b74e49d58d5b4f7",
+        "name": "Live Topology Table",
+        "order": 1,
+        "width": 0,
+        "height": 0,
+        "format": "<div style=\"padding:10px; background:#1e1e1e; border-radius:6px; color:#e2e8f0; max-height:200px; overflow-y:auto;\" v-html=\"msg.payload\"></div>",
+        "storeOutMessages": true,
+        "resendOnRefresh": true,
+        "templateScope": "local",
+        "className": "",
+        "x": 860,
+        "y": 80,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "0781c159a77d33eb",
+        "type": "ui-dropdown",
+        "z": "d8c6953bcf076db9",
+        "group": "ui_group_nac",
+        "name": "Target Dropdown",
+        "label": "Select Attacker IP",
+        "tooltip": "Select the IP to kick off the network",
+        "order": 1,
+        "width": 0,
+        "height": 0,
+        "passthru": true,
+        "multiple": false,
+        "options": [],
+        "payload": "",
+        "className": "",
+        "x": 850,
+        "y": 180,
+        "wires": [
+            [
+                "0d256818c4a7f8ce"
+            ]
+        ]
+    },
+    {
+        "id": "0d256818c4a7f8ce",
+        "type": "function",
+        "z": "d8c6953bcf076db9",
+        "name": "Save Target ID",
+        "func": "if(msg.payload) flow.set('soc_target', msg.payload);\nreturn msg;",
+        "outputs": 1,
+        "x": 1060,
+        "y": 180,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "f81a11a5645940ac",
+        "type": "ui-button",
+        "z": "d8c6953bcf076db9",
+        "group": "ui_group_nac",
+        "name": "Isolate Action",
+        "label": "Isolate IP from Lab Network",
+        "order": 2,
+        "width": 0,
+        "height": 0,
+        "tooltip": "Physically disconnects the container from br-iotlab",
+        "color": "white",
+        "bgcolor": "#ef4444",
+        "className": "",
+        "icon": "mdi-lan-disconnect",
+        "payload": "",
+        "payloadType": "str",
+        "topic": "topic",
+        "topicType": "msg",
+        "x": 170,
+        "y": 240,
+        "wires": [
+            [
+                "c5c5aa378e457bbc"
+            ]
+        ]
+    },
+    {
+        "id": "c5c5aa378e457bbc",
+        "type": "function",
+        "z": "d8c6953bcf076db9",
+        "name": "Prep Docker Disconnect",
+        "func": "let target = flow.get('soc_target');\nif(!target) {\n    return [null, {payload: \"⚠️ Please select an IP address from the dropdown first.\"}];\n}\n\nmsg.url = 'http://docker-proxy:2375/networks/iot_infralab_net/disconnect';\nmsg.method = 'POST';\nmsg.payload = {\n    \"Container\": target,\n    \"Force\": true\n};\n\nlet log = { payload: `Executing Network Isolation (NAC) on node ID: [${target}]...` };\nreturn [msg, log];",
+        "outputs": 2,
+        "x": 390,
+        "y": 240,
+        "wires": [
+            [
+                "36d1bc4e219f518a"
+            ],
+            [
+                "3bfd7365bf5b381f"
+            ]
+        ]
+    },
+    {
+        "id": "36d1bc4e219f518a",
+        "type": "http request",
+        "z": "d8c6953bcf076db9",
+        "name": "POST Network Disconnect",
+        "method": "use",
+        "ret": "txt",
+        "paytoqs": "ignore",
+        "url": "",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "authType": "",
+        "senderr": false,
+        "x": 650,
+        "y": 240,
+        "wires": [
+            [
+                "fe32743fbce0145c"
+            ]
+        ]
+    },
+    {
+        "id": "fe32743fbce0145c",
+        "type": "function",
+        "z": "d8c6953bcf076db9",
+        "name": "Format Output",
+        "func": "if(msg.statusCode === 200) {\n    msg.payload = \"✅ SUCCESS: Attacker IP has been physically disconnected from the IoT Network.\\nReconnaissance and Lateral Movement neutralized.\";\n} else {\n    msg.payload = \"❌ FAILED: Could not isolate IP. Error Status: \" + msg.statusCode + \"\\n\" + msg.payload;\n}\nreturn msg;",
+        "outputs": 1,
+        "x": 880,
+        "y": 240,
+        "wires": [
+            [
+                "3bfd7365bf5b381f"
+            ]
+        ]
+    },
+    {
+        "id": "3bfd7365bf5b381f",
+        "type": "ui-template",
+        "z": "d8c6953bcf076db9",
+        "group": "ui_group_soc_logs",
+        "name": "SOC Log View",
+        "order": 1,
+        "width": 6,
+        "height": 5,
+        "format": "<pre style=\"background:#0f172a;color:#38bdf8;padding:15px;height:250px;overflow-y:auto;font-family:monospace;margin:0;border-radius:4px;white-space:pre-wrap;\" v-text=\"msg.payload||'Awaiting SOC actions...' \"></pre>",
+        "storeOutMessages": true,
+        "resendOnRefresh": true,
+        "templateScope": "local",
+        "className": "",
+        "x": 1080,
+        "y": 240,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "e04790f802da2b64",
+        "type": "inject",
+        "z": "d8c6953bcf076db9",
+        "name": "Poll Suricata Alerts",
+        "props": [],
+        "repeat": "1.5",
+        "crontab": "",
+        "once": true,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 200,
+        "y": 400,
+        "wires": [
+            [
+                "0f13d04b0ba3f3a6"
+            ]
+        ]
+    },
+    {
+        "id": "0f13d04b0ba3f3a6",
+        "type": "function",
+        "z": "d8c6953bcf076db9",
+        "name": "Create Exec tail",
+        "func": "msg.url = 'http://docker-proxy:2375/containers/suricata-ids/exec';\nmsg.method = 'POST';\nmsg.headers = { 'Content-Type': 'application/json' };\nmsg.payload = {\n    'AttachStdout': true,\n    'Tty': true,\n    'Cmd': ['tail', '-n', '15', '/var/log/suricata/eve.json']\n};\nreturn msg;",
+        "outputs": 1,
+        "x": 400,
+        "y": 400,
+        "wires": [
+            [
+                "b35d49a199049062"
+            ]
+        ]
+    },
+    {
+        "id": "b35d49a199049062",
+        "type": "http request",
+        "z": "d8c6953bcf076db9",
+        "name": "POST Create Exec",
+        "method": "use",
+        "ret": "obj",
+        "paytoqs": "ignore",
+        "url": "",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "authType": "",
+        "senderr": false,
+        "x": 590,
+        "y": 400,
+        "wires": [
+            [
+                "d19bdbedf6106987"
+            ]
+        ]
+    },
+    {
+        "id": "d19bdbedf6106987",
+        "type": "function",
+        "z": "d8c6953bcf076db9",
+        "name": "Start Exec",
+        "func": "if (msg.payload && msg.payload.Id) {\n    msg.url = 'http://docker-proxy:2375/exec/' + msg.payload.Id + '/start';\n    msg.method = 'POST';\n    msg.headers = { 'Content-Type': 'application/json' };\n    msg.payload = { 'Detach': false, 'Tty': true };\n    return msg;\n}",
+        "outputs": 1,
+        "x": 770,
+        "y": 400,
+        "wires": [
+            [
+                "37928392074c49c1"
+            ]
+        ]
+    },
+    {
+        "id": "37928392074c49c1",
+        "type": "http request",
+        "z": "d8c6953bcf076db9",
+        "name": "POST Start Exec",
+        "method": "use",
+        "ret": "txt",
+        "paytoqs": "ignore",
+        "url": "",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "authType": "",
+        "senderr": false,
+        "x": 950,
+        "y": 400,
+        "wires": [
+            [
+                "476deb1e14781ab3"
+            ]
+        ]
+    },
+    {
+        "id": "476deb1e14781ab3",
+        "type": "function",
+        "z": "d8c6953bcf076db9",
+        "name": "Parse Suricata & Extract IPs",
+        "func": "let raw = msg.payload || '';\nlet lines = raw.split('\\n');\nlet alerts = [];\nlet attackerIPs = new Set(); // Store unique attacker IPs\n\nfor (let i = 0; i < lines.length; i++) {\n    let line = lines[i].trim();\n    if (!line) continue;\n    \n    let jsonStart = line.indexOf('{\"timestamp\"');\n    if (jsonStart !== -1) {\n        try {\n            let jsonStr = line.substring(jsonStart);\n            let evt = JSON.parse(jsonStr);\n            if (evt.event_type === 'alert') {\n                let time = new Date(evt.timestamp).toLocaleTimeString();\n                let sig = evt.alert.signature;\n                let src = evt.src_ip + (evt.src_port ? ':' + evt.src_port : '');\n                let dst = evt.dest_ip + (evt.dest_port ? ':' + evt.dest_port : '');\n                alerts.push(`[${time}] 🚨 DETECTED: ${sig}\\n    Target: ${src} -> ${dst}`);\n                \n                // Add the absolute Source IP as a known attacker\n                if (evt.src_ip) attackerIPs.add(evt.src_ip);\n            }\n        } catch(e) {}\n    }\n}\n\nalerts = alerts.reverse().slice(0, 15);\n\nlet msgAlerts = { payload: '' };\nif (alerts.length === 0) {\n    msgAlerts.payload = '🟢 System Secure: Watching for active threats in eve.json...';\n} else {\n    msgAlerts.payload = alerts.join('\\n\\n');\n}\n\n// Pass unique Attackers to the second output for the NAC Dropdown correlation\nlet msgAttackers = { payload: Array.from(attackerIPs) };\n\nreturn [msgAlerts, msgAttackers];",
+        "outputs": 2,
+        "x": 1200,
+        "y": 400,
+        "wires": [
+            [
+                "d9d38a8aa965d360"
+            ],
+            [
+                "34c64f4a7b47f83c"
+            ]
+        ]
+    },
+    {
+        "id": "34c64f4a7b47f83c",
+        "type": "function",
+        "z": "d8c6953bcf076db9",
+        "name": "Correlate Attackers for NAC",
+        "func": "let attackers = msg.payload || [];\nlet ipMap = flow.get('network_ip_map') || {};\nlet options = [];\n\n// If there are no attackers, completely hide the dropdown options\nif (attackers.length === 0) {\n    return { options: [], payload: null };\n}\n\n// If attackers exist, map their IPs to live container names for the dropdown\nattackers.forEach(ip => {\n    let containerName = ipMap[ip];\n    if (containerName) {\n         options.push({ \n             label: `🚨 ${ip} (Node: ${containerName})`, \n             value: containerName, \n             type: 'str' \n         });\n    } else {\n        // In case the IPs have left the network, or it's external\n         options.push({ \n             label: `🚨 ${ip} (Unknown Device)`, \n             value: ip, \n             type: 'str' \n         });\n    }\n});\n\n// Auto-select the first attacker just to make the UI faster for the SOC operator\nlet firstTarget = options.length > 0 ? options[0].value : null;\nreturn { options: options, payload: firstTarget };",
+        "outputs": 1,
+        "x": 600,
+        "y": 180,
+        "wires": [
+            [
+                "0781c159a77d33eb"
+            ]
+        ]
+    },
+    {
+        "id": "d9d38a8aa965d360",
+        "type": "ui-template",
+        "z": "d8c6953bcf076db9",
+        "group": "da323341862d9aea",
+        "page": "",
+        "ui": "",
+        "name": "Suricata IDS Alerts",
+        "order": 1,
+        "width": 6,
+        "height": "",
+        "format": "<div>\n    <pre style=\"background:#111;padding:15px;height:250px;overflow-y:auto;font-family:monospace;margin:0;white-space:pre-wrap;border:1px solid #3b82f6;border-radius:4px;\"><span :style=\"{color: msg.payload.includes('🚨') ? '#ef4444' : '#10b981'}\" v-text=\"msg.payload\"></span></pre>\n</div>",
+        "storeOutMessages": true,
+        "passthru": true,
+        "resendOnRefresh": true,
+        "templateScope": "local",
+        "className": "",
+        "x": 1430,
+        "y": 400,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "655d9225b7f86e91",
+        "type": "ui-button",
+        "z": "d8c6953bcf076db9",
+        "group": "da323341862d9aea",
+        "name": "Clear Alerts Btn",
+        "label": "Acknowledge & Clear Alerts",
+        "order": 2,
+        "width": 6,
+        "height": 0,
+        "emulateClick": false,
+        "tooltip": "Wipes the eve.json log file in the container",
+        "color": "white",
+        "bgcolor": "#4b5563",
+        "className": "",
+        "icon": "fa-trash",
+        "iconPosition": "left",
+        "payload": "",
+        "payloadType": "str",
+        "topic": "topic",
+        "topicType": "msg",
+        "x": 160,
+        "y": 480,
+        "wires": [
+            [
+                "8c43c68359d68621"
+            ]
+        ]
+    },
+    {
+        "id": "8c43c68359d68621",
+        "type": "function",
+        "z": "d8c6953bcf076db9",
+        "name": "Prep File Wipe",
+        "func": "msg.url = 'http://docker-proxy:2375/containers/suricata-ids/exec';\nmsg.method = 'POST';\nmsg.headers = { 'Content-Type': 'application/json' };\n// This command safely empties the log file inside the container\nmsg.payload = {\n    'AttachStdout': true,\n    'Tty': true,\n    'Cmd': ['sh', '-c', 'echo \"\" > /var/log/suricata/eve.json']\n};\nreturn msg;",
+        "outputs": 1,
+        "x": 360,
+        "y": 480,
+        "wires": [
+            [
+                "040c8756f91c0b42"
+            ]
+        ]
+    },
+    {
+        "id": "040c8756f91c0b42",
+        "type": "http request",
+        "z": "d8c6953bcf076db9",
+        "name": "Create Exec",
+        "method": "use",
+        "ret": "obj",
+        "paytoqs": "ignore",
+        "url": "",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "authType": "",
+        "senderr": false,
+        "x": 550,
+        "y": 480,
+        "wires": [
+            [
+                "475af368653bd905"
+            ]
+        ]
+    },
+    {
+        "id": "475af368653bd905",
+        "type": "function",
+        "z": "d8c6953bcf076db9",
+        "name": "Start File Wipe",
+        "func": "if (msg.payload && msg.payload.Id) {\n    msg.url = 'http://docker-proxy:2375/exec/' + msg.payload.Id + '/start';\n    msg.method = 'POST';\n    msg.headers = { 'Content-Type': 'application/json' };\n    msg.payload = { 'Detach': false, 'Tty': true };\n    return msg;\n}",
+        "outputs": 1,
+        "x": 740,
+        "y": 480,
+        "wires": [
+            [
+                "0ee11b429189f542"
+            ]
+        ]
+    },
+    {
+        "id": "0ee11b429189f542",
+        "type": "http request",
+        "z": "d8c6953bcf076db9",
+        "name": "Execute Wipe",
+        "method": "use",
+        "ret": "txt",
+        "paytoqs": "ignore",
+        "url": "",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "authType": "",
+        "senderr": false,
+        "x": 940,
+        "y": 480,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "4b74e49d58d5b4f7",
+        "type": "ui-group",
+        "name": "Active Network Topology (iot_infralab_net)",
+        "page": "ui_page_soc",
+        "width": "12",
+        "order": 1,
+        "showTitle": true,
+        "visible": true,
+        "disabled": false
+    },
+    {
+        "id": "ui_group_nac",
+        "type": "ui-group",
+        "name": "1. Network Access Control (NAC)",
+        "page": "ui_page_soc",
+        "width": "6",
+        "height": "",
+        "order": 4,
+        "showTitle": true,
+        "className": "",
+        "visible": "true",
+        "disabled": "false",
+        "groupType": "default"
+    },
+    {
+        "id": "ui_group_soc_logs",
+        "type": "ui-group",
+        "name": "Incident Response Logs & IDS Alerts",
+        "page": "ui_page_soc",
+        "width": 6,
+        "height": "",
+        "order": 2,
+        "showTitle": true,
+        "className": "",
+        "visible": "true",
+        "disabled": "false",
+        "groupType": "default"
+    },
+    {
+        "id": "da323341862d9aea",
+        "type": "ui-group",
+        "name": "Suricata IDS Alerts",
+        "page": "ui_page_soc",
+        "width": 6,
+        "height": 1,
+        "order": 3,
+        "showTitle": true,
+        "className": "",
+        "visible": "true",
+        "disabled": "false",
+        "groupType": "default"
+    },
+    {
+        "id": "ui_page_soc",
+        "type": "ui-page",
+        "name": "Security Operations (SOC)",
+        "ui": "8bcc34ca17387ebb",
+        "path": "/soc-defenses",
+        "icon": "shield",
+        "layout": "grid",
+        "theme": "c382198a61249f47",
+        "breakpoints": [
+            {
+                "name": "Default",
+                "px": "0",
+                "cols": "3"
+            },
+            {
+                "name": "Tablet",
+                "px": "576",
+                "cols": "6"
+            },
+            {
+                "name": "Small Desktop",
+                "px": "768",
+                "cols": "9"
+            },
+            {
+                "name": "Desktop",
+                "px": "1024",
+                "cols": "12"
+            }
+        ],
+        "order": 4,
+        "className": "",
+        "visible": true,
+        "disabled": false
+    },
+    {
+        "id": "8bcc34ca17387ebb",
+        "type": "ui-base",
+        "name": "My Dashboard",
+        "path": "/dashboard",
+        "appIcon": "",
+        "includeClientData": true,
+        "acceptsClientConfig": [
+            "ui-notification",
+            "ui-control"
+        ],
+        "showPathInSidebar": false,
+        "headerContent": "page",
+        "navigationStyle": "default",
+        "titleBarStyle": "default",
+        "showReconnectNotification": true,
+        "notificationDisplayTime": 1,
+        "showDisconnectNotification": true,
+        "allowInstall": false
+    },
+    {
+        "id": "c382198a61249f47",
+        "type": "ui-theme",
+        "name": "Default Theme",
+        "colors": {
+            "surface": "#ffffff",
+            "primary": "#0094CE",
+            "bgPage": "#eeeeee",
+            "groupBg": "#ffffff",
+            "groupOutline": "#cccccc"
+        },
+        "sizes": {
+            "density": "default",
+            "pagePadding": "12px",
+            "groupGap": "12px",
+            "groupBorderRadius": "4px",
+            "widgetGap": "12px"
+        }
+    },
+    {
+        "id": "e181b1f492fbf6c0",
+        "type": "global-config",
+        "env": [],
+        "modules": {
+            "@flowfuse/node-red-dashboard": "1.30.2"
+        }
+    }
+]

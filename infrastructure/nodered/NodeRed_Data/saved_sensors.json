@@ -1,0 +1,72 @@
+[
+  {
+    "id": "A_CNCMILL_01",
+    "types": "temperature,vibration,power_draw",
+    "profile": "normal",
+    "interval": 5,
+    "saved_at": "2026-03-18T16:09:53.168Z"
+  },
+  {
+    "id": "A_CNCMILL_02",
+    "types": "temperature,vibration,power_draw",
+    "profile": "failing",
+    "interval": 5,
+    "saved_at": "2026-03-18T16:10:08.480Z"
+  },
+  {
+    "id": "B_CNCMILL_01",
+    "types": "temperature,vibration,power_draw",
+    "profile": "normal",
+    "interval": 5,
+    "saved_at": "2026-03-18T16:10:32.336Z"
+  },
+  {
+    "id": "B_CNCMILL_02",
+    "types": "temperature,vibration,power_draw",
+    "profile": "normal",
+    "interval": 5,
+    "saved_at": "2026-03-18T16:10:37.898Z"
+  },
+  {
+    "id": "C_COMP_01",
+    "types": "power_draw,pressure,temperature",
+    "profile": "normal",
+    "interval": 5,
+    "saved_at": "2026-03-18T16:12:41.127Z"
+  },
+  {
+    "id": "C_COMP_02",
+    "types": "power_draw,pressure,temperature",
+    "profile": "failing",
+    "interval": 5,
+    "saved_at": "2026-03-18T16:12:59.774Z"
+  },
+  {
+    "id": "C_ENV_01",
+    "types": "temperature,humidity",
+    "profile": "normal",
+    "interval": 5,
+    "saved_at": "2026-03-18T16:13:36.672Z"
+  },
+  {
+    "id": "C_ENV_02",
+    "types": "temperature,humidity",
+    "profile": "normal",
+    "interval": 5,
+    "saved_at": "2026-03-18T16:13:40.231Z"
+  },
+  {
+    "id": "B_COOLINGPUMP_01",
+    "types": "pressure,flow_rate,power_draw",
+    "profile": "normal",
+    "interval": 5,
+    "saved_at": "2026-03-19T08:12:18.717Z"
+  },
+  {
+    "id": "A_COOLINGPUMP_01",
+    "types": "pressure,flow_rate,power_draw",
+    "profile": "erratic",
+    "interval": 5,
+    "saved_at": "2026-03-19T08:12:35.695Z"
+  }
+]

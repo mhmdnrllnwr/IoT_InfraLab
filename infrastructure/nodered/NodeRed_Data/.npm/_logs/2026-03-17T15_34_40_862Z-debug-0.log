@@ -1,0 +1,30 @@
+0 verbose cli /usr/local/bin/node /usr/local/bin/npm
+1 info using npm@10.8.2
+2 info using node@v20.20.0
+3 silly config load:file:/usr/local/lib/node_modules/npm/npmrc
+4 silly config load:file:/data/.npmrc
+5 silly config load:file:/usr/src/node-red/.npmrc
+6 silly config load:file:/usr/local/etc/npmrc
+7 verbose title npm remove node-red-node-ui-table
+8 verbose argv "remove" "--no-audit" "--no-update-notifier" "--no-fund" "--save" "node-red-node-ui-table"
+9 verbose logfile logs-max:10 dir:/data/.npm/_logs/2026-03-17T15_34_40_862Z-
+10 verbose logfile /data/.npm/_logs/2026-03-17T15_34_40_862Z-debug-0.log
+11 silly packumentCache heap:1962934272 maxSize:490733568 maxEntrySize:245366784
+12 silly logfile start cleaning logs, removing 1 files
+13 silly logfile done cleaning log files
+14 silly idealTree buildDeps
+15 verbose shrinkwrap failed to load node_modules/.package-lock.json out of date, updated: node_modules
+16 silly reify mark retired [ '/data/node_modules/node-red-node-ui-table' ]
+17 silly reify moves {
+17 silly reify   '/data/node_modules/node-red-node-ui-table': '/data/node_modules/.node-red-node-ui-table-hOJXOpCm'
+17 silly reify }
+18 silly ADD node_modules/node-red-contrib-dockerode
+19 silly ADD node_modules/node-red-contrib-dockerode/node_modules/ms
+20 silly ADD node_modules/node-red-contrib-dockerode/node_modules/debug
+21 silly REMOVE node_modules/node-red-node-ui-table
+22 verbose cwd /data
+23 verbose os Linux 5.15.167.4-microsoft-standard-WSL2
+24 verbose node v20.20.0
+25 verbose npm  v10.8.2
+26 verbose exit 0
+27 info ok

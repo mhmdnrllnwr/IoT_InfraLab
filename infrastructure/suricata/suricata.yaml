@@ -1,0 +1,47 @@
+﻿%YAML 1.1
+---
+# Minimal Suricata Configuration
+
+vars:
+  address-groups:
+    HOME_NET: "[192.168.0.0/16,10.0.0.0/8,172.16.0.0/12]"
+    EXTERNAL_NET: "any"
+
+default-log-dir: /var/log/suricata/
+
+outputs:
+  - fast:
+      enabled: no
+      filename: fast.log
+      append: yes
+
+  - eve-log:
+      enabled: yes
+      filetype: regular
+      filename: eve.json
+      append: yes
+      types:
+        - alert:
+            payload: yes
+            payload-printable: yes
+            packet: yes
+
+# Listen on specific interface
+af-packet:
+  - interface: eth0
+    threads: 1
+    cluster-id: 99
+    cluster-type: cluster_flow
+    defrag: yes
+
+app-layer:
+  protocols:
+    mqtt:
+      enabled: yes
+
+# Load the custom ruleset
+rule-files:
+  - /etc/suricata/rules/local.rules
+
+heartbeat:
+  output-flush-interval: 1

@@ -12,6 +12,11 @@ alert tcp any any -> any any (msg:"Nmap SYN Stealth Scan Detected"; flow:statele
 # Alerts if cleartext standard HTTP methods are sent to the MQTT broker
 alert tcp any any -> any 1883 (msg:"Protocol Mismatch: HTTP Method sent to MQTT Broker"; flow:to_server,established; pcre:"/^(GET|POST|PUT|DELETE)\s+/i"; classtype:protocol-command-decode; sid:1000003; rev:1;)
 
-# 4. Malicious MQTT Payload Injection (Sensor Spoofing)
-# Alerts if cleartext payloads containing "9000" are injected into the broker
-alert tcp any any -> any 1883 (msg:"Malicious MQTT Payload Injection - Temp > 9000"; flow:to_server,established; content:"9000"; classtype:bad-unknown; sid:1000004; rev:1;)
+# 4a. Rogue Subscriber (Native MQTT Parser)
+# This uses Suricata's built-in MQTT decoder. It doesn't care about hex bytes, it just reads the topic.
+alert mqtt any any -> any 1883 (msg:"Rogue Subscriber Detected: Native MQTT Wildcard '#'"; mqtt.subscribe.topic:"#"; classtype:attempted-recon; sid:1000005; rev:2;)
+
+# 4b. Rogue Subscriber (Raw TCP Fallback)
+# If the native parser is disabled, this raw hex check acts as a backup. 
+# Notice we removed the "established" keyword so it catches the packet even if Docker drops the handshake state.
+alert tcp any any -> any 1883 (msg:"Rogue Subscriber Detected: Raw Hex Wildcard '#'"; flow:to_server; content:"|00 01 23|"; classtype:attempted-recon; sid:1000007; rev:1;)

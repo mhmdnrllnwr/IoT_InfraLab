@@ -26,7 +26,7 @@
     {
         "id": "4acab47cf7e84e94",
         "type": "tab",
-        "label": "Data to InfluxDB",
+        "label": "Backend",
         "disabled": false,
         "info": "",
         "env": []
@@ -148,29 +148,6 @@
         "sessionExpiry": ""
     },
     {
-        "id": "a70e7057f4859509",
-        "type": "ui-group",
-        "name": "Attacker Console",
-        "page": "ab2ed11df08aa8a7",
-        "width": "8",
-        "order": 2,
-        "showTitle": true
-    },
-    {
-        "id": "7d01403463477825",
-        "type": "ui-group",
-        "name": "Attack Phases",
-        "page": "ab2ed11df08aa8a7",
-        "width": "4",
-        "height": "",
-        "order": 1,
-        "showTitle": true,
-        "className": "",
-        "visible": "true",
-        "disabled": "false",
-        "groupType": "default"
-    },
-    {
         "id": "ab2ed11df08aa8a7",
         "type": "ui-page",
         "name": "Cyber Attack Simulation",
@@ -205,59 +182,6 @@
         "className": "",
         "visible": "true",
         "disabled": "false"
-    },
-    {
-        "id": "426c92f3f4d5bb85",
-        "type": "ui-group",
-        "name": "Active Network Topology (iot_infralab_net)",
-        "page": "5a633147924a28d1",
-        "width": "12",
-        "order": 1,
-        "showTitle": true,
-        "visible": true,
-        "disabled": false
-    },
-    {
-        "id": "8356bd12d00a4d35",
-        "type": "ui-group",
-        "name": "1. Network Access Control (NAC)",
-        "page": "5a633147924a28d1",
-        "width": "6",
-        "height": "",
-        "order": 4,
-        "showTitle": true,
-        "className": "",
-        "visible": "true",
-        "disabled": "false",
-        "groupType": "default"
-    },
-    {
-        "id": "1384ea55c0ba1905",
-        "type": "ui-group",
-        "name": "Incident Response Logs & IDS Alerts",
-        "page": "5a633147924a28d1",
-        "width": 6,
-        "height": "",
-        "order": 2,
-        "showTitle": true,
-        "className": "",
-        "visible": "true",
-        "disabled": "false",
-        "groupType": "default"
-    },
-    {
-        "id": "cf452f90a4917a01",
-        "type": "ui-group",
-        "name": "Suricata IDS Alerts",
-        "page": "5a633147924a28d1",
-        "width": 6,
-        "height": 1,
-        "order": 3,
-        "showTitle": true,
-        "className": "",
-        "visible": "true",
-        "disabled": "false",
-        "groupType": "default"
     },
     {
         "id": "5a633147924a28d1",
@@ -340,6 +264,132 @@
         "willMsg": {},
         "userProps": "",
         "sessionExpiry": ""
+    },
+    {
+        "id": "a70e7057f4859509",
+        "type": "ui-group",
+        "name": "Attacker Console",
+        "page": "ab2ed11df08aa8a7",
+        "width": "8",
+        "order": 2,
+        "showTitle": true
+    },
+    {
+        "id": "7d01403463477825",
+        "type": "ui-group",
+        "name": "Attack Phases",
+        "page": "ab2ed11df08aa8a7",
+        "width": "4",
+        "height": "",
+        "order": 1,
+        "showTitle": true,
+        "className": "",
+        "visible": "true",
+        "disabled": "false",
+        "groupType": "default"
+    },
+    {
+        "id": "426c92f3f4d5bb85",
+        "type": "ui-group",
+        "name": "Active Network Topology (iot_infralab_net)",
+        "page": "5a633147924a28d1",
+        "width": "12",
+        "order": 1,
+        "showTitle": true,
+        "visible": true,
+        "disabled": false
+    },
+    {
+        "id": "8356bd12d00a4d35",
+        "type": "ui-group",
+        "name": "1. Network Access Control (NAC)",
+        "page": "5a633147924a28d1",
+        "width": "6",
+        "height": "",
+        "order": 4,
+        "showTitle": true,
+        "className": "",
+        "visible": "true",
+        "disabled": "false",
+        "groupType": "default"
+    },
+    {
+        "id": "1384ea55c0ba1905",
+        "type": "ui-group",
+        "name": "Incident Response Logs & IDS Alerts",
+        "page": "5a633147924a28d1",
+        "width": 6,
+        "height": "",
+        "order": 2,
+        "showTitle": true,
+        "className": "",
+        "visible": "true",
+        "disabled": "false",
+        "groupType": "default"
+    },
+    {
+        "id": "cf452f90a4917a01",
+        "type": "ui-group",
+        "name": "Suricata IDS Alerts",
+        "page": "5a633147924a28d1",
+        "width": 6,
+        "height": 1,
+        "order": 3,
+        "showTitle": true,
+        "className": "",
+        "visible": "true",
+        "disabled": "false",
+        "groupType": "default"
+    },
+    {
+        "id": "8c0da6627d65d747",
+        "type": "ui-page",
+        "name": "Docker Management",
+        "ui": "8bcc34ca17387ebb",
+        "path": "/page4",
+        "icon": "home",
+        "layout": "grid",
+        "theme": "c382198a61249f47",
+        "breakpoints": [
+            {
+                "name": "Default",
+                "px": "0",
+                "cols": "3"
+            },
+            {
+                "name": "Tablet",
+                "px": "576",
+                "cols": "6"
+            },
+            {
+                "name": "Small Desktop",
+                "px": "768",
+                "cols": "9"
+            },
+            {
+                "name": "Desktop",
+                "px": "1024",
+                "cols": "12"
+            }
+        ],
+        "order": 4,
+        "className": "",
+        "visible": "true",
+        "disabled": "false"
+    },
+    {
+        "id": "f57ba6f4611ca27c",
+        "type": "ui-group",
+        "name": "Grafana",
+        "page": "8c0da6627d65d747",
+        "width": 6,
+        "height": 1,
+        "order": 1,
+        "showTitle": true,
+        "className": "",
+        "visible": "true",
+        "disabled": "false",
+        "groupType": "default"
     },
     {
         "id": "3fa37c7f153cdb69",
@@ -3007,6 +3057,212 @@
                 "f2325d189ff9fa90",
                 "0a3d5de1d4fa2473"
             ]
+        ]
+    },
+    {
+        "id": "ui_btn_start_grafana",
+        "type": "ui-button",
+        "z": "4acab47cf7e84e94",
+        "group": "f57ba6f4611ca27c",
+        "name": "Power ON Grafana",
+        "label": "▶️ Power ON Grafana",
+        "order": 1,
+        "width": 6,
+        "height": "1",
+        "emulateClick": false,
+        "tooltip": "Boot up the Grafana Analytics Container",
+        "color": "white",
+        "bgcolor": "#10b981",
+        "className": "font-weight-bold",
+        "icon": "",
+        "iconPosition": "left",
+        "payload": "",
+        "payloadType": "str",
+        "topic": "",
+        "topicType": "str",
+        "buttonColor": "",
+        "textColor": "",
+        "iconColor": "",
+        "enableClick": true,
+        "enablePointerdown": false,
+        "pointerdownPayload": "",
+        "pointerdownPayloadType": "str",
+        "enablePointerup": false,
+        "pointerupPayload": "",
+        "pointerupPayloadType": "str",
+        "x": 130,
+        "y": 240,
+        "wires": [
+            [
+                "http_start_grafana"
+            ]
+        ]
+    },
+    {
+        "id": "ui_btn_stop_grafana",
+        "type": "ui-button",
+        "z": "4acab47cf7e84e94",
+        "group": "f57ba6f4611ca27c",
+        "name": "Power OFF Grafana",
+        "label": "⏹️ Power OFF Grafana",
+        "order": 3,
+        "width": 6,
+        "height": "1",
+        "emulateClick": false,
+        "tooltip": "Kill the Grafana Analytics Container",
+        "color": "white",
+        "bgcolor": "#ef4444",
+        "className": "font-weight-bold",
+        "icon": "",
+        "iconPosition": "left",
+        "payload": "",
+        "payloadType": "str",
+        "topic": "",
+        "topicType": "str",
+        "buttonColor": "",
+        "textColor": "",
+        "iconColor": "",
+        "enableClick": true,
+        "enablePointerdown": false,
+        "pointerdownPayload": "",
+        "pointerdownPayloadType": "str",
+        "enablePointerup": false,
+        "pointerupPayload": "",
+        "pointerupPayloadType": "str",
+        "x": 130,
+        "y": 300,
+        "wires": [
+            [
+                "http_stop_grafana"
+            ]
+        ]
+    },
+    {
+        "id": "http_start_grafana",
+        "type": "http request",
+        "z": "4acab47cf7e84e94",
+        "name": "POST /start",
+        "method": "POST",
+        "ret": "txt",
+        "paytoqs": "ignore",
+        "url": "http://docker-proxy:2375/containers/grafana/start",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "authType": "",
+        "senderr": false,
+        "x": 370,
+        "y": 240,
+        "wires": [
+            [
+                "debug_docker_response"
+            ]
+        ]
+    },
+    {
+        "id": "http_stop_grafana",
+        "type": "http request",
+        "z": "4acab47cf7e84e94",
+        "name": "POST /stop",
+        "method": "POST",
+        "ret": "txt",
+        "paytoqs": "ignore",
+        "url": "http://docker-proxy:2375/containers/grafana/stop",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "authType": "",
+        "senderr": false,
+        "x": 370,
+        "y": 300,
+        "wires": [
+            [
+                "debug_docker_response"
+            ]
+        ]
+    },
+    {
+        "id": "inject_auto_kill",
+        "type": "inject",
+        "z": "4acab47cf7e84e94",
+        "name": "Auto-Kill on Boot",
+        "props": [],
+        "repeat": "",
+        "crontab": "",
+        "once": true,
+        "onceDelay": "2",
+        "topic": "",
+        "x": 130,
+        "y": 360,
+        "wires": [
+            [
+                "http_stop_grafana"
+            ]
+        ]
+    },
+    {
+        "id": "debug_docker_response",
+        "type": "debug",
+        "z": "4acab47cf7e84e94",
+        "name": "Docker API Response",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 600,
+        "y": 260,
+        "wires": []
+    },
+    {
+        "id": "e3ed85fc26827843",
+        "type": "ui-template",
+        "z": "4acab47cf7e84e94",
+        "group": "f57ba6f4611ca27c",
+        "page": "",
+        "ui": "",
+        "name": "Open Grafana UI",
+        "order": 2,
+        "width": 12,
+        "height": 1,
+        "format": "<template>\n    <v-btn \n        color=\"#f59e0b\" \n        variant=\"elevated\" \n        block\n        class=\"text-none font-weight-bold\"\n        style=\"color: white !important;\"\n        href=\"http://localhost:3000/\" \n        target=\"_blank\"\n        prepend-icon=\"mdi-chart-line\">\n        📊 Open Grafana Dashboard\n    </v-btn>\n</template>",
+        "storeOutMessages": true,
+        "passthru": true,
+        "resendOnRefresh": true,
+        "templateScope": "local",
+        "className": "",
+        "x": 130,
+        "y": 420,
+        "wires": [
+            [
+                "a534dbea4ddca405"
+            ]
+        ]
+    },
+    {
+        "id": "a534dbea4ddca405",
+        "type": "delay",
+        "z": "4acab47cf7e84e94",
+        "name": "",
+        "pauseType": "delay",
+        "timeout": "5",
+        "timeoutUnits": "seconds",
+        "rate": "1",
+        "nbRateUnits": "1",
+        "rateUnits": "second",
+        "randomFirst": "1",
+        "randomLast": "5",
+        "randomUnits": "seconds",
+        "drop": false,
+        "allowrate": false,
+        "outputs": 1,
+        "x": 320,
+        "y": 420,
+        "wires": [
+            []
         ]
     }
 ]

@@ -82,7 +82,8 @@ services:
       - "3000:3000"
     volumes:
       - ./infrastructure/grafana/data:/var/lib/grafana
-    restart: "no"
+    restart: unless-stopped
+    #restart: "no"
     depends_on:
       - influxdb
 

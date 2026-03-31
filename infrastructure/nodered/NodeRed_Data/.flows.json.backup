@@ -26,7 +26,7 @@
     {
         "id": "4acab47cf7e84e94",
         "type": "tab",
-        "label": "Attacker Node",
+        "label": "Backend",
         "disabled": false,
         "info": "",
         "env": []
@@ -35,7 +35,12 @@
         "id": "8bcc34ca17387ebb",
         "type": "ui-base",
         "name": "My Dashboard",
-        "path": "/dashboard"
+        "path": "/dashboard",
+        "includeClientData": true,
+        "acceptsClientConfig": [
+            "ui-control",
+            "ui-notification"
+        ]
     },
     {
         "id": "c382198a61249f47",
@@ -143,29 +148,6 @@
         "sessionExpiry": ""
     },
     {
-        "id": "a70e7057f4859509",
-        "type": "ui-group",
-        "name": "Attacker Console",
-        "page": "ab2ed11df08aa8a7",
-        "width": "8",
-        "order": 2,
-        "showTitle": true
-    },
-    {
-        "id": "7d01403463477825",
-        "type": "ui-group",
-        "name": "Attack Phases",
-        "page": "ab2ed11df08aa8a7",
-        "width": "4",
-        "height": "",
-        "order": 1,
-        "showTitle": true,
-        "className": "",
-        "visible": "true",
-        "disabled": "false",
-        "groupType": "default"
-    },
-    {
         "id": "ab2ed11df08aa8a7",
         "type": "ui-page",
         "name": "Cyber Attack Simulation",
@@ -200,6 +182,111 @@
         "className": "",
         "visible": "true",
         "disabled": "false"
+    },
+    {
+        "id": "5a633147924a28d1",
+        "type": "ui-page",
+        "name": "Security Operations (SOC)",
+        "ui": "8bcc34ca17387ebb",
+        "path": "/soc-defenses",
+        "icon": "shield",
+        "layout": "grid",
+        "theme": "c382198a61249f47",
+        "breakpoints": [
+            {
+                "name": "Default",
+                "px": "0",
+                "cols": "3"
+            },
+            {
+                "name": "Tablet",
+                "px": "576",
+                "cols": "6"
+            },
+            {
+                "name": "Small Desktop",
+                "px": "768",
+                "cols": "9"
+            },
+            {
+                "name": "Desktop",
+                "px": "1024",
+                "cols": "12"
+            }
+        ],
+        "order": 3,
+        "className": "",
+        "visible": true,
+        "disabled": false
+    },
+    {
+        "id": "17435d09976b7d21",
+        "type": "influxdb",
+        "hostname": "127.0.0.1",
+        "port": 8086,
+        "protocol": "http",
+        "database": "database",
+        "name": "Local Influxdb",
+        "usetls": false,
+        "tls": "",
+        "influxdbVersion": "2.0",
+        "url": "http://influxdb:8086",
+        "timeout": 10,
+        "rejectUnauthorized": true
+    },
+    {
+        "id": "bda5655996317aa0",
+        "type": "mqtt-broker",
+        "name": "Mosquitto Broker",
+        "broker": "iot_broker",
+        "port": 1883,
+        "clientid": "",
+        "autoConnect": true,
+        "usetls": false,
+        "protocolVersion": 4,
+        "keepalive": 60,
+        "cleansession": true,
+        "autoUnsubscribe": true,
+        "birthTopic": "",
+        "birthQos": "0",
+        "birthRetain": "false",
+        "birthPayload": "",
+        "birthMsg": {},
+        "closeTopic": "",
+        "closeQos": "0",
+        "closeRetain": "false",
+        "closePayload": "",
+        "closeMsg": {},
+        "willTopic": "",
+        "willQos": "0",
+        "willRetain": "false",
+        "willPayload": "",
+        "willMsg": {},
+        "userProps": "",
+        "sessionExpiry": ""
+    },
+    {
+        "id": "a70e7057f4859509",
+        "type": "ui-group",
+        "name": "Attacker Console",
+        "page": "ab2ed11df08aa8a7",
+        "width": "8",
+        "order": 2,
+        "showTitle": true
+    },
+    {
+        "id": "7d01403463477825",
+        "type": "ui-group",
+        "name": "Attack Phases",
+        "page": "ab2ed11df08aa8a7",
+        "width": "4",
+        "height": "",
+        "order": 1,
+        "showTitle": true,
+        "className": "",
+        "visible": "true",
+        "disabled": "false",
+        "groupType": "default"
     },
     {
         "id": "426c92f3f4d5bb85",
@@ -255,12 +342,12 @@
         "groupType": "default"
     },
     {
-        "id": "5a633147924a28d1",
+        "id": "8c0da6627d65d747",
         "type": "ui-page",
-        "name": "Security Operations (SOC)",
+        "name": "Docker Management",
         "ui": "8bcc34ca17387ebb",
-        "path": "/soc-defenses",
-        "icon": "shield",
+        "path": "/page4",
+        "icon": "home",
         "layout": "grid",
         "theme": "c382198a61249f47",
         "breakpoints": [
@@ -287,129 +374,22 @@
         ],
         "order": 4,
         "className": "",
-        "visible": true,
-        "disabled": false
-    },
-    {
-        "id": "17435d09976b7d21",
-        "type": "influxdb",
-        "hostname": "127.0.0.1",
-        "port": 8086,
-        "protocol": "http",
-        "database": "database",
-        "name": "Local Influxdb",
-        "usetls": false,
-        "tls": "",
-        "influxdbVersion": "2.0",
-        "url": "http://influxdb:8086",
-        "timeout": 10,
-        "rejectUnauthorized": true
-    },
-    {
-        "id": "bda5655996317aa0",
-        "type": "mqtt-broker",
-        "name": "Mosquitto Broker",
-        "broker": "iot_broker",
-        "port": 1883,
-        "clientid": "",
-        "autoConnect": true,
-        "usetls": false,
-        "protocolVersion": 4,
-        "keepalive": 60,
-        "cleansession": true,
-        "autoUnsubscribe": true,
-        "birthTopic": "",
-        "birthQos": "0",
-        "birthRetain": "false",
-        "birthPayload": "",
-        "birthMsg": {},
-        "closeTopic": "",
-        "closeQos": "0",
-        "closeRetain": "false",
-        "closePayload": "",
-        "closeMsg": {},
-        "willTopic": "",
-        "willQos": "0",
-        "willRetain": "false",
-        "willPayload": "",
-        "willMsg": {},
-        "userProps": "",
-        "sessionExpiry": ""
-    },
-    {
-        "id": "16d784cd0c41af6e",
-        "type": "ui-group",
-        "name": "IDS Alerts",
-        "page": "5385f290e439938e",
-        "width": "4",
-        "height": "1",
-        "order": 3,
-        "showTitle": false,
-        "className": "",
         "visible": "true",
-        "disabled": "true",
-        "groupType": "default"
+        "disabled": "false"
     },
     {
-        "id": "090137c6d7dbe76c",
+        "id": "f57ba6f4611ca27c",
         "type": "ui-group",
-        "name": "Node Control",
-        "page": "5385f290e439938e",
-        "width": "4",
-        "height": "",
+        "name": "Grafana",
+        "page": "8c0da6627d65d747",
+        "width": 6,
+        "height": 1,
         "order": 1,
         "showTitle": true,
         "className": "",
         "visible": "true",
         "disabled": "false",
         "groupType": "default"
-    },
-    {
-        "id": "319e764f378f32a5",
-        "type": "ui-group",
-        "name": "Launch Attacks",
-        "page": "5385f290e439938e",
-        "width": "4",
-        "order": 2,
-        "showTitle": true,
-        "visible": true,
-        "disabled": false
-    },
-    {
-        "id": "5385f290e439938e",
-        "type": "ui-page",
-        "name": "Attacker Dashboard",
-        "ui": "8bcc34ca17387ebb",
-        "path": "/attacker-control",
-        "icon": "bug",
-        "layout": "grid",
-        "theme": "c382198a61249f47",
-        "breakpoints": [
-            {
-                "name": "Default",
-                "px": "0",
-                "cols": "3"
-            },
-            {
-                "name": "Tablet",
-                "px": "576",
-                "cols": "6"
-            },
-            {
-                "name": "Small Desktop",
-                "px": "768",
-                "cols": "9"
-            },
-            {
-                "name": "Desktop",
-                "px": "1024",
-                "cols": "12"
-            }
-        ],
-        "order": 5,
-        "className": "",
-        "visible": false,
-        "disabled": false
     },
     {
         "id": "3fa37c7f153cdb69",
@@ -3077,6 +3057,187 @@
                 "f2325d189ff9fa90",
                 "0a3d5de1d4fa2473"
             ]
+        ]
+    },
+    {
+        "id": "ui_btn_start_grafana",
+        "type": "ui-button",
+        "z": "4acab47cf7e84e94",
+        "group": "f57ba6f4611ca27c",
+        "name": "Power ON Grafana",
+        "label": "▶️ Power ON Grafana",
+        "order": 2,
+        "width": 6,
+        "height": "1",
+        "emulateClick": false,
+        "tooltip": "Boot up the Grafana Analytics Container",
+        "color": "white",
+        "bgcolor": "#10b981",
+        "className": "font-weight-bold",
+        "icon": "",
+        "iconPosition": "left",
+        "payload": "",
+        "payloadType": "str",
+        "topic": "",
+        "topicType": "str",
+        "buttonColor": "",
+        "textColor": "",
+        "iconColor": "",
+        "enableClick": true,
+        "enablePointerdown": false,
+        "pointerdownPayload": "",
+        "pointerdownPayloadType": "str",
+        "enablePointerup": false,
+        "pointerupPayload": "",
+        "pointerupPayloadType": "str",
+        "x": 130,
+        "y": 240,
+        "wires": [
+            [
+                "http_start_grafana"
+            ]
+        ]
+    },
+    {
+        "id": "ui_btn_stop_grafana",
+        "type": "ui-button",
+        "z": "4acab47cf7e84e94",
+        "group": "f57ba6f4611ca27c",
+        "name": "Power OFF Grafana",
+        "label": "⏹️ Power OFF Grafana",
+        "order": 3,
+        "width": 6,
+        "height": "1",
+        "emulateClick": false,
+        "tooltip": "Kill the Grafana Analytics Container",
+        "color": "white",
+        "bgcolor": "#ef4444",
+        "className": "font-weight-bold",
+        "icon": "",
+        "iconPosition": "left",
+        "payload": "",
+        "payloadType": "str",
+        "topic": "",
+        "topicType": "str",
+        "buttonColor": "",
+        "textColor": "",
+        "iconColor": "",
+        "enableClick": true,
+        "enablePointerdown": false,
+        "pointerdownPayload": "",
+        "pointerdownPayloadType": "str",
+        "enablePointerup": false,
+        "pointerupPayload": "",
+        "pointerupPayloadType": "str",
+        "x": 130,
+        "y": 300,
+        "wires": [
+            [
+                "http_stop_grafana"
+            ]
+        ]
+    },
+    {
+        "id": "http_start_grafana",
+        "type": "http request",
+        "z": "4acab47cf7e84e94",
+        "name": "POST /start",
+        "method": "POST",
+        "ret": "txt",
+        "paytoqs": "ignore",
+        "url": "http://docker-proxy:2375/containers/grafana/start",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "authType": "",
+        "senderr": false,
+        "x": 370,
+        "y": 240,
+        "wires": [
+            [
+                "debug_docker_response"
+            ]
+        ]
+    },
+    {
+        "id": "http_stop_grafana",
+        "type": "http request",
+        "z": "4acab47cf7e84e94",
+        "name": "POST /stop",
+        "method": "POST",
+        "ret": "txt",
+        "paytoqs": "ignore",
+        "url": "http://docker-proxy:2375/containers/grafana/stop",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "authType": "",
+        "senderr": false,
+        "x": 370,
+        "y": 300,
+        "wires": [
+            [
+                "debug_docker_response"
+            ]
+        ]
+    },
+    {
+        "id": "inject_auto_kill",
+        "type": "inject",
+        "z": "4acab47cf7e84e94",
+        "name": "Auto-Kill on Boot",
+        "props": [],
+        "repeat": "",
+        "crontab": "",
+        "once": true,
+        "onceDelay": "2",
+        "topic": "",
+        "x": 130,
+        "y": 360,
+        "wires": [
+            [
+                "http_stop_grafana"
+            ]
+        ]
+    },
+    {
+        "id": "debug_docker_response",
+        "type": "debug",
+        "z": "4acab47cf7e84e94",
+        "name": "Docker API Response",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 600,
+        "y": 260,
+        "wires": []
+    },
+    {
+        "id": "e3ed85fc26827843",
+        "type": "ui-template",
+        "z": "4acab47cf7e84e94",
+        "group": "f57ba6f4611ca27c",
+        "page": "",
+        "ui": "",
+        "name": "Open Grafana UI",
+        "order": 1,
+        "width": 12,
+        "height": 1,
+        "format": "<template>\n    <v-btn \n        color=\"#f59e0b\" \n        variant=\"elevated\" \n        block\n        class=\"text-none font-weight-bold\"\n        style=\"color: white !important;\"\n        href=\"http://localhost:3000/\" \n        target=\"_blank\"\n        prepend-icon=\"mdi-chart-line\">\n        📊 Open Grafana Dashboard\n    </v-btn>\n</template>",
+        "storeOutMessages": true,
+        "passthru": true,
+        "resendOnRefresh": true,
+        "templateScope": "local",
+        "className": "",
+        "x": 130,
+        "y": 420,
+        "wires": [
+            []
         ]
     }
 ]

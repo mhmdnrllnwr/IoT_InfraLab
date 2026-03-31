@@ -302,7 +302,7 @@
     {
         "id": "8356bd12d00a4d35",
         "type": "ui-group",
-        "name": "1. Network Access Control (NAC)",
+        "name": "Network Access Control (NAC)",
         "page": "5a633147924a28d1",
         "width": "6",
         "height": "",
@@ -385,6 +385,47 @@
         "width": 6,
         "height": 1,
         "order": 1,
+        "showTitle": true,
+        "className": "",
+        "visible": "true",
+        "disabled": "false",
+        "groupType": "default"
+    },
+    {
+        "id": "ff_mqtt_broker",
+        "type": "mqtt-broker",
+        "name": "Mosquitto",
+        "broker": "mosquitto",
+        "port": "1883",
+        "clientid": "",
+        "autoConnect": true,
+        "usetls": false,
+        "protocolVersion": "4",
+        "keepalive": "60",
+        "cleansession": true,
+        "birthTopic": "",
+        "birthQos": "0",
+        "birthPayload": "",
+        "birthMsg": {},
+        "closeTopic": "",
+        "closeQos": "0",
+        "closePayload": "",
+        "closeMsg": {},
+        "willTopic": "",
+        "willQos": "0",
+        "willPayload": "",
+        "willMsg": {},
+        "userProps": "",
+        "sessionExpiry": ""
+    },
+    {
+        "id": "01d38afb921c168e",
+        "type": "ui-group",
+        "name": "AI Security Report",
+        "page": "5a633147924a28d1",
+        "width": 6,
+        "height": 1,
+        "order": 5,
         "showTitle": true,
         "className": "",
         "visible": "true",
@@ -2608,8 +2649,8 @@
         "options": [],
         "payload": "",
         "className": "",
-        "x": 770,
-        "y": 160,
+        "x": 1470,
+        "y": 460,
         "wires": [
             [
                 "890f27216709ba05"
@@ -2623,8 +2664,8 @@
         "name": "Save Target ID",
         "func": "if(msg.payload) flow.set('soc_target', msg.payload);\nreturn msg;",
         "outputs": 1,
-        "x": 980,
-        "y": 160,
+        "x": 1680,
+        "y": 460,
         "wires": [
             []
         ]
@@ -2744,8 +2785,8 @@
         "topic": "",
         "payload": "",
         "payloadType": "date",
-        "x": 120,
-        "y": 380,
+        "x": 162,
+        "y": 380.9999885559082,
         "wires": [
             [
                 "8d8f9ea92bf18fdb"
@@ -2759,8 +2800,8 @@
         "name": "Create Exec tail",
         "func": "msg.url = 'http://docker-proxy:2375/containers/suricata-ids/exec';\nmsg.method = 'POST';\nmsg.headers = { 'Content-Type': 'application/json' };\nmsg.payload = {\n    'AttachStdout': true,\n    'Tty': true,\n    'Cmd': ['tail', '-n', '15', '/var/log/suricata/eve.json']\n};\nreturn msg;",
         "outputs": 1,
-        "x": 320,
-        "y": 380,
+        "x": 362,
+        "y": 380.9999885559082,
         "wires": [
             [
                 "a06976b9776bd36d"
@@ -2781,8 +2822,8 @@
         "proxy": "",
         "authType": "",
         "senderr": false,
-        "x": 510,
-        "y": 380,
+        "x": 552,
+        "y": 380.9999885559082,
         "wires": [
             [
                 "3bf362abe5cdf2b8"
@@ -2796,8 +2837,8 @@
         "name": "Start Exec",
         "func": "if (msg.payload && msg.payload.Id) {\n    msg.url = 'http://docker-proxy:2375/exec/' + msg.payload.Id + '/start';\n    msg.method = 'POST';\n    msg.headers = { 'Content-Type': 'application/json' };\n    msg.payload = { 'Detach': false, 'Tty': true };\n    return msg;\n}",
         "outputs": 1,
-        "x": 690,
-        "y": 380,
+        "x": 732,
+        "y": 380.9999885559082,
         "wires": [
             [
                 "fb47530090725ff3"
@@ -2818,8 +2859,8 @@
         "proxy": "",
         "authType": "",
         "senderr": false,
-        "x": 870,
-        "y": 380,
+        "x": 912,
+        "y": 380.9999885559082,
         "wires": [
             [
                 "65c23a3bd747246c"
@@ -2833,8 +2874,8 @@
         "name": "Parse Suricata & Extract IPs",
         "func": "let raw = msg.payload || '';\nlet lines = raw.split('\\n');\nlet alerts = [];\nlet attackerIPs = new Set(); // Store unique attacker IPs\n\nfor (let i = 0; i < lines.length; i++) {\n    let line = lines[i].trim();\n    if (!line) continue;\n    \n    let jsonStart = line.indexOf('{\"timestamp\"');\n    if (jsonStart !== -1) {\n        try {\n            let jsonStr = line.substring(jsonStart);\n            let evt = JSON.parse(jsonStr);\n            if (evt.event_type === 'alert') {\n                let time = new Date(evt.timestamp).toLocaleTimeString();\n                let sig = evt.alert.signature;\n                let src = evt.src_ip + (evt.src_port ? ':' + evt.src_port : '');\n                let dst = evt.dest_ip + (evt.dest_port ? ':' + evt.dest_port : '');\n                alerts.push(`[${time}] 🚨 DETECTED: ${sig}\\n    Target: ${src} -> ${dst}`);\n                \n                // Add the absolute Source IP as a known attacker\n                if (evt.src_ip) attackerIPs.add(evt.src_ip);\n            }\n        } catch(e) {}\n    }\n}\n\nalerts = alerts.reverse().slice(0, 15);\n\nlet msgAlerts = { payload: '' };\nif (alerts.length === 0) {\n    msgAlerts.payload = '🟢 System Secure: Watching for active threats in eve.json...';\n} else {\n    msgAlerts.payload = alerts.join('\\n\\n');\n}\n\n// Pass unique Attackers to the second output for the NAC Dropdown correlation\nlet msgAttackers = { payload: Array.from(attackerIPs) };\n\nreturn [msgAlerts, msgAttackers];",
         "outputs": 2,
-        "x": 1120,
-        "y": 380,
+        "x": 1162,
+        "y": 380.9999885559082,
         "wires": [
             [
                 "4a3336cc3d1920a0"
@@ -2851,8 +2892,8 @@
         "name": "Correlate Attackers for NAC",
         "func": "let attackers = msg.payload || [];\nlet ipMap = flow.get('network_ip_map') || {};\nlet options = [];\n\n// If there are no attackers, completely hide the dropdown options\nif (attackers.length === 0) {\n    return { options: [], payload: null };\n}\n\n// If attackers exist, map their IPs to live container names for the dropdown\nattackers.forEach(ip => {\n    let containerName = ipMap[ip];\n    if (containerName) {\n         options.push({ \n             label: `🚨 ${ip} (Node: ${containerName})`, \n             value: containerName, \n             type: 'str' \n         });\n    } else {\n        // In case the IPs have left the network, or it's external\n         options.push({ \n             label: `🚨 ${ip} (Unknown Device)`, \n             value: ip, \n             type: 'str' \n         });\n    }\n});\n\n// Auto-select the first attacker just to make the UI faster for the SOC operator\nlet firstTarget = options.length > 0 ? options[0].value : null;\nreturn { options: options, payload: firstTarget };",
         "outputs": 1,
-        "x": 520,
-        "y": 160,
+        "x": 1220,
+        "y": 460,
         "wires": [
             [
                 "48bead69107b66a0"
@@ -2876,8 +2917,8 @@
         "resendOnRefresh": true,
         "templateScope": "local",
         "className": "",
-        "x": 1350,
-        "y": 380,
+        "x": 1392,
+        "y": 380.9999885559082,
         "wires": [
             []
         ]
@@ -2903,7 +2944,7 @@
         "payloadType": "str",
         "topic": "topic",
         "topicType": "msg",
-        "x": 80,
+        "x": 120,
         "y": 460,
         "wires": [
             [
@@ -2918,7 +2959,7 @@
         "name": "Prep File Wipe",
         "func": "msg.url = 'http://docker-proxy:2375/containers/suricata-ids/exec';\nmsg.method = 'POST';\nmsg.headers = { 'Content-Type': 'application/json' };\n// This command safely empties the log file inside the container\nmsg.payload = {\n    'AttachStdout': true,\n    'Tty': true,\n    'Cmd': ['sh', '-c', 'echo \"\" > /var/log/suricata/eve.json']\n};\nreturn msg;",
         "outputs": 1,
-        "x": 280,
+        "x": 320,
         "y": 460,
         "wires": [
             [
@@ -2940,7 +2981,7 @@
         "proxy": "",
         "authType": "",
         "senderr": false,
-        "x": 470,
+        "x": 510,
         "y": 460,
         "wires": [
             [
@@ -2955,7 +2996,7 @@
         "name": "Start File Wipe",
         "func": "if (msg.payload && msg.payload.Id) {\n    msg.url = 'http://docker-proxy:2375/exec/' + msg.payload.Id + '/start';\n    msg.method = 'POST';\n    msg.headers = { 'Content-Type': 'application/json' };\n    msg.payload = { 'Detach': false, 'Tty': true };\n    return msg;\n}",
         "outputs": 1,
-        "x": 660,
+        "x": 700,
         "y": 460,
         "wires": [
             [
@@ -2977,8 +3018,206 @@
         "proxy": "",
         "authType": "",
         "senderr": false,
-        "x": 860,
+        "x": 900,
         "y": 460,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "d93be06a2dce1120",
+        "type": "ui-dropdown",
+        "z": "d415d47f74e99da2",
+        "group": "01d38afb921c168e",
+        "name": "Model Selector",
+        "label": "Select AI Model",
+        "order": 1,
+        "width": "6",
+        "height": "1",
+        "passthru": true,
+        "multiple": false,
+        "chips": false,
+        "clearable": false,
+        "options": [
+            {
+                "label": "Gemini 2.0 Flash (Fastest)",
+                "value": "gemini-2.0-flash",
+                "type": "str"
+            },
+            {
+                "label": "Gemini 1.5 Flash (Stable)",
+                "value": "gemini-flash-latest",
+                "type": "str"
+            },
+            {
+                "label": "Gemini Pro",
+                "value": "gemini-pro-latest",
+                "type": "str"
+            }
+        ],
+        "topic": "lab/security/model",
+        "topicType": "str",
+        "className": "",
+        "typeIsComboBox": true,
+        "msgTrigger": "onChange",
+        "x": 120,
+        "y": 560,
+        "wires": [
+            [
+                "b308d287a834d5c2"
+            ]
+        ]
+    },
+    {
+        "id": "b308d287a834d5c2",
+        "type": "mqtt out",
+        "z": "d415d47f74e99da2",
+        "name": "",
+        "topic": "lab/security/model",
+        "qos": "1",
+        "retain": "true",
+        "broker": "ff_mqtt_broker",
+        "x": 370,
+        "y": 560,
+        "wires": []
+    },
+    {
+        "id": "a80ecd1079a9722a",
+        "type": "ui-button",
+        "z": "d415d47f74e99da2",
+        "group": "01d38afb921c168e",
+        "name": "Trigger Scan",
+        "label": "Run Security Audit 🛡️",
+        "order": 2,
+        "width": "3",
+        "height": "1",
+        "emulateClick": false,
+        "className": "",
+        "icon": "gesture-tap",
+        "iconPosition": "left",
+        "payload": "SCAN_NOW",
+        "payloadType": "str",
+        "topic": "lab/security/trigger",
+        "topicType": "str",
+        "buttonColor": "",
+        "textColor": "",
+        "iconColor": "",
+        "enableClick": true,
+        "enablePointerdown": false,
+        "pointerdownPayload": "",
+        "pointerdownPayloadType": "str",
+        "enablePointerup": false,
+        "pointerupPayload": "",
+        "pointerupPayloadType": "str",
+        "x": 120,
+        "y": 620,
+        "wires": [
+            [
+                "bd288db68fac88a1"
+            ]
+        ]
+    },
+    {
+        "id": "bd288db68fac88a1",
+        "type": "mqtt out",
+        "z": "d415d47f74e99da2",
+        "name": "",
+        "topic": "lab/security/trigger",
+        "qos": "",
+        "retain": "",
+        "broker": "ff_mqtt_broker",
+        "x": 370,
+        "y": 620,
+        "wires": []
+    },
+    {
+        "id": "28151b661cffb467",
+        "type": "mqtt in",
+        "z": "d415d47f74e99da2",
+        "name": "",
+        "topic": "lab/security/status",
+        "qos": "2",
+        "datatype": "utf8",
+        "broker": "ff_mqtt_broker",
+        "inputs": 0,
+        "x": 130,
+        "y": 700,
+        "wires": [
+            [
+                "638584429b5f8242"
+            ]
+        ]
+    },
+    {
+        "id": "638584429b5f8242",
+        "type": "ui-text",
+        "z": "d415d47f74e99da2",
+        "group": "01d38afb921c168e",
+        "order": 3,
+        "width": "3",
+        "height": "1",
+        "name": "Status Display",
+        "label": "Auditor Status",
+        "format": "{{msg.payload}}",
+        "x": 380,
+        "y": 700,
+        "wires": []
+    },
+    {
+        "id": "7ac46aa1d06debf2",
+        "type": "mqtt in",
+        "z": "d415d47f74e99da2",
+        "name": "",
+        "topic": "lab/security/report",
+        "qos": "2",
+        "datatype": "utf8",
+        "broker": "ff_mqtt_broker",
+        "inputs": 0,
+        "x": 130,
+        "y": 780,
+        "wires": [
+            [
+                "a7ca6fc2492dd05a",
+                "09e298371cded1de"
+            ]
+        ]
+    },
+    {
+        "id": "a7ca6fc2492dd05a",
+        "type": "debug",
+        "z": "d415d47f74e99da2",
+        "name": "debug 1",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 300,
+        "y": 900,
+        "wires": []
+    },
+    {
+        "id": "09e298371cded1de",
+        "type": "ui-template",
+        "z": "d415d47f74e99da2",
+        "group": "01d38afb921c168e",
+        "page": "",
+        "ui": "",
+        "name": "AI Security Summary",
+        "order": 0,
+        "width": 0,
+        "height": 0,
+        "head": "",
+        "format": "<div style=\"font-family: sans-serif; line-height: 1.5;\">\n    <div v-html=\"msg.payload\"></div>\n</div>",
+        "storeOutMessages": true,
+        "passthru": true,
+        "resendOnRefresh": true,
+        "templateScope": "local",
+        "className": "",
+        "x": 420,
+        "y": 780,
         "wires": [
             []
         ]
@@ -3066,7 +3305,7 @@
         "group": "f57ba6f4611ca27c",
         "name": "Power ON Grafana",
         "label": "▶️ Power ON Grafana",
-        "order": 2,
+        "order": 1,
         "width": 6,
         "height": "1",
         "emulateClick": false,
@@ -3225,7 +3464,7 @@
         "page": "",
         "ui": "",
         "name": "Open Grafana UI",
-        "order": 1,
+        "order": 2,
         "width": 12,
         "height": 1,
         "format": "<template>\n    <v-btn \n        color=\"#f59e0b\" \n        variant=\"elevated\" \n        block\n        class=\"text-none font-weight-bold\"\n        style=\"color: white !important;\"\n        href=\"http://localhost:3000/\" \n        target=\"_blank\"\n        prepend-icon=\"mdi-chart-line\">\n        📊 Open Grafana Dashboard\n    </v-btn>\n</template>",
@@ -3235,6 +3474,31 @@
         "templateScope": "local",
         "className": "",
         "x": 130,
+        "y": 420,
+        "wires": [
+            [
+                "a534dbea4ddca405"
+            ]
+        ]
+    },
+    {
+        "id": "a534dbea4ddca405",
+        "type": "delay",
+        "z": "4acab47cf7e84e94",
+        "name": "",
+        "pauseType": "delay",
+        "timeout": "5",
+        "timeoutUnits": "seconds",
+        "rate": "1",
+        "nbRateUnits": "1",
+        "rateUnits": "second",
+        "randomFirst": "1",
+        "randomLast": "5",
+        "randomUnits": "seconds",
+        "drop": false,
+        "allowrate": false,
+        "outputs": 1,
+        "x": 320,
         "y": 420,
         "wires": [
             []

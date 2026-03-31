@@ -1,0 +1,3 @@
+google-genai
+python-nmap
+paho-mqtt

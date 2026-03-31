@@ -108,9 +108,27 @@ services:
     depends_on:
       - mosquitto
 
+  security-auditor:
+    build: ./simulation/security-auditor
+    container_name: security_auditor
+    networks:
+      iot_infralab_net:
+        ipv4_address: 172.18.0.5
+    env_file:
+      - .env
+    cap_add:
+      - NET_RAW
+      - NET_ADMIN
+    depends_on:
+      - mosquitto
+    restart: unless-stopped
+
 networks:
   iot_infralab_net:
     name: iot_infralab_net
     driver: bridge
+    ipam:
+      config:
+        - subnet: 172.18.0.0/24
     driver_opts:
       com.docker.network.bridge.name: br-iotlab

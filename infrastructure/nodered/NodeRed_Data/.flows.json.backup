@@ -433,7 +433,7 @@
         "groupType": "default"
     },
     {
-        "id": "3fa37c7f153cdb69",
+        "id": "599a1bcf052a2d6b",
         "type": "ui-text-input",
         "z": "89c26b2630a7d108",
         "group": "ui_group_create",
@@ -457,29 +457,29 @@
         "icon": "",
         "iconPosition": "left",
         "iconInnerPosition": "inside",
-        "x": 160,
-        "y": 100,
+        "x": 140,
+        "y": 120,
         "wires": [
             [
-                "3321c28d5de1f655"
+                "6ab43fba25710a01"
             ]
         ]
     },
     {
-        "id": "3321c28d5de1f655",
+        "id": "6ab43fba25710a01",
         "type": "function",
         "z": "89c26b2630a7d108",
         "name": "Save ID",
         "func": "flow.set('cfg_node_id', msg.payload);\nreturn msg;",
         "outputs": 1,
-        "x": 360,
-        "y": 100,
+        "x": 340,
+        "y": 120,
         "wires": [
             []
         ]
     },
     {
-        "id": "43247f0fde337d47",
+        "id": "d888d3d4aeb2a954",
         "type": "ui-dropdown",
         "z": "89c26b2630a7d108",
         "group": "ui_group_create",
@@ -531,29 +531,29 @@
         "className": "",
         "typeIsComboBox": true,
         "msgTrigger": "onChange",
-        "x": 170,
-        "y": 160,
+        "x": 150,
+        "y": 180,
         "wires": [
             [
-                "2554241939fe3970"
+                "be2df5d237542d84"
             ]
         ]
     },
     {
-        "id": "2554241939fe3970",
+        "id": "be2df5d237542d84",
         "type": "function",
         "z": "89c26b2630a7d108",
         "name": "Save Sensors",
         "func": "flow.set('cfg_sensors', msg.payload);\nreturn msg;",
         "outputs": 1,
-        "x": 370,
-        "y": 160,
+        "x": 350,
+        "y": 180,
         "wires": [
             []
         ]
     },
     {
-        "id": "0e2f208e0ed1ab7f",
+        "id": "e34b9ac4c76bbf2b",
         "type": "ui-dropdown",
         "z": "89c26b2630a7d108",
         "group": "ui_group_create",
@@ -586,29 +586,29 @@
         "topic": "topic",
         "topicType": "msg",
         "className": "",
-        "x": 170,
-        "y": 220,
+        "x": 150,
+        "y": 240,
         "wires": [
             [
-                "e83afccf6bc1a8db"
+                "6fe6041556a8dbd6"
             ]
         ]
     },
     {
-        "id": "e83afccf6bc1a8db",
+        "id": "6fe6041556a8dbd6",
         "type": "function",
         "z": "89c26b2630a7d108",
         "name": "Save Profile",
         "func": "flow.set('cfg_profile', msg.payload);\nreturn msg;",
         "outputs": 1,
-        "x": 370,
-        "y": 220,
+        "x": 350,
+        "y": 240,
         "wires": [
             []
         ]
     },
     {
-        "id": "0b8b7c34a61f85ee",
+        "id": "d6e9ef46aea2ca6f",
         "type": "ui-text-input",
         "z": "89c26b2630a7d108",
         "group": "ui_group_create",
@@ -624,127 +624,157 @@
         "delay": 300,
         "passthru": true,
         "className": "",
-        "x": 160,
-        "y": 280,
+        "x": 140,
+        "y": 300,
         "wires": [
             [
-                "a0aa0dd460ccf3cf"
+                "bd0d828ca53469f2"
             ]
         ]
     },
     {
-        "id": "a0aa0dd460ccf3cf",
+        "id": "bd0d828ca53469f2",
         "type": "function",
         "z": "89c26b2630a7d108",
         "name": "Save Interval",
         "func": "flow.set('cfg_interval', msg.payload);\nreturn msg;",
         "outputs": 1,
-        "x": 370,
-        "y": 280,
+        "x": 350,
+        "y": 300,
         "wires": [
             []
         ]
     },
     {
-        "id": "2c235a962f0a234b",
+        "id": "42a84a202cae8c2b",
         "type": "ui-button",
         "z": "89c26b2630a7d108",
         "group": "ui_group_create",
         "name": "Save Config Btn",
-        "label": "Save Config & Run node",
+        "label": "Run & Save",
         "order": 5,
-        "width": 6,
+        "width": 3,
         "height": 0,
-        "tooltip": "Save these settings and launch exactly now",
+        "tooltip": "Save config and deploy node",
         "color": "white",
         "bgcolor": "#3b82f6",
         "className": "",
         "icon": "save",
-        "payload": "",
+        "payload": "save",
         "payloadType": "str",
         "topic": "topic",
         "topicType": "msg",
-        "x": 150,
-        "y": 340,
+        "x": 120,
+        "y": 360,
         "wires": [
             [
-                "b84da715e8b22f5c"
+                "3322adde400100f4"
             ]
         ]
     },
     {
-        "id": "b84da715e8b22f5c",
+        "id": "fe3cc3695fdbea2d",
+        "type": "ui-button",
+        "z": "89c26b2630a7d108",
+        "group": "ui_group_create",
+        "name": "Run Only Btn",
+        "label": "Run Only",
+        "order": 6,
+        "width": 3,
+        "height": 0,
+        "tooltip": "Deploy node without saving config",
+        "color": "white",
+        "bgcolor": "#10b981",
+        "className": "",
+        "icon": "play",
+        "payload": "run",
+        "payloadType": "str",
+        "topic": "topic",
+        "topicType": "msg",
+        "x": 120,
+        "y": 400,
+        "wires": [
+            [
+                "3322adde400100f4"
+            ]
+        ]
+    },
+    {
+        "id": "3322adde400100f4",
         "type": "function",
         "z": "89c26b2630a7d108",
-        "name": "Construct Config",
-        "func": "let n_id = flow.get('cfg_node_id');\nif(!n_id) {\n    return [null, { payload: \"⚠️ Error: Node ID is required to save!\"}];\n}\n\nlet s_types = flow.get('cfg_sensors') || ['temperature'];\nif (Array.isArray(s_types)) s_types = s_types.join(',');\nlet prof = flow.get('cfg_profile') || 'normal';\nlet intrvl = flow.get('cfg_interval') || 5;\n\nmsg.new_config = {\n    id: n_id,\n    types: s_types,\n    profile: prof,\n    interval: intrvl,\n    saved_at: new Date().toISOString()\n};\nreturn [msg, null];",
-        "outputs": 2,
-        "x": 350,
-        "y": 340,
+        "name": "Construct Config & Validate",
+        "func": "let action = msg.payload || 'save';\nlet n_id = flow.get('cfg_node_id');\nlet s_types = flow.get('cfg_sensors');\nlet prof = flow.get('cfg_profile');\nlet intrvl = flow.get('cfg_interval');\n\nlet errors = [];\nif (!n_id || n_id.trim() === '') errors.push(\"⚠️ Validation Error: Node ID is missing!\");\nif (!s_types || s_types.length === 0) errors.push(\"⚠️ Validation Error: Sensor Types not selected!\");\nif (!prof || prof.trim() === '') errors.push(\"⚠️ Validation Error: Behavior Profile not selected!\");\n\nif (errors.length > 0) {\n    return [null, null, { payload: errors.join('\\n') }];\n}\n\nif (Array.isArray(s_types)) s_types = s_types.join(',');\nintrvl = intrvl || 5;\n\nmsg.new_config = {\n    id: n_id,\n    types: s_types,\n    profile: prof,\n    interval: intrvl,\n    saved_at: new Date().toISOString()\n};\n\nmsg.payload = msg.new_config;\n\nif (action === 'run') {\n    let logMsg = { payload: `🚀 Deploying Node [${n_id}] directly (Run Only)...` };\n    return [null, msg, logMsg];\n} else {\n    return [msg, null, null];\n}",
+        "outputs": 3,
+        "x": 360,
+        "y": 360,
         "wires": [
             [
-                "8656102ac284ff12"
+                "7cf3b44f7e607176"
             ],
             [
-                "67da2e22b4afba53"
+                "6f9de8b348f9d7b7"
+            ],
+            [
+                "d7dfe950f06ff51b"
             ]
         ]
     },
     {
-        "id": "8656102ac284ff12",
+        "id": "7cf3b44f7e607176",
         "type": "file in",
         "z": "89c26b2630a7d108",
         "name": "Read Configs (Check)",
         "filename": "/data/saved_sensors.json",
         "format": "utf8",
-        "x": 560,
+        "x": 600,
         "y": 340,
         "wires": [
             [
-                "d5c0c2f9e9886355"
+                "b5e202ac0989d43a"
             ]
         ]
     },
     {
-        "id": "d5c0c2f9e9886355",
+        "id": "b5e202ac0989d43a",
         "type": "function",
         "z": "89c26b2630a7d108",
         "name": "Check ID & Append",
         "func": "let configs = [];\ntry {\n    if (msg.payload) {\n        configs = JSON.parse(msg.payload);\n    }\n} catch(e) { }\n\n// Check if ID exists!\nlet exists = configs.findIndex(c => c.id === msg.new_config.id);\nif (exists >= 0) {\n    // HALT operation on fail\n    return [null, null, { payload: `❌ FAILED: Saved Configuration '${msg.new_config.id}' already exists!` }];\n}\n\nconfigs.push(msg.new_config);\nmsg.payload = JSON.stringify(configs, null, 2);\n\n// Returns [save command, next docker deploy step, log/error msg]\nreturn [msg, { payload: msg.new_config }, { payload: `✅ Configuration [${msg.new_config.id}] saved... Dispatching deployment.`}];",
         "outputs": 3,
-        "x": 770,
+        "x": 810,
         "y": 340,
         "wires": [
             [
-                "ef2d85be1fbd33ad"
+                "06b717e37ca66f07"
             ],
             [
-                "71bc688df198c1c7"
+                "6f9de8b348f9d7b7"
             ],
             [
-                "67da2e22b4afba53",
-                "bd008476befb632c"
+                "d7dfe950f06ff51b",
+                "ee847efb50e50319"
             ]
         ]
     },
     {
-        "id": "ef2d85be1fbd33ad",
+        "id": "06b717e37ca66f07",
         "type": "file",
         "z": "89c26b2630a7d108",
         "name": "Write Configs",
         "filename": "/data/saved_sensors.json",
         "appendNewline": true,
         "overwriteFile": "true",
-        "x": 1020,
-        "y": 480,
+        "x": 1000,
+        "y": 300,
         "wires": [
             [
-                "0af4336a8b2f7a1b"
+                "417256df7d7f068b"
             ]
         ]
     },
     {
-        "id": "bd008476befb632c",
+        "id": "ee847efb50e50319",
         "type": "ui-notification",
         "z": "89c26b2630a7d108",
         "ui": "8bcc34ca17387ebb",
@@ -757,29 +787,29 @@
         "raw": false,
         "className": "",
         "name": "Saved Alert",
-        "x": 1030,
-        "y": 360,
+        "x": 1010,
+        "y": 340,
         "wires": [
             []
         ]
     },
     {
-        "id": "71bc688df198c1c7",
+        "id": "6f9de8b348f9d7b7",
         "type": "function",
         "z": "89c26b2630a7d108",
         "name": "Build Docker Cmd",
         "func": "let cfg = msg.payload;\n\nmsg.sensor_config = cfg;\nmsg.url = 'http://docker-proxy:2375/containers/create?name=' + cfg.id;\nmsg.payload = {\n    \"Image\": \"iot-sensor\",\n    \"Env\": [\n        \"SENSOR_ID=\" + cfg.id,\n        \"SENSOR_TYPES=\" + cfg.types,\n        \"NODE_PROFILE=\" + cfg.profile,\n        \"INTERVAL=\" + cfg.interval,\n        \"MQTT_BROKER=mosquitto\"\n    ],\n    \"HostConfig\": {\n        \"NetworkMode\": \"iot_infralab_net\",\n        \"AutoRemove\": true\n    }\n};\nreturn msg;",
         "outputs": 1,
-        "x": 190,
-        "y": 420,
+        "x": 210,
+        "y": 500,
         "wires": [
             [
-                "d7dfd24fd754d575"
+                "4f43f5aa75c75965"
             ]
         ]
     },
     {
-        "id": "d7dfd24fd754d575",
+        "id": "4f43f5aa75c75965",
         "type": "http request",
         "z": "89c26b2630a7d108",
         "name": "Docker POST Create",
@@ -793,33 +823,33 @@
         "authType": "",
         "senderr": false,
         "x": 440,
-        "y": 420,
+        "y": 500,
         "wires": [
             [
-                "69edac3d9fcbfbf8"
+                "c8cf2fb099d7669a"
             ]
         ]
     },
     {
-        "id": "69edac3d9fcbfbf8",
+        "id": "c8cf2fb099d7669a",
         "type": "function",
         "z": "89c26b2630a7d108",
         "name": "Build Start Request",
         "func": "if(!msg.payload.Id){\n    msg.payload = '❌ Create Error: ' + JSON.stringify(msg.payload);\n    return [null, msg];\n}\nlet logMsg = { payload: '↳ Container ID: ' + msg.payload.Id.substring(0,12) + '. Starting...' };\nmsg.url = 'http://docker-proxy:2375/containers/' + msg.payload.Id + '/start';\nmsg.payload = {};\nreturn [msg, logMsg];",
         "outputs": 2,
-        "x": 710,
-        "y": 420,
+        "x": 690,
+        "y": 500,
         "wires": [
             [
-                "191919f3e9742ef8"
+                "0f509b5f053dc21f"
             ],
             [
-                "67da2e22b4afba53"
+                "d7dfe950f06ff51b"
             ]
         ]
     },
     {
-        "id": "191919f3e9742ef8",
+        "id": "0f509b5f053dc21f",
         "type": "http request",
         "z": "89c26b2630a7d108",
         "name": "Docker POST Start",
@@ -832,31 +862,31 @@
         "proxy": "",
         "authType": "",
         "senderr": false,
-        "x": 1050,
-        "y": 420,
+        "x": 930,
+        "y": 500,
         "wires": [
             [
-                "98923b9b502a5305"
+                "e56cd726da7a8379"
             ]
         ]
     },
     {
-        "id": "98923b9b502a5305",
+        "id": "e56cd726da7a8379",
         "type": "function",
         "z": "89c26b2630a7d108",
         "name": "Deployment Success Log",
         "func": "if(msg.statusCode === 204){\n    msg.payload = \"✅ Node dynamically deployed on network.\\n\";\n} else {\n    msg.payload = \"❌ Error starting node.\\n\" + msg.payload;\n}\nreturn msg;",
         "outputs": 1,
-        "x": 1330,
-        "y": 420,
+        "x": 1170,
+        "y": 500,
         "wires": [
             [
-                "67da2e22b4afba53"
+                "d7dfe950f06ff51b"
             ]
         ]
     },
     {
-        "id": "67da2e22b4afba53",
+        "id": "d7dfe950f06ff51b",
         "type": "ui-template",
         "z": "89c26b2630a7d108",
         "group": "ui_group_deploy_log",
@@ -869,42 +899,42 @@
         "resendOnRefresh": true,
         "templateScope": "local",
         "className": "",
-        "x": 1600,
-        "y": 360,
+        "x": 1540,
+        "y": 400,
         "wires": [
             []
         ]
     },
     {
-        "id": "0af4336a8b2f7a1b",
+        "id": "417256df7d7f068b",
         "type": "link out",
         "z": "89c26b2630a7d108",
         "name": "Refresh Configs Table",
         "links": [
-            "a1d16edef4af7347"
+            "bd398f54fc8cf524"
         ],
-        "x": 1195,
-        "y": 480,
+        "x": 1175,
+        "y": 300,
         "wires": []
     },
     {
-        "id": "a1d16edef4af7347",
+        "id": "bd398f54fc8cf524",
         "type": "link in",
         "z": "89c26b2630a7d108",
         "name": "In Refresh Configs",
         "links": [
-            "0af4336a8b2f7a1b"
+            "417256df7d7f068b"
         ],
-        "x": 150,
-        "y": 1440,
+        "x": 130,
+        "y": 1460,
         "wires": [
             [
-                "d194ce04fd14dde1"
+                "9be6aa74c2b7aaea"
             ]
         ]
     },
     {
-        "id": "396b900cb4284819",
+        "id": "4f6d7840e9bb4b7d",
         "type": "inject",
         "z": "89c26b2630a7d108",
         "name": "Load Configs GUI",
@@ -916,49 +946,50 @@
         "topic": "",
         "payload": "",
         "payloadType": "date",
-        "x": 190,
-        "y": 1400,
+        "x": 170,
+        "y": 1420,
         "wires": [
             [
-                "d194ce04fd14dde1"
+                "9be6aa74c2b7aaea"
             ]
         ]
     },
     {
-        "id": "d194ce04fd14dde1",
+        "id": "9be6aa74c2b7aaea",
         "type": "file in",
         "z": "89c26b2630a7d108",
         "name": "Read Configs Table",
         "filename": "/data/saved_sensors.json",
         "format": "utf8",
-        "x": 390,
-        "y": 1420,
+        "x": 370,
+        "y": 1440,
         "wires": [
             [
-                "d5be3985932571ef"
+                "ad1067e6df98b852"
             ]
         ]
     },
     {
-        "id": "d5be3985932571ef",
+        "id": "ad1067e6df98b852",
         "type": "function",
         "z": "89c26b2630a7d108",
         "name": "Format JSON->HTML/Dropdown",
         "func": "let configs = [];\ntry {\n    if (msg.payload) configs = JSON.parse(msg.payload);\n} catch(e) {}\n\nlet html = '<table style=\"width:100%; text-align:left; border-collapse:collapse;\"><tr style=\"border-bottom:1px solid #555;\"><th style=\"padding:4px;\">ID</th><th style=\"padding:4px;\">Profile</th><th style=\"padding:4px;\">Sensors</th></tr>';\nlet dd_opts = [];\n\nif(configs.length > 0){\n    configs.forEach(c => {\n        html += `<tr style=\"border-bottom:1px solid #333;\"><td style=\"padding:4px;color:#60a5fa;\">${c.id}</td><td style=\"padding:4px;\">${c.profile}</td><td style=\"padding:4px;font-size:0.85em;color:#aaa;\">${c.types}</td></tr>`;\n        dd_opts.push({label: c.id, value: c.id, type: 'str'});\n    });\n} else {\n    html += '<tr><td colspan=\"3\" style=\"text-align:center;padding:10px;\">No saved configs</td></tr>';\n    dd_opts = [{label: \"No Configs\", value: \"none\", type: \"str\"}];\n}\nhtml += '</table>';\n\n// Send visual HTML to table, drop options to dropdown\nreturn [{payload: html}, {options: dd_opts}];",
         "outputs": 2,
-        "x": 630,
-        "y": 1420,
+        "x": 610,
+        "y": 1440,
         "wires": [
             [
-                "a616ea604a2be049"
+                "a0e4ce86e61d7e70"
             ],
             [
-                "7547d010c8300a5f"
+                "2ab517062f73c81a",
+                "24a2a0c33fcea25b"
             ]
         ]
     },
     {
-        "id": "a616ea604a2be049",
+        "id": "a0e4ce86e61d7e70",
         "type": "ui-template",
         "z": "89c26b2630a7d108",
         "group": "2a7528eec5f798b0",
@@ -974,20 +1005,20 @@
         "resendOnRefresh": true,
         "templateScope": "local",
         "className": "",
-        "x": 880,
-        "y": 1400,
+        "x": 1040,
+        "y": 1420,
         "wires": [
             []
         ]
     },
     {
-        "id": "abb18e044776ad59",
+        "id": "6aaf537eb1e62b1c",
         "type": "ui-button",
         "z": "89c26b2630a7d108",
         "group": "2a7528eec5f798b0",
         "name": "Run All Saved Configs",
         "label": "Run ALL Saved Nodes",
-        "order": 4,
+        "order": 5,
         "width": 0,
         "height": 0,
         "tooltip": "Deploy every saved sensor configuration sequentially",
@@ -1000,62 +1031,62 @@
         "topic": "topic",
         "topicType": "msg",
         "enableClick": true,
-        "x": 160,
-        "y": 600,
+        "x": 140,
+        "y": 620,
         "wires": [
             [
-                "1ef8dcbe2ccf7da5"
+                "dc546cadf21a2ad0"
             ]
         ]
     },
     {
-        "id": "1ef8dcbe2ccf7da5",
+        "id": "dc546cadf21a2ad0",
         "type": "file in",
         "z": "89c26b2630a7d108",
         "name": "Read Mass Configs",
         "filename": "/data/saved_sensors.json",
         "format": "utf8",
-        "x": 370,
-        "y": 600,
+        "x": 350,
+        "y": 620,
         "wires": [
             [
-                "58138af8c7843f51",
-                "b25ca7eacb4fb45c"
+                "913093a5c65980f2",
+                "f296764e6241a1e1"
             ]
         ]
     },
     {
-        "id": "b25ca7eacb4fb45c",
+        "id": "f296764e6241a1e1",
         "type": "function",
         "z": "89c26b2630a7d108",
         "name": "Log Start Mass",
         "func": "return { payload: \"🚀 INITIATING MASS DEPLOYMENT of all saved configurations...\"};",
         "outputs": 1,
-        "x": 580,
-        "y": 560,
+        "x": 560,
+        "y": 580,
         "wires": [
             [
-                "387acedc91dd88e9"
+                "075b1f8eff241944"
             ]
         ]
     },
     {
-        "id": "58138af8c7843f51",
+        "id": "913093a5c65980f2",
         "type": "function",
         "z": "89c26b2630a7d108",
         "name": "Spawn Splitters",
         "func": "let configs = [];\ntry { if (msg.payload) configs = JSON.parse(msg.payload); } catch(e) {}\nif(configs.length === 0) return null;\n\nlet delay = 0;\nlet msgs = [];\n// We create multiple msg objects that will fire sequentially into the docker node\nconfigs.forEach(cfg => {\n    msgs.push({ \n        payload: cfg,\n        delay: delay\n    }); \n    delay += 2000; // 2 seconds between creation\n});\nreturn [msgs];",
         "outputs": 1,
-        "x": 580,
-        "y": 600,
+        "x": 560,
+        "y": 620,
         "wires": [
             [
-                "b10d741e679d8a3d"
+                "2fda066a281289cf"
             ]
         ]
     },
     {
-        "id": "b10d741e679d8a3d",
+        "id": "2fda066a281289cf",
         "type": "delay",
         "z": "89c26b2630a7d108",
         "name": "Stagger Spawn",
@@ -1071,25 +1102,25 @@
         "drop": false,
         "allowrate": false,
         "outputs": 1,
-        "x": 760,
-        "y": 600,
+        "x": 740,
+        "y": 620,
         "wires": [
             [
-                "71bc688df198c1c7"
+                "6f9de8b348f9d7b7"
             ]
         ]
     },
     {
-        "id": "743085aa21eebcb2",
+        "id": "dd8c797c7b829981",
         "type": "ui-button",
         "z": "89c26b2630a7d108",
         "group": "2a7528eec5f798b0",
-        "name": "Del Config Btn",
-        "label": "Delete Config",
-        "order": 3,
+        "name": "Remove All Configs Btn",
+        "label": "Remove All Configs",
+        "order": 6,
         "width": 0,
         "height": 0,
-        "tooltip": "",
+        "tooltip": "Wipes all saved configurations",
         "color": "white",
         "bgcolor": "#ef4444",
         "className": "",
@@ -1099,62 +1130,50 @@
         "topic": "topic",
         "topicType": "msg",
         "enableClick": true,
-        "x": 140,
-        "y": 680,
+        "x": 120,
+        "y": 760,
         "wires": [
             [
-                "7f1a12580b64154f"
+                "ce73baeaf4ca6229"
             ]
         ]
     },
     {
-        "id": "7f1a12580b64154f",
-        "type": "file in",
-        "z": "89c26b2630a7d108",
-        "name": "Read Data Delete",
-        "filename": "/data/saved_sensors.json",
-        "format": "utf8",
-        "x": 350,
-        "y": 680,
-        "wires": [
-            [
-                "d45c338b26ece524"
-            ]
-        ]
-    },
-    {
-        "id": "d45c338b26ece524",
+        "id": "ce73baeaf4ca6229",
         "type": "function",
         "z": "89c26b2630a7d108",
-        "name": "Filter Delete",
-        "func": "let target_id = flow.get('cfg_target_del_id');\nif(!target_id || target_id === 'none') return null;\n\nlet configs = [];\ntry { if(msg.payload) configs = JSON.parse(msg.payload); } catch(e) {}\n\nconfigs = configs.filter(c => c.id !== target_id);\nmsg.payload = JSON.stringify(configs, null, 2);\nreturn msg;",
-        "outputs": 1,
-        "x": 530,
-        "y": 680,
+        "name": "Clear Array Log",
+        "func": "msg.payload = \"[]\";\nreturn [msg, { payload: \"🗑️ All saved configurations have been purged.\" }];",
+        "outputs": 2,
+        "x": 340,
+        "y": 760,
         "wires": [
             [
-                "57212c27fb8492ff"
+                "95e9b4b7a777c328"
+            ],
+            [
+                "d7dfe950f06ff51b"
             ]
         ]
     },
     {
-        "id": "57212c27fb8492ff",
+        "id": "95e9b4b7a777c328",
         "type": "file",
         "z": "89c26b2630a7d108",
-        "name": "Write Delete",
+        "name": "Wipe JSON File",
         "filename": "/data/saved_sensors.json",
         "appendNewline": true,
         "overwriteFile": "true",
-        "x": 710,
-        "y": 680,
+        "x": 540,
+        "y": 760,
         "wires": [
             [
-                "0af4336a8b2f7a1b"
+                "417256df7d7f068b"
             ]
         ]
     },
     {
-        "id": "a9f48a7978aba124",
+        "id": "c342440c6131d7fa",
         "type": "inject",
         "z": "89c26b2630a7d108",
         "name": "Poll Live Sensors",
@@ -1166,16 +1185,16 @@
         "topic": "",
         "payload": "",
         "payloadType": "date",
-        "x": 170,
-        "y": 800,
+        "x": 150,
+        "y": 820,
         "wires": [
             [
-                "62c97e79eb8218ae"
+                "7b7bdfeb8d8b2ca4"
             ]
         ]
     },
     {
-        "id": "62c97e79eb8218ae",
+        "id": "7b7bdfeb8d8b2ca4",
         "type": "http request",
         "z": "89c26b2630a7d108",
         "name": "Get Containers",
@@ -1188,35 +1207,35 @@
         "proxy": "",
         "authType": "",
         "senderr": false,
-        "x": 380,
-        "y": 800,
+        "x": 360,
+        "y": 820,
         "wires": [
             [
-                "75b4b084fee30fc5"
+                "c3457f8cd7627499"
             ]
         ]
     },
     {
-        "id": "75b4b084fee30fc5",
+        "id": "c3457f8cd7627499",
         "type": "function",
         "z": "89c26b2630a7d108",
         "name": "Parse Live Nodes",
         "func": "let html = '<table style=\"width:100%; text-align:left; border-collapse:collapse;\"><tr style=\"border-bottom:1px solid #555;\"><th style=\"padding:4px;\">Node ID</th><th style=\"padding:4px;\">State</th><th style=\"padding:4px;\">Status</th></tr>';\nlet opts = [];\nif(msg.payload && Array.isArray(msg.payload)){\n    let sensors = msg.payload.filter(c => c.Image === 'iot-sensor' || c.Image === 'iot-sensor:latest');\n    sensors.forEach(c => {\n        let name = c.Names[0].replace('/','');\n        let status = c.Status;\n        let state = c.State;\n        let color = state === 'running' ? '#10b981' : (state === 'paused' ? '#f59e0b' : '#ef4444');\n        if(state === 'exited') color = '#ef4444';\n        html += `<tr style=\"border-bottom:1px solid #333;\"><td style=\"padding:4px;\">${name}</td><td style=\"padding:4px;color:${color}\">${state}</td><td style=\"padding:4px;font-size:0.85em;color:#aaa;\">${status}</td></tr>`;\n        opts.push({label: name, value: name, type: 'str'});\n    });\n    if(sensors.length === 0) html += '<tr><td colspan=\"3\" style=\"text-align:center;padding:10px;\">No sensors actively running</td></tr>';\n}\nhtml += '</table>';\nreturn [{payload: html}, {options: opts}];",
         "outputs": 2,
-        "x": 610,
-        "y": 800,
+        "x": 590,
+        "y": 820,
         "wires": [
             [
-                "a7c9a4fe6f02c8db"
+                "338566eff2953ae6"
             ],
             [
-                "061b5599eaa5d445",
-                "7ec3216715dbb88f"
+                "1453f448f840983f",
+                "a9b32cc95c805692"
             ]
         ]
     },
     {
-        "id": "a7c9a4fe6f02c8db",
+        "id": "338566eff2953ae6",
         "type": "ui-template",
         "z": "89c26b2630a7d108",
         "group": "ui_group_sensors_list",
@@ -1232,14 +1251,14 @@
         "resendOnRefresh": true,
         "templateScope": "local",
         "className": "",
-        "x": 990,
-        "y": 800,
+        "x": 970,
+        "y": 820,
         "wires": [
             []
         ]
     },
     {
-        "id": "304036e41bb355c9",
+        "id": "3f1c960a7aec12de",
         "type": "ui-button",
         "z": "89c26b2630a7d108",
         "group": "ui_group_node_control",
@@ -1257,34 +1276,34 @@
         "payloadType": "str",
         "topic": "topic",
         "topicType": "msg",
-        "x": 150,
-        "y": 960,
+        "x": 130,
+        "y": 980,
         "wires": [
             [
-                "3d709883dc67b052"
+                "dbe78305fe67ba53"
             ]
         ]
     },
     {
-        "id": "3d709883dc67b052",
+        "id": "dbe78305fe67ba53",
         "type": "function",
         "z": "89c26b2630a7d108",
         "name": "Prep Request",
         "func": "let target_node = flow.get('cfg_target_node');\nlet action = flow.get('cfg_target_action');\nif(!target_node || !action) { return [null, { payload: '⚠️ Select Node and Action' }]; }\n\nif(action === 'delete') {\n    msg.method = 'DELETE';\n    msg.url = 'http://docker-proxy:2375/containers/' + target_node + '?force=true';\n} else if (action === 'kill') {\n    msg.method = 'POST';\n    msg.url = 'http://docker-proxy:2375/containers/' + target_node + '/kill';\n} else {\n    msg.method = 'POST';\n    msg.url = 'http://docker-proxy:2375/containers/' + target_node + '/' + action;\n}\nlet log = { payload: `Executing ${action.toUpperCase()} on node: ${target_node}...` };\nreturn [msg, log];",
         "outputs": 2,
-        "x": 360,
-        "y": 960,
+        "x": 340,
+        "y": 980,
         "wires": [
             [
-                "bd26960b021c25e4"
+                "1ec3ece025157cb1"
             ],
             [
-                "c92aa9f75172ccd0"
+                "d602a204ee8de4e4"
             ]
         ]
     },
     {
-        "id": "bd26960b021c25e4",
+        "id": "1ec3ece025157cb1",
         "type": "http request",
         "z": "89c26b2630a7d108",
         "name": "Exec Action",
@@ -1297,31 +1316,31 @@
         "proxy": "",
         "authType": "",
         "senderr": false,
-        "x": 550,
-        "y": 960,
+        "x": 530,
+        "y": 980,
         "wires": [
             [
-                "830cebd4a733d255"
+                "77aaeaabb1afdf1d"
             ]
         ]
     },
     {
-        "id": "830cebd4a733d255",
+        "id": "77aaeaabb1afdf1d",
         "type": "function",
         "z": "89c26b2630a7d108",
         "name": "Action Result",
         "func": "if(msg.statusCode >= 200 && msg.statusCode < 300) {\n    msg.payload = '✅ Action completed successfully.\\n';\n} else {\n    msg.payload = '❌ Action failed: ' + msg.payload + '\\n';\n}\nreturn msg;",
         "outputs": 1,
-        "x": 730,
-        "y": 960,
+        "x": 710,
+        "y": 980,
         "wires": [
             [
-                "c92aa9f75172ccd0"
+                "d602a204ee8de4e4"
             ]
         ]
     },
     {
-        "id": "b6c52dae83b0487a",
+        "id": "6d71d041030d570b",
         "type": "ui-button",
         "z": "89c26b2630a7d108",
         "group": "ui_group_node_control",
@@ -1339,32 +1358,32 @@
         "payloadType": "str",
         "topic": "topic",
         "topicType": "msg",
-        "x": 130,
-        "y": 1040,
+        "x": 110,
+        "y": 1060,
         "wires": [
             [
-                "a612e022c162674a",
-                "fbd7ea73a5aa0a39"
+                "872150f19df02a57",
+                "1983a759ee89a990"
             ]
         ]
     },
     {
-        "id": "a612e022c162674a",
+        "id": "872150f19df02a57",
         "type": "function",
         "z": "89c26b2630a7d108",
         "name": "Log Kill All",
         "func": "return { payload: '🔥 ALL SENSORS EVACUATION TRIGGERED...' };",
         "outputs": 1,
-        "x": 330,
-        "y": 1000,
+        "x": 310,
+        "y": 1020,
         "wires": [
             [
-                "c92aa9f75172ccd0"
+                "d602a204ee8de4e4"
             ]
         ]
     },
     {
-        "id": "fbd7ea73a5aa0a39",
+        "id": "1983a759ee89a990",
         "type": "http request",
         "z": "89c26b2630a7d108",
         "name": "Get Sensors Wipe",
@@ -1377,34 +1396,34 @@
         "proxy": "",
         "authType": "",
         "senderr": false,
-        "x": 330,
-        "y": 1040,
+        "x": 310,
+        "y": 1060,
         "wires": [
             [
-                "6b5cbb1a10682793"
+                "dc550562aa9db095"
             ]
         ]
     },
     {
-        "id": "6b5cbb1a10682793",
+        "id": "dc550562aa9db095",
         "type": "function",
         "z": "89c26b2630a7d108",
         "name": "Extract IDs to Kill",
         "func": "let sensors = [];\nif(msg.payload && Array.isArray(msg.payload)){\n    sensors = msg.payload.filter(c => c.Image === 'iot-sensor' || c.Image === 'iot-sensor:latest');\n}\nif(sensors.length === 0) {\n    return [null, { payload: \"↳ No sensors bound...\" }];\n}\nlet msgs = sensors.map(s => {\n    return {\n        url: 'http://docker-proxy:2375/containers/' + s.Id + '?force=true',\n        method: 'DELETE'\n    };\n});\nreturn [msgs, { payload: `↳ Wiping out ${msgs.length} engines...` }];",
         "outputs": 2,
-        "x": 550,
-        "y": 1040,
+        "x": 530,
+        "y": 1060,
         "wires": [
             [
-                "165cc60db4fa5582"
+                "2d193af0c49f92fb"
             ],
             [
-                "c92aa9f75172ccd0"
+                "d602a204ee8de4e4"
             ]
         ]
     },
     {
-        "id": "165cc60db4fa5582",
+        "id": "2d193af0c49f92fb",
         "type": "http request",
         "z": "89c26b2630a7d108",
         "name": "HTTP Wipe",
@@ -1417,14 +1436,14 @@
         "proxy": "",
         "authType": "",
         "senderr": false,
-        "x": 750,
-        "y": 1040,
+        "x": 730,
+        "y": 1060,
         "wires": [
             []
         ]
     },
     {
-        "id": "061b5599eaa5d445",
+        "id": "1453f448f840983f",
         "type": "ui-dropdown",
         "z": "89c26b2630a7d108",
         "group": "ui_group_sensor_monitor",
@@ -1445,34 +1464,34 @@
         "className": "",
         "typeIsComboBox": false,
         "msgTrigger": "onChange",
-        "x": 860,
-        "y": 920,
+        "x": 840,
+        "y": 940,
         "wires": [
             [
-                "38b6d983ed125038"
+                "ed3a222922460339"
             ]
         ]
     },
     {
-        "id": "38b6d983ed125038",
+        "id": "ed3a222922460339",
         "type": "function",
         "z": "89c26b2630a7d108",
         "name": "Save Target MQTT",
         "func": "if(msg.payload) flow.set('cfg_monitor_node', msg.payload);\nreturn msg;",
         "outputs": 1,
-        "x": 1070,
-        "y": 920,
+        "x": 1050,
+        "y": 940,
         "wires": [
             []
         ]
     },
     {
-        "id": "ae254836798eac4e",
+        "id": "d321091dc35acb56",
         "type": "ui-button",
         "z": "89c26b2630a7d108",
         "group": "ui_group_sensor_monitor",
         "name": "Start Monitor Btn",
-        "label": "Start MQTT Stream",
+        "label": "Start",
         "order": 3,
         "width": 3,
         "height": 0,
@@ -1485,21 +1504,21 @@
         "payloadType": "str",
         "topic": "topic",
         "topicType": "msg",
-        "x": 190,
-        "y": 1120,
+        "x": 170,
+        "y": 1140,
         "wires": [
             [
-                "22c621c82c75fb6c"
+                "9870adbace0b3c6d"
             ]
         ]
     },
     {
-        "id": "ed6d6bb6628c3eed",
+        "id": "8ad272094d5c84de",
         "type": "ui-button",
         "z": "89c26b2630a7d108",
         "group": "ui_group_sensor_monitor",
         "name": "Stop Monitor Btn",
-        "label": "Stop Stream",
+        "label": "Stop",
         "order": 4,
         "width": 3,
         "height": 0,
@@ -1512,46 +1531,46 @@
         "payloadType": "str",
         "topic": "topic",
         "topicType": "msg",
-        "x": 170,
-        "y": 1180,
+        "x": 150,
+        "y": 1200,
         "wires": [
             [
-                "c469ef05561637bd"
+                "4b6b8f7d5b48186e"
             ]
         ]
     },
     {
-        "id": "22c621c82c75fb6c",
+        "id": "9870adbace0b3c6d",
         "type": "function",
         "z": "89c26b2630a7d108",
         "name": "Activate Stream",
         "func": "let target = flow.get('cfg_monitor_node');\nif (!target) { msg.payload = \"⚠️ ERROR: No sensor selected.\"; return msg; }\n\nflow.set('sensor_monitor_active', true);\nflow.set('mqtt_terminal_logs', []);\nmsg.payload = `[SYSTEM] Connected to Mosquitto Broker.\\nListening for MQTT telemetry matching [${target}]...`;\nreturn msg;",
         "outputs": 1,
-        "x": 400,
-        "y": 1120,
+        "x": 380,
+        "y": 1140,
         "wires": [
             [
-                "72a9e0a541264b3c"
+                "b577b406436de1c3"
             ]
         ]
     },
     {
-        "id": "c469ef05561637bd",
+        "id": "4b6b8f7d5b48186e",
         "type": "function",
         "z": "89c26b2630a7d108",
         "name": "Deactivate Stream",
         "func": "let target = flow.get('cfg_monitor_node') || 'sensor';\nflow.set('sensor_monitor_active', false);\nmsg.payload = `[SYSTEM] Filter deactivated.\\nStopped listening for [${target}].`;\nreturn msg;",
         "outputs": 1,
-        "x": 390,
-        "y": 1180,
+        "x": 370,
+        "y": 1200,
         "wires": [
             [
-                "72a9e0a541264b3c"
+                "b577b406436de1c3"
             ]
         ]
     },
     {
-        "id": "ae6ac4d61bd48b7b",
+        "id": "239b3cfa5ea187ca",
         "type": "mqtt in",
         "z": "89c26b2630a7d108",
         "name": "Subscribe: All Traffic (#)",
@@ -1563,31 +1582,31 @@
         "rap": true,
         "rh": 0,
         "inputs": 0,
-        "x": 180,
-        "y": 1240,
+        "x": 160,
+        "y": 1260,
         "wires": [
             [
-                "2ad3c874f298ee52"
+                "3743e72af9692d86"
             ]
         ]
     },
     {
-        "id": "2ad3c874f298ee52",
+        "id": "3743e72af9692d86",
         "type": "function",
         "z": "89c26b2630a7d108",
         "name": "Smart Filter",
         "func": "let active = flow.get('sensor_monitor_active');\nlet target = flow.get('cfg_monitor_node');\nif (!active || !target) return null;\n\nlet topic = msg.topic;\nlet payloadStr = typeof msg.payload === 'object' ? JSON.stringify(msg.payload) : String(msg.payload);\n\nif (topic.includes(target) || payloadStr.includes(target)) {\n    let time = new Date().toLocaleTimeString();\n    if (typeof msg.payload === 'object') {\n        payloadStr = JSON.stringify(msg.payload, null, 2);\n    }\n    let logEntry = `[${time}] Topic: ${topic}\\n${payloadStr}`;\n    let logs = flow.get('mqtt_terminal_logs') || [];\n    logs.push(logEntry);\n    if (logs.length > 5) logs.shift();\n    flow.set('mqtt_terminal_logs', logs);\n    msg.payload = logs.join('\\n----------------------------------\\n');\n    return msg;\n}\nreturn null;",
         "outputs": 1,
-        "x": 410,
-        "y": 1240,
+        "x": 390,
+        "y": 1260,
         "wires": [
             [
-                "72a9e0a541264b3c"
+                "b577b406436de1c3"
             ]
         ]
     },
     {
-        "id": "72a9e0a541264b3c",
+        "id": "b577b406436de1c3",
         "type": "ui-template",
         "z": "89c26b2630a7d108",
         "group": "ui_group_sensor_monitor",
@@ -1603,14 +1622,14 @@
         "resendOnRefresh": true,
         "templateScope": "local",
         "className": "",
-        "x": 660,
-        "y": 1160,
+        "x": 640,
+        "y": 1180,
         "wires": [
             []
         ]
     },
     {
-        "id": "7547d010c8300a5f",
+        "id": "2ab517062f73c81a",
         "type": "ui-dropdown",
         "z": "89c26b2630a7d108",
         "group": "2a7528eec5f798b0",
@@ -1631,92 +1650,92 @@
         "className": "",
         "typeIsComboBox": true,
         "msgTrigger": "onChange",
-        "x": 1070,
-        "y": 1480,
+        "x": 1050,
+        "y": 1500,
         "wires": [
             [
-                "c5cf40e220941a53"
+                "8df06c89e95539c7"
             ]
         ]
     },
     {
-        "id": "c5cf40e220941a53",
+        "id": "8df06c89e95539c7",
         "type": "function",
         "z": "89c26b2630a7d108",
         "name": "Save Target Data",
         "func": "if (msg.payload && msg.payload !== \"none\") {\n    flow.set('cfg_target_del_id', msg.payload);\n}\nreturn msg;",
         "outputs": 1,
-        "x": 1270,
-        "y": 1480,
+        "x": 1250,
+        "y": 1500,
         "wires": [
             []
         ]
     },
     {
-        "id": "a6d11ec423a34d60",
+        "id": "04553eb8843ef23e",
         "type": "function",
         "z": "89c26b2630a7d108",
         "name": "Verify Selection",
         "func": "let target_id = flow.get('cfg_target_del_id');\nif(!target_id || target_id === 'none') {\n    return [null, { payload: \"⚠️ Error: No configuration selected to delete!\" }];\n}\nreturn [msg, null];",
         "outputs": 2,
-        "x": 150,
-        "y": 1340,
+        "x": 130,
+        "y": 1360,
         "wires": [
             [
-                "c864b440b178d558"
+                "fb4f5754ecb07475"
             ],
             []
         ]
     },
     {
-        "id": "c864b440b178d558",
+        "id": "fb4f5754ecb07475",
         "type": "file in",
         "z": "89c26b2630a7d108",
         "name": "Read Data Delete",
         "filename": "/data/saved_sensors.json",
         "format": "utf8",
-        "x": 330,
-        "y": 1340,
+        "x": 310,
+        "y": 1360,
         "wires": [
             [
-                "6d79e0efe7846e0b"
+                "0b159f4717a62910"
             ]
         ]
     },
     {
-        "id": "6d79e0efe7846e0b",
+        "id": "0b159f4717a62910",
         "type": "function",
         "z": "89c26b2630a7d108",
         "name": "Filter Delete",
         "func": "let target_id = flow.get('cfg_target_del_id');\nlet configs = [];\n\ntry { \n    if(msg.payload) configs = JSON.parse(msg.payload); \n} catch(e) { }\n\nlet filtered = configs.filter(c => c.id !== target_id);\nmsg.payload = JSON.stringify(filtered, null, 2);\n\n// Clear the current selection so we don't accidentally double delete\nflow.set('cfg_target_del_id', null);\n\nreturn [msg, { payload: `🗑️ Deleted saved configuration: [${target_id}]` }];",
         "outputs": 2,
-        "x": 510,
-        "y": 1340,
+        "x": 490,
+        "y": 1360,
         "wires": [
             [
-                "8015b3330480490d"
+                "bf96eb182ecd0db8"
             ],
             []
         ]
     },
     {
-        "id": "8015b3330480490d",
+        "id": "bf96eb182ecd0db8",
         "type": "file",
         "z": "89c26b2630a7d108",
         "name": "Write Delete",
         "filename": "/data/saved_sensors.json",
         "appendNewline": true,
         "overwriteFile": "true",
-        "x": 690,
-        "y": 1340,
+        "x": 670,
+        "y": 1360,
         "wires": [
             [
-                "efdca520c0ba7cf3"
+                "e4ea63be11a5e781"
             ]
         ]
     },
     {
-        "id": "efdca520c0ba7cf3",
+        "id": "e4ea63be11a5e781",
         "type": "delay",
         "z": "89c26b2630a7d108",
         "name": "Wait for Write",
@@ -1732,14 +1751,14 @@
         "drop": false,
         "allowrate": false,
         "outputs": 1,
-        "x": 860,
-        "y": 1340,
+        "x": 840,
+        "y": 1360,
         "wires": [
             []
         ]
     },
     {
-        "id": "7ec3216715dbb88f",
+        "id": "a9b32cc95c805692",
         "type": "ui-dropdown",
         "z": "89c26b2630a7d108",
         "group": "ui_group_node_control",
@@ -1758,16 +1777,16 @@
         "className": "",
         "typeIsComboBox": true,
         "msgTrigger": "onChange",
-        "x": 900,
-        "y": 860,
+        "x": 880,
+        "y": 880,
         "wires": [
             [
-                "9bdfe461a8670251"
+                "417f7fb89d3984a5"
             ]
         ]
     },
     {
-        "id": "9bdfe461a8670251",
+        "id": "417f7fb89d3984a5",
         "type": "function",
         "z": "89c26b2630a7d108",
         "name": "Save Action Target",
@@ -1778,14 +1797,14 @@
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 1130,
-        "y": 860,
+        "x": 1110,
+        "y": 880,
         "wires": [
             []
         ]
     },
     {
-        "id": "969dd693fdf5b291",
+        "id": "a56f2bec522482e9",
         "type": "ui-dropdown",
         "z": "89c26b2630a7d108",
         "group": "ui_group_node_control",
@@ -1842,16 +1861,16 @@
         "className": "",
         "typeIsComboBox": true,
         "msgTrigger": "onChange",
-        "x": 150,
-        "y": 900,
+        "x": 130,
+        "y": 920,
         "wires": [
             [
-                "3a75d592a648207f"
+                "218fef18d5810555"
             ]
         ]
     },
     {
-        "id": "3a75d592a648207f",
+        "id": "218fef18d5810555",
         "type": "function",
         "z": "89c26b2630a7d108",
         "name": "Save Action",
@@ -1862,67 +1881,186 @@
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 350,
-        "y": 900,
+        "x": 330,
+        "y": 920,
         "wires": [
             []
         ]
     },
     {
-        "id": "c92aa9f75172ccd0",
+        "id": "d602a204ee8de4e4",
         "type": "link out",
         "z": "89c26b2630a7d108",
         "name": "link out 1",
         "mode": "link",
         "links": [
-            "d289495a6a2f5064"
+            "54eab7d35e4e552c"
         ],
-        "x": 1075,
-        "y": 1020,
+        "x": 1055,
+        "y": 1040,
         "wires": []
     },
     {
-        "id": "d289495a6a2f5064",
+        "id": "54eab7d35e4e552c",
         "type": "link in",
         "z": "89c26b2630a7d108",
         "name": "link in 1",
         "links": [
-            "c92aa9f75172ccd0"
+            "d602a204ee8de4e4"
         ],
-        "x": 1395,
-        "y": 320,
+        "x": 1375,
+        "y": 340,
         "wires": [
             [
-                "67da2e22b4afba53"
+                "d7dfe950f06ff51b"
             ]
         ]
     },
     {
-        "id": "387acedc91dd88e9",
+        "id": "075b1f8eff241944",
         "type": "link out",
         "z": "89c26b2630a7d108",
         "name": "link out 2",
         "mode": "link",
         "links": [
-            "2a490050d00ec09f"
+            "0cda87dc25d903f4"
         ],
-        "x": 905,
-        "y": 540,
+        "x": 885,
+        "y": 560,
         "wires": []
     },
     {
-        "id": "2a490050d00ec09f",
+        "id": "0cda87dc25d903f4",
         "type": "link in",
         "z": "89c26b2630a7d108",
         "name": "link in 2",
         "links": [
-            "387acedc91dd88e9"
+            "075b1f8eff241944"
         ],
-        "x": 1395,
-        "y": 480,
+        "x": 1375,
+        "y": 500,
         "wires": [
             [
-                "67da2e22b4afba53"
+                "d7dfe950f06ff51b"
+            ]
+        ]
+    },
+    {
+        "id": "24a2a0c33fcea25b",
+        "type": "ui-dropdown",
+        "z": "89c26b2630a7d108",
+        "group": "2a7528eec5f798b0",
+        "name": "Delete Multi Dropdown",
+        "label": "Select Configs to Delete:",
+        "tooltip": "Select one or more",
+        "order": 3,
+        "width": 0,
+        "height": 0,
+        "passthru": true,
+        "multiple": true,
+        "chips": true,
+        "clearable": true,
+        "options": [],
+        "payload": "",
+        "topic": "topic",
+        "topicType": "msg",
+        "className": "",
+        "typeIsComboBox": false,
+        "msgTrigger": "onChange",
+        "x": 960,
+        "y": 700,
+        "wires": [
+            [
+                "9f4851f5ca0bc997"
+            ]
+        ]
+    },
+    {
+        "id": "9f4851f5ca0bc997",
+        "type": "function",
+        "z": "89c26b2630a7d108",
+        "name": "Save Target Array",
+        "func": "if (msg.payload) {\n    // Dropdown with 'multiple' enabled outputs an array\n    flow.set('cfg_target_del_ids', msg.payload);\n}\nreturn msg;",
+        "outputs": 1,
+        "x": 1170,
+        "y": 700,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "59d08ebc14ded4c9",
+        "type": "ui-button",
+        "z": "89c26b2630a7d108",
+        "group": "2a7528eec5f798b0",
+        "name": "Del Config Btn",
+        "label": "Delete Selected Configs",
+        "order": 4,
+        "width": 0,
+        "height": 0,
+        "tooltip": "",
+        "color": "white",
+        "bgcolor": "#ef4444",
+        "className": "",
+        "icon": "trash",
+        "payload": "",
+        "payloadType": "str",
+        "topic": "topic",
+        "topicType": "msg",
+        "enableClick": true,
+        "x": 100,
+        "y": 700,
+        "wires": [
+            [
+                "a7e3e9c4b23ecee5"
+            ]
+        ]
+    },
+    {
+        "id": "a7e3e9c4b23ecee5",
+        "type": "file in",
+        "z": "89c26b2630a7d108",
+        "name": "Read Data Delete",
+        "filename": "/data/saved_sensors.json",
+        "format": "utf8",
+        "x": 310,
+        "y": 700,
+        "wires": [
+            [
+                "e56869580375d8ba"
+            ]
+        ]
+    },
+    {
+        "id": "e56869580375d8ba",
+        "type": "function",
+        "z": "89c26b2630a7d108",
+        "name": "Filter Multiple Deletes",
+        "func": "let target_ids = flow.get('cfg_target_del_ids');\n\n// Check if array exists and has elements\nif(!target_ids || !Array.isArray(target_ids) || target_ids.length === 0) {\n    return [null, { payload: \"⚠️ Error: No configurations selected to delete!\" }];\n}\n\nlet configs = [];\ntry { \n    if(msg.payload) configs = JSON.parse(msg.payload); \n} catch(e) { }\n\n// Filter out ANY config whose ID exists in the target_ids array\nlet filtered = configs.filter(c => !target_ids.includes(c.id));\nmsg.payload = JSON.stringify(filtered, null, 2);\n\n// Clear the selection after processing\nflow.set('cfg_target_del_ids', []);\n\nreturn [msg, { payload: `🗑️ Deleted configs: [${target_ids.join(', ')}]` }];",
+        "outputs": 2,
+        "x": 520,
+        "y": 700,
+        "wires": [
+            [
+                "14587dad53056061"
+            ],
+            []
+        ]
+    },
+    {
+        "id": "14587dad53056061",
+        "type": "file",
+        "z": "89c26b2630a7d108",
+        "name": "Write Delete",
+        "filename": "/data/saved_sensors.json",
+        "appendNewline": true,
+        "overwriteFile": "true",
+        "x": 730,
+        "y": 700,
+        "wires": [
+            [
+                "417256df7d7f068b",
+                "a0e4ce86e61d7e70"
             ]
         ]
     },
@@ -3266,7 +3404,7 @@
         "type": "debug",
         "z": "4acab47cf7e84e94",
         "name": "debug 4",
-        "active": true,
+        "active": false,
         "tosidebar": true,
         "console": false,
         "tostatus": false,
@@ -3445,7 +3583,7 @@
         "type": "debug",
         "z": "4acab47cf7e84e94",
         "name": "Docker API Response",
-        "active": true,
+        "active": false,
         "tosidebar": true,
         "console": false,
         "tostatus": false,

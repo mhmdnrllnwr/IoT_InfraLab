@@ -68,26 +68,5 @@
     "profile": "erratic",
     "interval": 5,
     "saved_at": "2026-03-19T08:12:35.695Z"
-  },
-  {
-    "id": "Sensor_ServerRoom",
-    "types": "temperature,humidity",
-    "profile": "normal",
-    "interval": 5,
-    "saved_at": "2026-04-01T04:28:57.381Z"
-  },
-  {
-    "id": "Temp2",
-    "types": "temperature",
-    "profile": "normal",
-    "interval": 5,
-    "saved_at": "2026-04-01T11:46:37.921Z"
-  },
-  {
-    "id": "temp1",
-    "types": "temperature",
-    "profile": "normal",
-    "interval": 5,
-    "saved_at": "2026-04-01T12:34:48.348Z"
   }
 ]

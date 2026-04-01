@@ -1,8 +1,46 @@
+# --- Docker & Environment Secrets ---
+.env
+*.env
+docker-compose.override.yml
 
-# Suricata runtime files
+# --- Python Virtual Environment & Artifacts ---
+.venv/
+venv/
+env/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.pytest_cache/
+
+# --- Node-RED Dynamic Data & Secrets ---
+# We keep flows.json and package.json (code), but ignore secrets and installed modules
+infrastructure/nodered/NodeRed_Data/*_cred.json
+infrastructure/nodered/NodeRed_Data/node_modules/
+infrastructure/nodered/NodeRed_Data/.sessions.json
+
+# --- Suricata Runtime & Logs ---
 infrastructure/suricata/run/*
 !infrastructure/suricata/run/.gitkeep
-
-# Suricata logs
 infrastructure/suricata/logs/*
 !infrastructure/suricata/logs/.gitkeep
+
+# --- Database & Container Volume Mounts (Stateful Data) ---
+# Mosquitto
+infrastructure/mosquitto/data/*
+!infrastructure/mosquitto/data/.gitkeep
+infrastructure/mosquitto/log/*
+!infrastructure/mosquitto/log/.gitkeep
+
+# InfluxDB
+infrastructure/influxdb/data/*
+!infrastructure/influxdb/data/.gitkeep
+
+# Grafana
+infrastructure/grafana/data/*
+!infrastructure/grafana/data/.gitkeep
+
+# --- IDE & Editor Files ---
+.vscode/
+.idea/
+.DS_Store

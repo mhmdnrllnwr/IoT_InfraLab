@@ -3041,13 +3041,18 @@
         "clearable": false,
         "options": [
             {
-                "label": "Gemini 1.5 Flash (Stable)",
-                "value": "gemini-flash-latest",
+                "label": "Gemini 3.1",
+                "value": "gemini-3.1-flash-lite-preview",
                 "type": "str"
             },
             {
-                "label": "Gemini 3.1",
-                "value": "gemini-3.1-flash-lite-preview",
+                "label": "Gemini 3.0 Flash",
+                "value": "gemini-3-flash-preview",
+                "type": "str"
+            },
+            {
+                "label": "Gemini 1.5 Flash (Stable)",
+                "value": "gemini-flash-latest",
                 "type": "str"
             }
         ],

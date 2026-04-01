@@ -16,6 +16,7 @@ services:
       - ./infrastructure/mosquitto/config:/mosquitto/config
       - ./infrastructure/mosquitto/data:/mosquitto/data
       - ./infrastructure/mosquitto/log:/mosquitto/log
+    command: mosquitto -c /mosquitto/config/mosquitto_vulnerable.conf
     restart: unless-stopped
 
   nodered:
@@ -23,7 +24,8 @@ services:
     container_name: iot_nodered
     user: "root"
     networks:
-      - iot_infralab_net
+      iot_infralab_net:
+        ipv4_address: 172.18.0.7
     ports:
       - "1880:1880"
     volumes:
@@ -93,16 +95,19 @@ services:
   suricata:
     image: jasonish/suricata:latest
     container_name: suricata-ids
-    # Share Mosquitto's network namespace (sidecar pattern)
+    user: root
     network_mode: "service:mosquitto"
     cap_add:
       - NET_ADMIN
       - NET_RAW
       - SYS_NICE
     volumes:
+      # Use the exact internal paths Suricata expects
       - ./infrastructure/suricata/suricata.yaml:/etc/suricata/suricata.yaml
       - ./infrastructure/suricata/local.rules:/etc/suricata/rules/local.rules
       - ./infrastructure/suricata/logs:/var/log/suricata
+      # NEW: Explicitly mount the run directory for the socket
+      - ./infrastructure/suricata/run:/var/run/suricata 
     command: -i eth0
     restart: unless-stopped
     depends_on:

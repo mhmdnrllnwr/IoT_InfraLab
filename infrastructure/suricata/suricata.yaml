@@ -1,20 +1,23 @@
 ﻿%YAML 1.1
 ---
-# Minimal Suricata Configuration
+# Suricata Configuration for IoT-InfraLab
 
 vars:
   address-groups:
-    HOME_NET: "[192.168.0.0/16,10.0.0.0/8,172.16.0.0/12]"
+    HOME_NET: "[172.18.0.0/24]" # Your Docker Subnet
     EXTERNAL_NET: "any"
 
+  port-groups:
+    HTTP_PORTS: "80"
+    SHELLCODE_PORTS: "!80"
+    SSH_PORTS: "22"
+
+# -----------------------------------------------------------------------------
+# LOGGING CONFIGURATION
+# -----------------------------------------------------------------------------
 default-log-dir: /var/log/suricata/
 
 outputs:
-  - fast:
-      enabled: no
-      filename: fast.log
-      append: yes
-
   - eve-log:
       enabled: yes
       filetype: regular
@@ -22,26 +25,61 @@ outputs:
       append: yes
       types:
         - alert:
-            payload: yes
-            payload-printable: yes
+            payload: yes             # Captures the attack data
+            payload-printable: yes   # Makes it readable in logs
             packet: yes
+        - http:
+            enabled: yes
+        - mqtt:
+            enabled: yes             # Critical for your IoT project
+        - files:
+            force-magic: no
+        - drop:
+            enabled: yes             # Logs when IPS blocks a packet
 
-# Listen on specific interface
+# -----------------------------------------------------------------------------
+# COMMAND & CONTROL (The Socket)
+# -----------------------------------------------------------------------------
+# This allows Node-RED to swap rules from Alert to Reject
+unix-command:
+  enabled: yes
+  filename: /var/run/suricata/suricata-command.socket
+
+# -----------------------------------------------------------------------------
+# NETWORK CAPTURE ENGINE
+# -----------------------------------------------------------------------------
+# Changed from eth0 to 'any' to ensure visibility in Docker shared network
 af-packet:
-  - interface: eth0
+  - interface: any
     threads: 1
     cluster-id: 99
     cluster-type: cluster_flow
     defrag: yes
+    use-mmap: yes
+    tpacket-v3: yes
 
+# -----------------------------------------------------------------------------
+# PROTOCOL SETTINGS
+# -----------------------------------------------------------------------------
 app-layer:
   protocols:
     mqtt:
       enabled: yes
+    http:
+      enabled: yes
+    tls:
+      enabled: yes
 
-# Load the custom ruleset
+# CRITICAL FOR WINDOWS/WSL2: Disable checksums to prevent "Blind IDS"
+stream:
+  checksum-validation: no
+
+# -----------------------------------------------------------------------------
+# RULE MANAGEMENT
+# -----------------------------------------------------------------------------
 rule-files:
   - /etc/suricata/rules/local.rules
 
+# How often to write to the JSON file (seconds)
 heartbeat:
   output-flush-interval: 1

@@ -3,6 +3,9 @@
 # Allow all traffic from the Auditor IP (172.18.0.5) to any destination
 pass ip 172.18.0.5 any <> any any (msg:"Safelisting Security Auditor"; sid:9900001; rev:1;)
 
+# Allow all traffic from Node-RED (172.18.0.7) to any destination
+pass ip 172.18.0.7 any <> any any (msg:"Safelisting Node-RED"; sid:9900002; rev:1;)
+
 # 1. MQTT SYN Flood (DoS)
 # Alerts if a single source IP sends more than 100 SYN packets per second to port 1883
 alert tcp any any -> any 1883 (msg:"DoS Attempt: MQTT SYN Flood Detected"; flow:to_server,stateless; flags:S; threshold:type both, track by_src, count 100, seconds 1; classtype:attempted-dos; sid:1000001; rev:1;)
@@ -17,7 +20,7 @@ alert tcp any any -> any 1883 (msg:"Protocol Mismatch: HTTP Method sent to MQTT 
 
 # 4a. Rogue Subscriber (Native MQTT Parser)
 # This uses Suricata's built-in MQTT decoder. It doesn't care about hex bytes, it just reads the topic.
-alert mqtt any any -> any 1883 (msg:"Rogue Subscriber Detected: Native MQTT Wildcard '#'"; mqtt.subscribe.topic:"#"; classtype:attempted-recon; sid:1000005; rev:2;)
+# alert mqtt any any -> any 1883 (msg:"Rogue Subscriber Detected: Native MQTT Wildcard '#'"; mqtt.subscribe.topic:"#"; classtype:attempted-recon; sid:1000005; rev:2;)
 
 # 4b. Rogue Subscriber (Raw TCP Fallback)
 # If the native parser is disabled, this raw hex check acts as a backup. 

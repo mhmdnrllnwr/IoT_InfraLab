@@ -1,0 +1,8 @@
+
+# Suricata runtime files
+infrastructure/suricata/run/*
+!infrastructure/suricata/run/.gitkeep
+
+# Suricata logs
+infrastructure/suricata/logs/*
+!infrastructure/suricata/logs/.gitkeep

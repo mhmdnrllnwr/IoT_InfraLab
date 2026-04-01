@@ -1,0 +1,6 @@
+# Force all configuration files to stay as LF, always.
+*.conf text eol=lf
+*.rules text eol=lf
+*.yaml text eol=lf
+acl text eol=lf
+passwd text eol=lf

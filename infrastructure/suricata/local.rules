@@ -1,7 +1,7 @@
 # Custom Suricata Rules for IoT Lab
 
 # Allow all traffic from the Auditor IP (172.18.0.5) to any destination
-pass ip 172.18.0.7 any <> any any (msg:"Safelisting Security Auditor"; sid:9900001; rev:1;)
+pass ip 172.18.0.5 any <> any any (msg:"Safelisting Security Auditor"; sid:9900001; rev:1;)
 
 # 1. MQTT SYN Flood (DoS)
 # Alerts if a single source IP sends more than 100 SYN packets per second to port 1883

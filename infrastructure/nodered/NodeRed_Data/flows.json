@@ -1937,6 +1937,7 @@
         "height": 0,
         "format": "<div style=\"background:#0f172a;color:#10b981;padding:15px;height:450px;overflow-y:auto;font-family:monospace;margin:0;border-radius:4px;\"><h3>root@kali-linux:~#</h3><pre style=\"white-space:pre-wrap;\" v-text=\"msg.payload||'Awaiting target node deployment...' \"></pre></div>",
         "storeOutMessages": true,
+        "passthru": true,
         "resendOnRefresh": true,
         "templateScope": "local",
         "className": "",
@@ -3040,8 +3041,13 @@
         "clearable": false,
         "options": [
             {
-                "label": "Gemini 2.0 Flash (Fastest)",
-                "value": "gemini-2.0-flash",
+                "label": "Gemini 3.1",
+                "value": "gemini-3.1-flash-lite-preview",
+                "type": "str"
+            },
+            {
+                "label": "Gemini 3.0 Flash",
+                "value": "gemini-3-flash-preview",
                 "type": "str"
             },
             {
@@ -3201,7 +3207,7 @@
         "page": "",
         "ui": "",
         "name": "AI Security Summary",
-        "order": 0,
+        "order": 4,
         "width": 0,
         "height": 0,
         "head": "",

@@ -1,6 +1,7 @@
 import os
 import time
 import nmap
+import threading
 import paho.mqtt.client as mqtt
 from paho.mqtt.enums import CallbackAPIVersion
 from google import genai
@@ -26,15 +27,18 @@ is_scanning = False
 def perform_audit():
     global last_scan_time, is_scanning, MODEL_ID
     is_scanning = True
+    print(f"\n[INFO] Starting Security Audit at {time.strftime('%Y-%m-%d %H:%M:%S')}...")
     
     try:
         # 1. INITIALIZATION CHECK
         if not API_KEY:
             raise ValueError("Missing API Key. Check your .env file.")
 
+        print(f"[INFO] Using Gemini Model: {MODEL_ID}")
         client_mqtt.publish("lab/security/status", "Auditor Running... 🚀")
         
         # 2. SCANNING VALIDATION
+        print(f"[INFO] Initiating Nmap scan on Subnet: {TARGET_SUBNET}")
         client_mqtt.publish("lab/security/status", "Scanning All Services... 🔍")
         nm = nmap.PortScanner()
         
@@ -53,14 +57,19 @@ def perform_audit():
                         product = nm[host][proto][port]['product']
                         version = nm[host][proto][port]['version']
                         scan_summary += f"HOST: {host} | PORT: {port} | SERVICE: {service} | PRODUCT: {product} {version}\n"
+        
+        print("[SUCCESS] Nmap scan completed.")
+        print(f"--- Nmap Results ---\n{scan_summary if scan_summary else 'No open ports found.'}\n--------------------")
 
         # 3. EMPTY DATA GUARD
         if not scan_summary:
+            print("[WARN] Audit Cancelled: No Hosts Found")
             client_mqtt.publish("lab/security/status", "Audit Cancelled: No Hosts Found ℹ️")
             client_mqtt.publish("lab/security/report", "<h3>Scan Summary</h3><p>Network scan completed, but no active hosts with open ports were detected. Check your TARGET_SUBNET.</p>")
             return
 
         # 4. AI ANALYSIS & API VALIDATION
+        print(f"[INFO] Sending structured scan data to Gemini AI ({MODEL_ID})...")
         client_mqtt.publish("lab/security/status", "AI Analyzing Sniffing & MQTT... 🧠")
         
         strict_prompt = f"""
@@ -75,7 +84,12 @@ def perform_audit():
         2. Focus on Port 1883 (MQTT) for SNIFFING risks.
         3. Analyze Port 1880 (Node-RED) and 8086 (InfluxDB).
         
-        OUTPUT: Return ONLY RAW HTML table with <h3> headers.
+        OUTPUT INSTRUCTIONS: 
+        You MUST return EXACTLY ONE <h3> header followed by ONE RAW HTML <table>.
+        You MUST use exactly these 4 column headers in your <thead>: "Target Host", "Service", "Risk Analysis", "Security Recommendation".
+        Use proper <thead>, <tbody>, <tr>, <th>, and <td> tags.
+        DO NOT use markdown formatting (no ```html or pipes like |---|---|).
+        DO NOT include any conversational text outside the HTML tags.
         """
         
         try:
@@ -94,32 +108,48 @@ def perform_audit():
                 raise Exception(f"AI Service Error: {err_str}")
 
         # 5. PUBLISH SUCCESS
+        print("[SUCCESS] AI Analysis Complete. Publishing final report.")
+        print(f"--- AI Report ---\n{response.text[:200]}...\n-----------------")
         client_mqtt.publish("lab/security/report", response.text)
         client_mqtt.publish("lab/security/status", "Audit Complete ✅")
 
     except Exception as e:
         # GLOBAL ERROR CATCHER
         error_msg = str(e)
-        print(f"DEBUG ERROR: {error_msg}")
+        print(f"❌ [ERROR] {error_msg}")
         client_mqtt.publish("lab/security/status", "Audit Error ❌")
         client_mqtt.publish("lab/security/report", f"<h3 style='color:red'>System Error</h3><p>{error_msg}</p>")
     
     finally:
         is_scanning = False
         last_scan_time = time.time()
+        print("[INFO] Audit thread finished, entering cooldown.\n")
 
 # --- MQTT HANDLER ---
+def on_connect(client, userdata, flags, rc):
+    if rc == 0:
+        print(f"[SUCCESS] Connected to MQTT Broker: {BROKER} on port 1883")
+        client.subscribe([("lab/security/trigger", 0), ("lab/security/model", 0)])
+        print(f"[INFO] Subscribed to topic: lab/security/trigger")
+        print(f"[INFO] Subscribed to topic: lab/security/model")
+        print(f"[INFO] Ready and waiting for commands...")
+    else:
+        print(f"❌ [CRITICAL] MQTT Connection failed with code {rc}")
+
 def on_message(client, userdata, msg):
     global last_scan_time, is_scanning, MODEL_ID
     payload = msg.payload.decode()
     
     if msg.topic == "lab/security/model":
         MODEL_ID = payload
+        print(f"[CMD] Received model change request. New Model: {MODEL_ID}")
         client_mqtt.publish("lab/security/status", f"Model Set: {MODEL_ID}")
     
     elif msg.topic == "lab/security/trigger" and payload == "SCAN_NOW":
+        print(f"[CMD] SCAN_NOW trigger received from dashboard.")
         # Check running state
         if is_scanning:
+            print("[WARN] Scan attempted while system is already busy.")
             client_mqtt.publish("lab/security/status", "System Busy: Scan in Progress ⚠️")
             return
             
@@ -127,22 +157,26 @@ def on_message(client, userdata, msg):
         time_passed = time.time() - last_scan_time
         if time_passed < COOLDOWN_TIME:
             wait_time = int(COOLDOWN_TIME - time_passed)
+            print(f"[WARN] Scan attempted during cooldown. Retry in {wait_time}s.")
             client_mqtt.publish("lab/security/status", f"Cooldown: Wait {wait_time}s ⏳")
             return
             
-        perform_audit()
+        # VERY IMPORTANT FIX: Start audit in a separate thread so it doesn't block the MQTT Paho message loop!
+        print("[INFO] Launching background audit thread execution...")
+        threading.Thread(target=perform_audit, daemon=True).start()
 
 # --- MQTT CONNECTION VALIDATION ---
 client_mqtt = mqtt.Client(CallbackAPIVersion.VERSION1)
+client_mqtt.on_connect = on_connect
 client_mqtt.on_message = on_message
 
 try:
-    print(f"Connecting to Broker: {BROKER}...")
+    print(f"\n[INFO] Starting Security Auditor...")
+    print(f"[INFO] Connecting to Broker: {BROKER}...")
     client_mqtt.connect(BROKER, 1883)
-    client_mqtt.subscribe([("lab/security/trigger", 0), ("lab/security/model", 0)])
     client_mqtt.loop_start()
 except Exception as e:
-    print(f"❌ CRITICAL MQTT ERROR: Could not connect to {BROKER}. {e}")
+    print(f"❌ [CRITICAL] MQTT ERROR: Could not connect to {BROKER}. {e}")
 
 while True:
     time.sleep(1)

@@ -3504,5 +3504,182 @@
         "wires": [
             []
         ]
+    },
+    {
+        "id": "ui_switch_security",
+        "type": "ui-switch",
+        "z": "4acab47cf7e84e94",
+        "name": "Security Mode Switch",
+        "label": "Enable Strict Security Policies",
+        "group": "f57ba6f4611ca27c",
+        "order": 4,
+        "width": 6,
+        "height": 1,
+        "passthru": false,
+        "decouple": false,
+        "topic": "topic",
+        "topicType": "msg",
+        "style": "default",
+        "className": "",
+        "layout": "",
+        "clickableArea": "switch",
+        "onvalue": "true",
+        "onvalueType": "bool",
+        "onicon": "mdi-lock",
+        "oncolor": "success",
+        "offvalue": "false",
+        "offvalueType": "bool",
+        "officon": "mdi-lock-open",
+        "offcolor": "error",
+        "x": 160,
+        "y": 520,
+        "wires": [
+            [
+                "fn_prep_exec_command"
+            ]
+        ]
+    },
+    {
+        "id": "fn_prep_exec_command",
+        "type": "function",
+        "z": "4acab47cf7e84e94",
+        "name": "Prep File Swap Command",
+        "func": "// Tell the Mosquitto container to copy the correct profile over the active mosquitto.conf\nif (msg.payload === true) {\n    msg.cmd = [\"cp\", \"/mosquitto/config/mosquitto_hardened.conf\", \"/mosquitto/config/mosquitto.conf\"];\n    msg.notification_text = \"Broker Hardened & Restarted\";\n} else {\n    msg.cmd = [\"cp\", \"/mosquitto/config/mosquitto_vulnerable.conf\", \"/mosquitto/config/mosquitto.conf\"];\n    msg.notification_text = \"Broker Vulnerable & Restarted\";\n}\n\n// Step 1: Create the Exec instance inside iot_broker\nmsg.url = \"http://docker-proxy:2375/containers/iot_broker/exec\";\nmsg.method = \"POST\";\nmsg.payload = {\n    \"AttachStdout\": false,\n    \"AttachStderr\": false,\n    \"Tty\": false,\n    \"Cmd\": msg.cmd\n};\nreturn msg;",
+        "outputs": 1,
+        "x": 420,
+        "y": 520,
+        "wires": [
+            [
+                "http_create_exec"
+            ]
+        ]
+    },
+    {
+        "id": "http_create_exec",
+        "type": "http request",
+        "z": "4acab47cf7e84e94",
+        "name": "Create Exec",
+        "method": "use",
+        "ret": "obj",
+        "paytoqs": "ignore",
+        "url": "",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "authType": "",
+        "senderr": false,
+        "x": 640,
+        "y": 520,
+        "wires": [
+            [
+                "fn_start_exec"
+            ]
+        ]
+    },
+    {
+        "id": "fn_start_exec",
+        "type": "function",
+        "z": "4acab47cf7e84e94",
+        "name": "Start Exec Command",
+        "func": "// Step 2: Trigger the copy command we just created\nif (msg.payload && msg.payload.Id) {\n    msg.url = \"http://docker-proxy:2375/exec/\" + msg.payload.Id + \"/start\";\n    msg.method = \"POST\";\n    msg.payload = { \"Detach\": false, \"Tty\": false };\n    return msg;\n}",
+        "outputs": 1,
+        "x": 830,
+        "y": 520,
+        "wires": [
+            [
+                "http_start_exec"
+            ]
+        ]
+    },
+    {
+        "id": "http_start_exec",
+        "type": "http request",
+        "z": "4acab47cf7e84e94",
+        "name": "Execute Copy",
+        "method": "use",
+        "ret": "txt",
+        "paytoqs": "ignore",
+        "url": "",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "authType": "",
+        "senderr": false,
+        "x": 1030,
+        "y": 520,
+        "wires": [
+            [
+                "fn_prep_restart"
+            ]
+        ]
+    },
+    {
+        "id": "fn_prep_restart",
+        "type": "function",
+        "z": "4acab47cf7e84e94",
+        "name": "Prep Docker Restart",
+        "func": "// Step 3: Restart Mosquitto so it reads the newly copied file\nmsg.url = \"http://docker-proxy:2375/containers/iot_broker/restart\";\nmsg.method = \"POST\";\nmsg.payload = {};\nreturn msg;",
+        "outputs": 1,
+        "x": 1230,
+        "y": 520,
+        "wires": [
+            [
+                "http_restart_container"
+            ]
+        ]
+    },
+    {
+        "id": "http_restart_container",
+        "type": "http request",
+        "z": "4acab47cf7e84e94",
+        "name": "POST Restart",
+        "method": "use",
+        "ret": "txt",
+        "paytoqs": "ignore",
+        "url": "",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "authType": "",
+        "senderr": false,
+        "x": 1430,
+        "y": 520,
+        "wires": [
+            [
+                "fn_trigger_notification"
+            ]
+        ]
+    },
+    {
+        "id": "fn_trigger_notification",
+        "type": "function",
+        "z": "4acab47cf7e84e94",
+        "name": "Format Toast",
+        "func": "if (msg.statusCode >= 200 && msg.statusCode < 300) {\n    msg.payload = msg.notification_text;\n} else {\n    msg.payload = `Error restarting broker: API returned ${msg.statusCode}`;\n}\nreturn msg;",
+        "outputs": 1,
+        "x": 1620,
+        "y": 520,
+        "wires": [
+            [
+                "ui_notification_security"
+            ]
+        ]
+    },
+    {
+        "id": "ui_notification_security",
+        "type": "ui-notification",
+        "z": "4acab47cf7e84e94",
+        "ui": "8bcc34ca17387ebb",
+        "position": "top right",
+        "displayTime": "3",
+        "outputs": 1,
+        "allowDismiss": true,
+        "name": "Security Toast",
+        "x": 1810,
+        "y": 520,
+        "wires": [
+            []
+        ],
+        "icon": "shield"
     }
 ]

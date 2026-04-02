@@ -103,6 +103,8 @@ services:
       # Use the exact internal paths Suricata expects
       - ./infrastructure/suricata/suricata.yaml:/etc/suricata/suricata.yaml
       - ./infrastructure/suricata/local.rules:/etc/suricata/rules/local.rules
+      - ./infrastructure/suricata/local.rules.ids:/etc/suricata/rules/local.rules.ids
+      - ./infrastructure/suricata/local.rules.ips:/etc/suricata/rules/local.rules.ips
       - ./infrastructure/suricata/logs:/var/log/suricata
       # NEW: Explicitly mount the run directory for the socket
       - ./infrastructure/suricata/run:/var/run/suricata 

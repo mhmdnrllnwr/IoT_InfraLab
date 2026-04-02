@@ -983,7 +983,6 @@
                 "a0e4ce86e61d7e70"
             ],
             [
-                "2ab517062f73c81a",
                 "24a2a0c33fcea25b"
             ]
         ]
@@ -1018,7 +1017,7 @@
         "group": "2a7528eec5f798b0",
         "name": "Run All Saved Configs",
         "label": "Run ALL Saved Nodes",
-        "order": 5,
+        "order": 4,
         "width": 0,
         "height": 0,
         "tooltip": "Deploy every saved sensor configuration sequentially",
@@ -1117,7 +1116,7 @@
         "group": "2a7528eec5f798b0",
         "name": "Remove All Configs Btn",
         "label": "Remove All Configs",
-        "order": 6,
+        "order": 5,
         "width": 0,
         "height": 0,
         "tooltip": "Wipes all saved configurations",
@@ -1152,7 +1151,7 @@
                 "95e9b4b7a777c328"
             ],
             [
-                "d7dfe950f06ff51b"
+                "29a9ac0ae18a1f57"
             ]
         ]
     },
@@ -1629,49 +1628,6 @@
         ]
     },
     {
-        "id": "2ab517062f73c81a",
-        "type": "ui-dropdown",
-        "z": "89c26b2630a7d108",
-        "group": "2a7528eec5f798b0",
-        "name": "Delete Dropdown",
-        "label": "Select Config:",
-        "tooltip": "",
-        "order": 2,
-        "width": 0,
-        "height": 0,
-        "passthru": true,
-        "multiple": false,
-        "chips": false,
-        "clearable": false,
-        "options": [],
-        "payload": "",
-        "topic": "topic",
-        "topicType": "msg",
-        "className": "",
-        "typeIsComboBox": true,
-        "msgTrigger": "onChange",
-        "x": 1050,
-        "y": 1500,
-        "wires": [
-            [
-                "8df06c89e95539c7"
-            ]
-        ]
-    },
-    {
-        "id": "8df06c89e95539c7",
-        "type": "function",
-        "z": "89c26b2630a7d108",
-        "name": "Save Target Data",
-        "func": "if (msg.payload && msg.payload !== \"none\") {\n    flow.set('cfg_target_del_id', msg.payload);\n}\nreturn msg;",
-        "outputs": 1,
-        "x": 1250,
-        "y": 1500,
-        "wires": [
-            []
-        ]
-    },
-    {
         "id": "04553eb8843ef23e",
         "type": "function",
         "z": "89c26b2630a7d108",
@@ -1953,7 +1909,7 @@
         "name": "Delete Multi Dropdown",
         "label": "Select Configs to Delete:",
         "tooltip": "Select one or more",
-        "order": 3,
+        "order": 2,
         "width": 0,
         "height": 0,
         "passthru": true,
@@ -1967,8 +1923,8 @@
         "className": "",
         "typeIsComboBox": false,
         "msgTrigger": "onChange",
-        "x": 960,
-        "y": 700,
+        "x": 1040,
+        "y": 1520,
         "wires": [
             [
                 "9f4851f5ca0bc997"
@@ -1982,8 +1938,8 @@
         "name": "Save Target Array",
         "func": "if (msg.payload) {\n    // Dropdown with 'multiple' enabled outputs an array\n    flow.set('cfg_target_del_ids', msg.payload);\n}\nreturn msg;",
         "outputs": 1,
-        "x": 1170,
-        "y": 700,
+        "x": 1250,
+        "y": 1520,
         "wires": [
             []
         ]
@@ -1995,7 +1951,7 @@
         "group": "2a7528eec5f798b0",
         "name": "Del Config Btn",
         "label": "Delete Selected Configs",
-        "order": 4,
+        "order": 3,
         "width": 0,
         "height": 0,
         "tooltip": "",
@@ -2060,9 +2016,67 @@
         "wires": [
             [
                 "417256df7d7f068b",
+                "c6cc1107f5d31b1d"
+            ]
+        ]
+    },
+    {
+        "id": "1752f782b21f61be",
+        "type": "link in",
+        "z": "89c26b2630a7d108",
+        "name": "link in 3",
+        "links": [
+            "c6cc1107f5d31b1d"
+        ],
+        "x": 795,
+        "y": 1400,
+        "wires": [
+            [
                 "a0e4ce86e61d7e70"
             ]
         ]
+    },
+    {
+        "id": "c6cc1107f5d31b1d",
+        "type": "link out",
+        "z": "89c26b2630a7d108",
+        "name": "link out 3",
+        "mode": "link",
+        "links": [
+            "1752f782b21f61be"
+        ],
+        "x": 955,
+        "y": 700,
+        "wires": []
+    },
+    {
+        "id": "c7696d58faac7022",
+        "type": "link in",
+        "z": "89c26b2630a7d108",
+        "name": "link in 4",
+        "links": [
+            "29a9ac0ae18a1f57"
+        ],
+        "x": 1375,
+        "y": 560,
+        "wires": [
+            [
+                "d7dfe950f06ff51b"
+            ]
+        ]
+    },
+    {
+        "id": "29a9ac0ae18a1f57",
+        "type": "link out",
+        "z": "89c26b2630a7d108",
+        "name": "link out 4",
+        "mode": "link",
+        "links": [
+            "c7696d58faac7022"
+        ],
+        "x": 745,
+        "y": 760,
+        "wires": []
     },
     {
         "id": "6d74a9d5049a6aac",
@@ -2369,8 +2383,13 @@
         "type": "function",
         "z": "b78d14cc362e1196",
         "name": "Cmd: Nmap Fast",
-        "func": "// Reduced to /24 instead of /16 and added --min-rate to guarantee completion in under 15 seconds\nmsg.cmd = ['nmap', '-sS', '-p', '1883,8086,1880', '--min-rate', '1000', '172.18.0.0/24'];\nreturn msg;",
+        "func": "// Explicitly check the status of Port 1883 instead of blind grepping.\n//     'OUTPUT=$(nmap -sS -p 8086,1880,1883 --min-rate 100 172.18.0.0/24); ' \nmsg.cmd = [\n    'sh', '-c',\n    'OUTPUT=$(nmap -sS -p 8086,1880,1883 --min-rate 100 172.18.0.0/24); '  +\n    'echo \"$OUTPUT\"; ' +\n    'if echo \"$OUTPUT\" | grep \"^1883/tcp\" | grep -qE \"closed|filtered\"; then ' +\n    '  echo \"-------------------------\"; ' +\n    '  echo \"🚨 BLOCKED 🚨\"; ' +\n    '  echo \"Suricata IPS hid Port 1883!\"; ' +\n    '  echo \"-------------------------\"; ' +\n    'fi'\n];\nreturn msg;",
         "outputs": 1,
+        "timeout": "",
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
         "x": 300,
         "y": 160,
         "wires": [
@@ -3017,7 +3036,7 @@
         "y": 380.9999885559082,
         "wires": [
             [
-                "4a3336cc3d1920a0"
+                "badfe3aaa39b3edd"
             ],
             [
                 "f0af5eabbe7b73e8"
@@ -3037,29 +3056,6 @@
             [
                 "48bead69107b66a0"
             ]
-        ]
-    },
-    {
-        "id": "4a3336cc3d1920a0",
-        "type": "ui-template",
-        "z": "d415d47f74e99da2",
-        "group": "cf452f90a4917a01",
-        "page": "",
-        "ui": "",
-        "name": "Suricata IDS Alerts",
-        "order": 1,
-        "width": 6,
-        "height": "",
-        "format": "<div>\n    <pre style=\"background:#111;padding:15px;height:250px;overflow-y:auto;font-family:monospace;margin:0;white-space:pre-wrap;border:1px solid #3b82f6;border-radius:4px;\"><span :style=\"{color: msg.payload.includes('🚨') ? '#ef4444' : '#10b981'}\" v-text=\"msg.payload\"></span></pre>\n</div>",
-        "storeOutMessages": true,
-        "passthru": true,
-        "resendOnRefresh": true,
-        "templateScope": "local",
-        "className": "",
-        "x": 1392,
-        "y": 380.9999885559082,
-        "wires": [
-            []
         ]
     },
     {
@@ -3362,6 +3358,516 @@
         ]
     },
     {
+        "id": "badfe3aaa39b3edd",
+        "type": "ui-template",
+        "z": "d415d47f74e99da2",
+        "group": "cf452f90a4917a01",
+        "page": "",
+        "ui": "",
+        "name": "Suricata IDS Alerts",
+        "order": 1,
+        "width": 6,
+        "height": "",
+        "format": "<div>\n    <pre style=\"background:#111;padding:15px;height:250px;overflow-y:auto;font-family:monospace;margin:0;white-space:pre-wrap;border:1px solid #3b82f6;border-radius:4px;\"><span :style=\"{color: msg?.payload?.includes('🚨') ? '#ef4444' : '#10b981'}\" v-text=\"msg?.payload || 'Shields up. Waiting for IDS alerts...'\"></span></pre>\n</div>",
+        "storeOutMessages": true,
+        "passthru": true,
+        "resendOnRefresh": true,
+        "templateScope": "local",
+        "className": "",
+        "x": 1470,
+        "y": 380,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "999c9dc5465ee1f9",
+        "type": "function",
+        "z": "d415d47f74e99da2",
+        "name": "Prep Suricata Restart",
+        "func": "// Step 4: Restart Suricata so it re-attaches to Mosquitto's network space\nmsg.url = \"http://docker-proxy:2375/containers/suricata-ids/restart\";\nmsg.method = \"POST\";\nmsg.payload = {};\nreturn msg;",
+        "outputs": 1,
+        "x": 1640,
+        "y": 1000,
+        "wires": [
+            [
+                "4c52fc413694fa18"
+            ]
+        ]
+    },
+    {
+        "id": "4c52fc413694fa18",
+        "type": "http request",
+        "z": "d415d47f74e99da2",
+        "name": "POST Restart Suricata",
+        "method": "use",
+        "ret": "txt",
+        "paytoqs": "ignore",
+        "url": "",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "authType": "",
+        "senderr": false,
+        "x": 1900,
+        "y": 1000,
+        "wires": [
+            [
+                "7a4ce5455d7d080a"
+            ]
+        ]
+    },
+    {
+        "id": "e221237c50ec7708",
+        "type": "ui-switch",
+        "z": "d415d47f74e99da2",
+        "name": "Security Mode Switch",
+        "label": "Enable Strict Security Policies",
+        "group": "8356bd12d00a4d35",
+        "order": 3,
+        "width": 6,
+        "height": 1,
+        "passthru": false,
+        "decouple": false,
+        "topic": "topic",
+        "topicType": "msg",
+        "style": "default",
+        "className": "",
+        "layout": "",
+        "clickableArea": "switch",
+        "onvalue": "true",
+        "onvalueType": "bool",
+        "onicon": "mdi-lock",
+        "oncolor": "success",
+        "offvalue": "false",
+        "offvalueType": "bool",
+        "officon": "mdi-lock-open",
+        "offcolor": "error",
+        "x": 140,
+        "y": 1000,
+        "wires": [
+            [
+                "4884960ef43bbee5"
+            ]
+        ]
+    },
+    {
+        "id": "4884960ef43bbee5",
+        "type": "function",
+        "z": "d415d47f74e99da2",
+        "name": "Prep File Swap Command",
+        "func": "// Tell the Mosquitto container to copy the correct profile over the active mosquitto.conf\nif (msg.payload === true) {\n    msg.cmd = [\"cp\", \"/mosquitto/config/mosquitto_hardened.conf\", \"/mosquitto/config/mosquitto.conf\"];\n    msg.notification_text = \"Broker Hardened & Restarted\";\n} else {\n    msg.cmd = [\"cp\", \"/mosquitto/config/mosquitto_vulnerable.conf\", \"/mosquitto/config/mosquitto.conf\"];\n    msg.notification_text = \"Broker Vulnerable & Restarted\";\n}\n\n// Step 1: Create the Exec instance inside iot_broker\nmsg.url = \"http://docker-proxy:2375/containers/iot_broker/exec\";\nmsg.method = \"POST\";\nmsg.payload = {\n    \"AttachStdout\": false,\n    \"AttachStderr\": false,\n    \"Tty\": false,\n    \"Cmd\": msg.cmd\n};\nreturn msg;",
+        "outputs": 1,
+        "x": 400,
+        "y": 1000,
+        "wires": [
+            [
+                "444740c195eafce8"
+            ]
+        ]
+    },
+    {
+        "id": "444740c195eafce8",
+        "type": "http request",
+        "z": "d415d47f74e99da2",
+        "name": "Create Exec",
+        "method": "use",
+        "ret": "obj",
+        "paytoqs": "ignore",
+        "url": "",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "authType": "",
+        "senderr": false,
+        "x": 620,
+        "y": 1000,
+        "wires": [
+            [
+                "0727ac8512aa12e1"
+            ]
+        ]
+    },
+    {
+        "id": "0727ac8512aa12e1",
+        "type": "function",
+        "z": "d415d47f74e99da2",
+        "name": "Start Exec Command",
+        "func": "// Step 2: Trigger the copy command we just created\nif (msg.payload && msg.payload.Id) {\n    msg.url = \"http://docker-proxy:2375/exec/\" + msg.payload.Id + \"/start\";\n    msg.method = \"POST\";\n    msg.payload = { \"Detach\": false, \"Tty\": false };\n    return msg;\n}",
+        "outputs": 1,
+        "x": 810,
+        "y": 1000,
+        "wires": [
+            [
+                "0355f269da5ac73d"
+            ]
+        ]
+    },
+    {
+        "id": "0355f269da5ac73d",
+        "type": "http request",
+        "z": "d415d47f74e99da2",
+        "name": "Execute Copy",
+        "method": "use",
+        "ret": "txt",
+        "paytoqs": "ignore",
+        "url": "",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "authType": "",
+        "senderr": false,
+        "x": 1010,
+        "y": 1000,
+        "wires": [
+            [
+                "016c4c521257bdd2"
+            ]
+        ]
+    },
+    {
+        "id": "016c4c521257bdd2",
+        "type": "function",
+        "z": "d415d47f74e99da2",
+        "name": "Prep Docker Restart",
+        "func": "// Step 3: Restart Mosquitto so it reads the newly copied file\nmsg.url = \"http://docker-proxy:2375/containers/iot_broker/restart\";\nmsg.method = \"POST\";\nmsg.payload = {};\nreturn msg;",
+        "outputs": 1,
+        "x": 1210,
+        "y": 1000,
+        "wires": [
+            [
+                "d3ed7ff1f022cc26"
+            ]
+        ]
+    },
+    {
+        "id": "d3ed7ff1f022cc26",
+        "type": "http request",
+        "z": "d415d47f74e99da2",
+        "name": "POST Restart",
+        "method": "use",
+        "ret": "txt",
+        "paytoqs": "ignore",
+        "url": "",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "authType": "",
+        "senderr": false,
+        "x": 1410,
+        "y": 1000,
+        "wires": [
+            [
+                "999c9dc5465ee1f9"
+            ]
+        ]
+    },
+    {
+        "id": "7a4ce5455d7d080a",
+        "type": "function",
+        "z": "d415d47f74e99da2",
+        "name": "Format Toast",
+        "func": "if (msg.statusCode >= 200 && msg.statusCode < 300) {\n    msg.payload = msg.notification_text;\n} else {\n    msg.payload = `Error restarting broker: API returned ${msg.statusCode}`;\n}\nreturn msg;",
+        "outputs": 1,
+        "x": 1610,
+        "y": 1060,
+        "wires": [
+            [
+                "1fbd4634cc588220"
+            ]
+        ]
+    },
+    {
+        "id": "1fbd4634cc588220",
+        "type": "ui-notification",
+        "z": "d415d47f74e99da2",
+        "ui": "8bcc34ca17387ebb",
+        "position": "top right",
+        "displayTime": "3",
+        "outputs": 1,
+        "allowDismiss": true,
+        "name": "Security Toast",
+        "x": 1860,
+        "y": 1060,
+        "wires": [
+            []
+        ],
+        "icon": "shield"
+    },
+    {
+        "id": "d5e5132002b03689",
+        "type": "ui-switch",
+        "z": "d415d47f74e99da2",
+        "name": "Suricata IPS Mode",
+        "label": "Suricata IPS Mode",
+        "group": "8356bd12d00a4d35",
+        "order": 4,
+        "width": 0,
+        "height": 0,
+        "passthru": true,
+        "decouple": false,
+        "topic": "topic",
+        "topicType": "msg",
+        "style": "",
+        "className": "",
+        "layout": "",
+        "clickableArea": "switch",
+        "onvalue": "true",
+        "onvalueType": "bool",
+        "onicon": "",
+        "oncolor": "",
+        "offvalue": "false",
+        "offvalueType": "bool",
+        "officon": "",
+        "offcolor": "",
+        "x": 130,
+        "y": 1080,
+        "wires": [
+            [
+                "3d44e82b44f028b7"
+            ]
+        ]
+    },
+    {
+        "id": "3d44e82b44f028b7",
+        "type": "function",
+        "z": "d415d47f74e99da2",
+        "name": "Prepare Rule Swap Exec",
+        "func": "if (msg.payload === true) {\n    msg.cmd = [\"cp\", \"/etc/suricata/rules/local.rules.ips\", \"/etc/suricata/rules/local.rules\"];\n    msg.mode_text = \"IPS Mode (Reject)\";\n} else {\n    msg.cmd = [\"cp\", \"/etc/suricata/rules/local.rules.ids\", \"/etc/suricata/rules/local.rules\"];\n    msg.mode_text = \"IDS Mode (Alert)\";\n}\n\nmsg.url = \"http://docker-proxy:2375/containers/suricata-ids/exec\";\nmsg.method = \"POST\";\nmsg.payload = {\n    \"AttachStdout\": false,\n    \"AttachStderr\": false,\n    \"Tty\": false,\n    \"Cmd\": msg.cmd\n};\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 360,
+        "y": 1080,
+        "wires": [
+            [
+                "97d8ea2c9302a288"
+            ]
+        ]
+    },
+    {
+        "id": "97d8ea2c9302a288",
+        "type": "http request",
+        "z": "d415d47f74e99da2",
+        "name": "Create CP Exec",
+        "method": "use",
+        "ret": "obj",
+        "paytoqs": "ignore",
+        "url": "",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "insecureHTTPParser": false,
+        "authType": "",
+        "senderr": false,
+        "headers": [],
+        "x": 570,
+        "y": 1080,
+        "wires": [
+            [
+                "9aca90685806f95c"
+            ]
+        ]
+    },
+    {
+        "id": "9aca90685806f95c",
+        "type": "function",
+        "z": "d415d47f74e99da2",
+        "name": "Start CP Exec",
+        "func": "if (!msg.payload || !msg.payload.Id) {\n    return null;\n}\nmsg.url = \"http://docker-proxy:2375/exec/\" + msg.payload.Id + \"/start\";\nmsg.method = \"POST\";\nmsg.payload = {\n    \"Detach\": false,\n    \"Tty\": false\n};\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 760,
+        "y": 1080,
+        "wires": [
+            [
+                "0d680b4937690bdc"
+            ]
+        ]
+    },
+    {
+        "id": "0d680b4937690bdc",
+        "type": "http request",
+        "z": "d415d47f74e99da2",
+        "name": "Run CP Exec",
+        "method": "use",
+        "ret": "txt",
+        "paytoqs": "ignore",
+        "url": "",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "insecureHTTPParser": false,
+        "authType": "",
+        "senderr": false,
+        "headers": [],
+        "x": 940,
+        "y": 1080,
+        "wires": [
+            [
+                "bb318d105a6af2b3"
+            ]
+        ]
+    },
+    {
+        "id": "bb318d105a6af2b3",
+        "type": "function",
+        "z": "d415d47f74e99da2",
+        "name": "Prepare Reload Exec",
+        "func": "msg.url = \"http://docker-proxy:2375/containers/suricata-ids/exec\";\nmsg.method = \"POST\";\nmsg.payload = {\n    \"AttachStdout\": false,\n    \"AttachStderr\": false,\n    \"Tty\": false,\n    \"Cmd\": [\"suricatasc\", \"-c\", \"reload-rules\"]\n};\n// Ensure we pass the mode_text to the end of the flow so the notification is accurate\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 370,
+        "y": 1140,
+        "wires": [
+            [
+                "f62e0f18dbf91dc1"
+            ]
+        ]
+    },
+    {
+        "id": "f62e0f18dbf91dc1",
+        "type": "http request",
+        "z": "d415d47f74e99da2",
+        "name": "Create Reload Exec",
+        "method": "use",
+        "ret": "obj",
+        "paytoqs": "ignore",
+        "url": "",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "insecureHTTPParser": false,
+        "authType": "",
+        "senderr": false,
+        "headers": [],
+        "x": 580,
+        "y": 1140,
+        "wires": [
+            [
+                "7398359bf04b2234"
+            ]
+        ]
+    },
+    {
+        "id": "7398359bf04b2234",
+        "type": "function",
+        "z": "d415d47f74e99da2",
+        "name": "Start Reload Exec",
+        "func": "if (!msg.payload || !msg.payload.Id) {\n    return null;\n}\nmsg.url = \"http://docker-proxy:2375/exec/\" + msg.payload.Id + \"/start\";\nmsg.method = \"POST\";\nmsg.payload = {\n    \"Detach\": false,\n    \"Tty\": false\n};\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 780,
+        "y": 1140,
+        "wires": [
+            [
+                "0f79df0f1ccb8549"
+            ]
+        ]
+    },
+    {
+        "id": "0f79df0f1ccb8549",
+        "type": "http request",
+        "z": "d415d47f74e99da2",
+        "name": "Run Reload Exec",
+        "method": "use",
+        "ret": "txt",
+        "paytoqs": "ignore",
+        "url": "",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "insecureHTTPParser": false,
+        "authType": "",
+        "senderr": false,
+        "headers": [],
+        "x": 970,
+        "y": 1140,
+        "wires": [
+            [
+                "90a21e80e2863965"
+            ]
+        ]
+    },
+    {
+        "id": "90a21e80e2863965",
+        "type": "function",
+        "z": "d415d47f74e99da2",
+        "name": "Format Notification",
+        "func": "msg.payload = \"Suricata successfully switched to: \" + msg.mode_text;\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1180,
+        "y": 1140,
+        "wires": [
+            [
+                "9fa3f1bee18469d1",
+                "280e44875fd04e69"
+            ]
+        ]
+    },
+    {
+        "id": "9fa3f1bee18469d1",
+        "type": "debug",
+        "z": "d415d47f74e99da2",
+        "name": "Suricata Status",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 1370,
+        "y": 1120,
+        "wires": []
+    },
+    {
+        "id": "280e44875fd04e69",
+        "type": "ui-notification",
+        "z": "d415d47f74e99da2",
+        "ui": "8bcc34ca17387ebb",
+        "position": "top right",
+        "colorDefault": false,
+        "color": "#000000",
+        "displayTime": "",
+        "showCountdown": false,
+        "outputs": 1,
+        "allowDismiss": true,
+        "dismissText": "",
+        "allowConfirm": false,
+        "confirmText": "",
+        "raw": false,
+        "className": "",
+        "name": "Notify UI",
+        "x": 1350,
+        "y": 1160,
+        "wires": [
+            []
+        ],
+        "icon": "mdi-shield-check"
+    },
+    {
         "id": "030bec7b7de86264",
         "type": "influxdb out",
         "z": "4acab47cf7e84e94",
@@ -3642,182 +4148,5 @@
         "wires": [
             []
         ]
-    },
-    {
-        "id": "ui_switch_security",
-        "type": "ui-switch",
-        "z": "4acab47cf7e84e94",
-        "name": "Security Mode Switch",
-        "label": "Enable Strict Security Policies",
-        "group": "f57ba6f4611ca27c",
-        "order": 4,
-        "width": 6,
-        "height": 1,
-        "passthru": false,
-        "decouple": false,
-        "topic": "topic",
-        "topicType": "msg",
-        "style": "default",
-        "className": "",
-        "layout": "",
-        "clickableArea": "switch",
-        "onvalue": "true",
-        "onvalueType": "bool",
-        "onicon": "mdi-lock",
-        "oncolor": "success",
-        "offvalue": "false",
-        "offvalueType": "bool",
-        "officon": "mdi-lock-open",
-        "offcolor": "error",
-        "x": 160,
-        "y": 520,
-        "wires": [
-            [
-                "fn_prep_exec_command"
-            ]
-        ]
-    },
-    {
-        "id": "fn_prep_exec_command",
-        "type": "function",
-        "z": "4acab47cf7e84e94",
-        "name": "Prep File Swap Command",
-        "func": "// Tell the Mosquitto container to copy the correct profile over the active mosquitto.conf\nif (msg.payload === true) {\n    msg.cmd = [\"cp\", \"/mosquitto/config/mosquitto_hardened.conf\", \"/mosquitto/config/mosquitto.conf\"];\n    msg.notification_text = \"Broker Hardened & Restarted\";\n} else {\n    msg.cmd = [\"cp\", \"/mosquitto/config/mosquitto_vulnerable.conf\", \"/mosquitto/config/mosquitto.conf\"];\n    msg.notification_text = \"Broker Vulnerable & Restarted\";\n}\n\n// Step 1: Create the Exec instance inside iot_broker\nmsg.url = \"http://docker-proxy:2375/containers/iot_broker/exec\";\nmsg.method = \"POST\";\nmsg.payload = {\n    \"AttachStdout\": false,\n    \"AttachStderr\": false,\n    \"Tty\": false,\n    \"Cmd\": msg.cmd\n};\nreturn msg;",
-        "outputs": 1,
-        "x": 420,
-        "y": 520,
-        "wires": [
-            [
-                "http_create_exec"
-            ]
-        ]
-    },
-    {
-        "id": "http_create_exec",
-        "type": "http request",
-        "z": "4acab47cf7e84e94",
-        "name": "Create Exec",
-        "method": "use",
-        "ret": "obj",
-        "paytoqs": "ignore",
-        "url": "",
-        "tls": "",
-        "persist": false,
-        "proxy": "",
-        "authType": "",
-        "senderr": false,
-        "x": 640,
-        "y": 520,
-        "wires": [
-            [
-                "fn_start_exec"
-            ]
-        ]
-    },
-    {
-        "id": "fn_start_exec",
-        "type": "function",
-        "z": "4acab47cf7e84e94",
-        "name": "Start Exec Command",
-        "func": "// Step 2: Trigger the copy command we just created\nif (msg.payload && msg.payload.Id) {\n    msg.url = \"http://docker-proxy:2375/exec/\" + msg.payload.Id + \"/start\";\n    msg.method = \"POST\";\n    msg.payload = { \"Detach\": false, \"Tty\": false };\n    return msg;\n}",
-        "outputs": 1,
-        "x": 830,
-        "y": 520,
-        "wires": [
-            [
-                "http_start_exec"
-            ]
-        ]
-    },
-    {
-        "id": "http_start_exec",
-        "type": "http request",
-        "z": "4acab47cf7e84e94",
-        "name": "Execute Copy",
-        "method": "use",
-        "ret": "txt",
-        "paytoqs": "ignore",
-        "url": "",
-        "tls": "",
-        "persist": false,
-        "proxy": "",
-        "authType": "",
-        "senderr": false,
-        "x": 1030,
-        "y": 520,
-        "wires": [
-            [
-                "fn_prep_restart"
-            ]
-        ]
-    },
-    {
-        "id": "fn_prep_restart",
-        "type": "function",
-        "z": "4acab47cf7e84e94",
-        "name": "Prep Docker Restart",
-        "func": "// Step 3: Restart Mosquitto so it reads the newly copied file\nmsg.url = \"http://docker-proxy:2375/containers/iot_broker/restart\";\nmsg.method = \"POST\";\nmsg.payload = {};\nreturn msg;",
-        "outputs": 1,
-        "x": 1230,
-        "y": 520,
-        "wires": [
-            [
-                "http_restart_container"
-            ]
-        ]
-    },
-    {
-        "id": "http_restart_container",
-        "type": "http request",
-        "z": "4acab47cf7e84e94",
-        "name": "POST Restart",
-        "method": "use",
-        "ret": "txt",
-        "paytoqs": "ignore",
-        "url": "",
-        "tls": "",
-        "persist": false,
-        "proxy": "",
-        "authType": "",
-        "senderr": false,
-        "x": 1430,
-        "y": 520,
-        "wires": [
-            [
-                "fn_trigger_notification"
-            ]
-        ]
-    },
-    {
-        "id": "fn_trigger_notification",
-        "type": "function",
-        "z": "4acab47cf7e84e94",
-        "name": "Format Toast",
-        "func": "if (msg.statusCode >= 200 && msg.statusCode < 300) {\n    msg.payload = msg.notification_text;\n} else {\n    msg.payload = `Error restarting broker: API returned ${msg.statusCode}`;\n}\nreturn msg;",
-        "outputs": 1,
-        "x": 1620,
-        "y": 520,
-        "wires": [
-            [
-                "ui_notification_security"
-            ]
-        ]
-    },
-    {
-        "id": "ui_notification_security",
-        "type": "ui-notification",
-        "z": "4acab47cf7e84e94",
-        "ui": "8bcc34ca17387ebb",
-        "position": "top right",
-        "displayTime": "3",
-        "outputs": 1,
-        "allowDismiss": true,
-        "name": "Security Toast",
-        "x": 1810,
-        "y": 520,
-        "wires": [
-            []
-        ],
-        "icon": "shield"
     }
 ]

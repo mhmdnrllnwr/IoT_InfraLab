@@ -3,6 +3,13 @@ import argparse
 import sys
 import time
 
+def on_disconnect(client, userdata, rc):
+    if rc != 0:
+        print("\n🚨 CONNECTION BLOCKED: Suricata IPS actively terminated this socket (TCP RST)!")
+        print("🚨 Attack Failed: Cannot maintain session to sniff data.\n")
+        sys.stdout.flush()
+        sys.exit(1)
+
 def on_connect(client, userdata, flags, rc):
     if rc == 0:
         print("Connected to broker! Subscribing to all topics (#)...")
@@ -30,6 +37,7 @@ if __name__ == "__main__":
     
     client = mqtt.Client("rogue_sniffer")
     client.on_connect = on_connect
+    client.on_disconnect = on_disconnect
     client.on_message = on_message
     
     print(f"Connecting to {args.broker}:{args.port}...")

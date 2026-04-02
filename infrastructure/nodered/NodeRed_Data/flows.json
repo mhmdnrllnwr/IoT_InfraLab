@@ -2445,6 +2445,11 @@
         "name": "Cmd: Hping3",
         "func": "msg.cmd = ['hping3', '-S', '-p', '1883', '-c', '1000', '-i', 'u1000', 'mosquitto'];\nreturn msg;",
         "outputs": 1,
+        "timeout": "",
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
         "x": 300,
         "y": 280,
         "wires": [

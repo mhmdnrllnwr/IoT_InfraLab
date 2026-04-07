@@ -240,7 +240,7 @@
         "type": "function",
         "z": "d8c6953bcf076db9",
         "name": "Create Exec tail",
-        "func": "msg.url = 'http://docker-proxy:2375/containers/suricata-ids/exec';\nmsg.method = 'POST';\nmsg.headers = { 'Content-Type': 'application/json' };\nmsg.payload = {\n    'AttachStdout': true,\n    'Tty': true,\n    'Cmd': ['tail', '-n', '15', '/var/log/suricata/eve.json']\n};\nreturn msg;",
+        "func": "msg.url = 'http://docker-proxy:2375/containers/suricata-ids/exec';\nmsg.method = 'POST';\nmsg.headers = { 'Content-Type': 'application/json' };\nmsg.payload = {\n    'AttachStdout': true,\n    'Tty': true,\n    'Cmd': ['sh', '-c', 'grep \\\"\\\\\"event_type\\\\\":\\\\\"alert\\\\\"\\\" /var/log/suricata/eve.json | tail -n 15']\n};\nreturn msg;",
         "outputs": 1,
         "x": 400,
         "y": 400,

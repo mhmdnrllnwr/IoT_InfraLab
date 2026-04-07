@@ -36,7 +36,7 @@
         "id": "suricata_prepare_cp",
         "type": "function",
         "name": "Prepare Rule Swap Exec",
-        "func": "if (msg.payload === true) {\n    msg.cmd = [\"cp\", \"/etc/suricata/rules/local.rules.ips\", \"/etc/suricata/rules/local.rules\"];\n    msg.mode_text = \"IPS Mode (Reject)\";\n} else {\n    msg.cmd = [\"cp\", \"/etc/suricata/rules/local.rules.ids\", \"/etc/suricata/rules/local.rules\"];\n    msg.mode_text = \"IDS Mode (Alert)\";\n}\n\nmsg.url = \"http://docker-proxy:2375/containers/suricata-ids/exec\";\nmsg.method = \"POST\";\nmsg.payload = {\n    \"AttachStdout\": false,\n    \"AttachStderr\": false,\n    \"Tty\": false,\n    \"Cmd\": msg.cmd\n};\nreturn msg;",
+        "func": "if (msg.payload === true) {\n    msg.cmd = [\"cp\", \"/etc/suricata/rules/local.rules.vuln\", \"/etc/suricata/rules/local.rules\"];\n    msg.mode_text = \"Vulnerable Mode (Disabled)\";\n} else {\n    msg.cmd = [\"cp\", \"/etc/suricata/rules/local.rules.ids\", \"/etc/suricata/rules/local.rules\"];\n    msg.mode_text = \"IDS Mode (Alert)\";\n}\n\nmsg.url = \"http://docker-proxy:2375/containers/suricata-ids/exec\";\nmsg.method = \"POST\";\nmsg.payload = {\n    \"AttachStdout\": false,\n    \"AttachStderr\": false,\n    \"Tty\": false,\n    \"Cmd\": msg.cmd\n};\nreturn msg;",
         "outputs": 1,
         "timeout": 0,
         "noerr": 0,

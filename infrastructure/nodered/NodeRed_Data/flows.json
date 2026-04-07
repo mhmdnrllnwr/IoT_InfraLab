@@ -8,17 +8,17 @@
         "env": []
     },
     {
-        "id": "b78d14cc362e1196",
+        "id": "53b83243ce3bfc91",
         "type": "tab",
-        "label": "Cyber Attack Simulation",
+        "label": "Security Ops",
         "disabled": false,
         "info": "",
         "env": []
     },
     {
-        "id": "d415d47f74e99da2",
+        "id": "b78d14cc362e1196",
         "type": "tab",
-        "label": "Security Ops",
+        "label": "Cyber Attack Simulation",
         "disabled": false,
         "info": "",
         "env": []
@@ -40,7 +40,13 @@
         "acceptsClientConfig": [
             "ui-control",
             "ui-notification"
-        ]
+        ],
+        "headerContent": "page",
+        "titleBarStyle": "default",
+        "showReconnectNotification": true,
+        "notificationDisplayTime": 5,
+        "showDisconnectNotification": true,
+        "allowInstall": true
     },
     {
         "id": "c382198a61249f47",
@@ -63,7 +69,32 @@
         "icon": "server",
         "layout": "grid",
         "theme": "c382198a61249f47",
-        "order": 1
+        "breakpoints": [
+            {
+                "name": "Default",
+                "px": "0",
+                "cols": "3"
+            },
+            {
+                "name": "Tablet",
+                "px": "576",
+                "cols": "6"
+            },
+            {
+                "name": "Small Desktop",
+                "px": "768",
+                "cols": "9"
+            },
+            {
+                "name": "Desktop",
+                "px": "1024",
+                "cols": "12"
+            }
+        ],
+        "order": 1,
+        "className": "",
+        "visible": true,
+        "disabled": false
     },
     {
         "id": "ui_group_create",
@@ -99,7 +130,9 @@
         "page": "ui_page_management",
         "width": "6",
         "order": 5,
-        "showTitle": true
+        "showTitle": true,
+        "visible": true,
+        "disabled": false
     },
     {
         "id": "ui_group_node_control",
@@ -181,7 +214,7 @@
         "order": 2,
         "className": "",
         "visible": "true",
-        "disabled": "false"
+        "disabled": false
     },
     {
         "id": "5a633147924a28d1",
@@ -293,16 +326,19 @@
         "type": "ui-group",
         "name": "Active Network Topology (iot_infralab_net)",
         "page": "5a633147924a28d1",
-        "width": "12",
+        "width": "16",
+        "height": "8",
         "order": 1,
         "showTitle": true,
-        "visible": true,
-        "disabled": false
+        "className": "",
+        "visible": "true",
+        "disabled": "false",
+        "groupType": "default"
     },
     {
         "id": "8356bd12d00a4d35",
         "type": "ui-group",
-        "name": "Network Access Control (NAC)",
+        "name": "Security Controls",
         "page": "5a633147924a28d1",
         "width": "6",
         "height": "",
@@ -316,11 +352,11 @@
     {
         "id": "1384ea55c0ba1905",
         "type": "ui-group",
-        "name": "Incident Response Logs & IDS Alerts",
+        "name": "Logs & Rules",
         "page": "5a633147924a28d1",
-        "width": 6,
-        "height": "",
-        "order": 2,
+        "width": "6",
+        "height": "12",
+        "order": 5,
         "showTitle": true,
         "className": "",
         "visible": "true",
@@ -330,7 +366,7 @@
     {
         "id": "cf452f90a4917a01",
         "type": "ui-group",
-        "name": "Suricata IDS Alerts",
+        "name": "Suricata IDPS Alerts",
         "page": "5a633147924a28d1",
         "width": 6,
         "height": 1,
@@ -421,11 +457,11 @@
     {
         "id": "01d38afb921c168e",
         "type": "ui-group",
-        "name": "AI Security Report",
+        "name": "AI Port Vulnerability AI Assessment",
         "page": "5a633147924a28d1",
         "width": 6,
         "height": 1,
-        "order": 5,
+        "order": 2,
         "showTitle": true,
         "className": "",
         "visible": "true",
@@ -2079,24 +2115,1355 @@
         "wires": []
     },
     {
-        "id": "6d74a9d5049a6aac",
+        "id": "fce8349266f9f819",
+        "type": "inject",
+        "z": "53b83243ce3bfc91",
+        "name": "Poll Network",
+        "props": [],
+        "repeat": "3",
+        "crontab": "",
+        "once": true,
+        "onceDelay": 0.5,
+        "topic": "",
+        "x": 100,
+        "y": 60,
+        "wires": [
+            [
+                "fe5f944518faeb35"
+            ]
+        ]
+    },
+    {
+        "id": "fe5f944518faeb35",
+        "type": "http request",
+        "z": "53b83243ce3bfc91",
+        "name": "GET Containers",
+        "method": "GET",
+        "ret": "obj",
+        "paytoqs": "ignore",
+        "url": "http://docker-proxy:2375/containers/json?all=true",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "authType": "",
+        "senderr": false,
+        "x": 300,
+        "y": 60,
+        "wires": [
+            [
+                "1f8ece1238ec50d0"
+            ]
+        ]
+    },
+    {
+        "id": "1f8ece1238ec50d0",
+        "type": "function",
+        "z": "53b83243ce3bfc91",
+        "name": "Parse IPs & Update Map",
+        "func": "let html = '<table style=\"width:100%; text-align:left; border-collapse:collapse; color:#e2e8f0;\"><tr style=\"border-bottom:1px solid #555;\"><th style=\"padding:6px;\">Node Name</th><th style=\"padding:6px;\">IP Address</th><th style=\"padding:6px;\">State</th></tr>';\nlet ipMap = {};\n\nif (msg.payload && Array.isArray(msg.payload)) {\n    msg.payload.forEach(c => {\n        let name = c.Names[0].replace('/','');\n        let nets = (c.NetworkSettings && c.NetworkSettings.Networks) ? c.NetworkSettings.Networks : {};\n        let netInfo = nets['iot_infralab_net'];\n        let ip = netInfo ? netInfo.IPAddress : null;\n        let state = c.State;\n        \n        if (ip) {\n            html += `<tr style=\"border-bottom:1px solid #333;\"><td style=\"padding:6px;\">${name}</td><td style=\"padding:6px;color:#3b82f6;font-family:monospace;font-weight:bold;\">${ip}</td><td style=\"padding:6px;color:#10b981;\">${state}</td></tr>`;\n            ipMap[ip] = name;\n        } else {\n            html += `<tr style=\"border-bottom:1px solid #333;\"><td style=\"padding:6px;color:#64748b;\">${name}</td><td style=\"padding:6px;color:#ef4444;font-family:monospace;\">Disconnected</td><td style=\"padding:6px;color:#64748b;\">${state}</td></tr>`;\n        }\n    });\n}\nhtml += '</table>';\n\n// Save the live active map globally so Suricata alerts can check against it\nflow.set('network_ip_map', ipMap);\n\nreturn { payload: html };",
+        "outputs": 1,
+        "x": 530,
+        "y": 60,
+        "wires": [
+            [
+                "e2536164d2e97496"
+            ]
+        ]
+    },
+    {
+        "id": "e2536164d2e97496",
         "type": "ui-template",
-        "z": "b78d14cc362e1196",
-        "group": "a70e7057f4859509",
-        "name": "Hacker Terminal",
+        "z": "53b83243ce3bfc91",
+        "group": "426c92f3f4d5bb85",
+        "name": "Live Topology Table",
         "order": 1,
         "width": 0,
         "height": 0,
-        "format": "<div style=\"background:#0f172a;color:#10b981;padding:15px;height:450px;overflow-y:auto;font-family:monospace;margin:0;border-radius:4px;\"><h3>root@kali-linux:~#</h3><pre style=\"white-space:pre-wrap;\" v-text=\"msg.payload||'Awaiting target node deployment...' \"></pre></div>",
+        "format": "<div style=\"padding:10px; background:#1e1e1e; border-radius:6px; color:#e2e8f0; max-height:200px; overflow-y:auto;\" v-html=\"msg.payload\"></div>",
         "storeOutMessages": true,
         "passthru": true,
         "resendOnRefresh": true,
         "templateScope": "local",
         "className": "",
-        "x": 1200,
-        "y": 280,
+        "x": 780,
+        "y": 60,
         "wires": [
             []
+        ]
+    },
+    {
+        "id": "be08aa46efe093b0",
+        "type": "ui-dropdown",
+        "z": "53b83243ce3bfc91",
+        "group": "8356bd12d00a4d35",
+        "name": "Target Dropdown",
+        "label": "Select Attacker IP",
+        "tooltip": "Select the IP to kick off the network",
+        "order": 4,
+        "width": 0,
+        "height": 0,
+        "passthru": true,
+        "multiple": false,
+        "options": [],
+        "payload": "",
+        "className": "",
+        "x": 1470,
+        "y": 460,
+        "wires": [
+            [
+                "e917f845bce7fc76"
+            ]
+        ]
+    },
+    {
+        "id": "e917f845bce7fc76",
+        "type": "function",
+        "z": "53b83243ce3bfc91",
+        "name": "Save Target ID",
+        "func": "if(msg.payload) flow.set('soc_target', msg.payload);\nreturn msg;",
+        "outputs": 1,
+        "x": 1680,
+        "y": 460,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "e3ee0ec9f1edc7d9",
+        "type": "inject",
+        "z": "53b83243ce3bfc91",
+        "name": "Poll Suricata Alerts",
+        "props": [],
+        "repeat": "3.5",
+        "crontab": "",
+        "once": true,
+        "onceDelay": 0.1,
+        "topic": "",
+        "x": 162,
+        "y": 380.9999885559082,
+        "wires": [
+            [
+                "99813c80a59c7673"
+            ]
+        ]
+    },
+    {
+        "id": "99813c80a59c7673",
+        "type": "function",
+        "z": "53b83243ce3bfc91",
+        "name": "Create Exec tail",
+        "func": "msg.url = 'http://docker-proxy:2375/containers/suricata-ids/exec';\nmsg.method = 'POST';\nmsg.headers = { 'Content-Type': 'application/json' };\nmsg.payload = {\n    'AttachStdout': true,\n    'Tty': true,\n    'Cmd': ['sh', '-c', 'grep \\\"\\\\\"event_type\\\\\":\\\\\"alert\\\\\"\\\" /var/log/suricata/eve.json | tail -n 15']\n};\nreturn msg;",
+        "outputs": 1,
+        "x": 362,
+        "y": 380.9999885559082,
+        "wires": [
+            [
+                "21cbe85afb4cbc19"
+            ]
+        ]
+    },
+    {
+        "id": "21cbe85afb4cbc19",
+        "type": "http request",
+        "z": "53b83243ce3bfc91",
+        "name": "POST Create Exec",
+        "method": "use",
+        "ret": "obj",
+        "paytoqs": "ignore",
+        "url": "",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "authType": "",
+        "senderr": false,
+        "x": 552,
+        "y": 380.9999885559082,
+        "wires": [
+            [
+                "7cb0a20bb4374f33"
+            ]
+        ]
+    },
+    {
+        "id": "7cb0a20bb4374f33",
+        "type": "function",
+        "z": "53b83243ce3bfc91",
+        "name": "Start Exec",
+        "func": "if (msg.payload && msg.payload.Id) {\n    msg.url = 'http://docker-proxy:2375/exec/' + msg.payload.Id + '/start';\n    msg.method = 'POST';\n    msg.headers = { 'Content-Type': 'application/json' };\n    msg.payload = { 'Detach': false, 'Tty': true };\n    return msg;\n}",
+        "outputs": 1,
+        "x": 732,
+        "y": 380.9999885559082,
+        "wires": [
+            [
+                "08cccde04215ef12"
+            ]
+        ]
+    },
+    {
+        "id": "08cccde04215ef12",
+        "type": "http request",
+        "z": "53b83243ce3bfc91",
+        "name": "POST Start Exec",
+        "method": "use",
+        "ret": "txt",
+        "paytoqs": "ignore",
+        "url": "",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "authType": "",
+        "senderr": false,
+        "x": 912,
+        "y": 380.9999885559082,
+        "wires": [
+            [
+                "bea7bfa2b9cc96e8"
+            ]
+        ]
+    },
+    {
+        "id": "6c61d37b156ddc1f",
+        "type": "function",
+        "z": "53b83243ce3bfc91",
+        "name": "Correlate Attackers for NAC",
+        "func": "let attackers = msg.payload || [];\nlet ipMap = flow.get('network_ip_map') || {};\nlet options = [];\n\n// If there are no attackers, completely hide the dropdown options\nif (attackers.length === 0) {\n    return { options: [], payload: null };\n}\n\n// If attackers exist, map their IPs to live container names for the dropdown\nattackers.forEach(ip => {\n    let containerName = ipMap[ip];\n    if (containerName) {\n         options.push({ \n             label: `🚨 ${ip} (Node: ${containerName})`, \n             value: containerName, \n             type: 'str' \n         });\n    } else {\n        // In case the IPs have left the network, or it's external\n         options.push({ \n             label: `🚨 ${ip} (Unknown Device)`, \n             value: ip, \n             type: 'str' \n         });\n    }\n});\n\n// Auto-select the first attacker just to make the UI faster for the SOC operator\nlet firstTarget = options.length > 0 ? options[0].value : null;\nreturn { options: options, payload: firstTarget };",
+        "outputs": 1,
+        "x": 1220,
+        "y": 460,
+        "wires": [
+            [
+                "be08aa46efe093b0"
+            ]
+        ]
+    },
+    {
+        "id": "82b8df3e5e81b0b3",
+        "type": "ui-button",
+        "z": "53b83243ce3bfc91",
+        "group": "cf452f90a4917a01",
+        "name": "Clear Alerts Btn",
+        "label": "Acknowledge & Clear Alerts",
+        "order": 2,
+        "width": 6,
+        "height": 0,
+        "emulateClick": false,
+        "tooltip": "Wipes the eve.json log file in the container",
+        "color": "white",
+        "bgcolor": "#4b5563",
+        "className": "",
+        "icon": "fa-trash",
+        "iconPosition": "left",
+        "payload": "",
+        "payloadType": "str",
+        "topic": "topic",
+        "topicType": "msg",
+        "x": 120,
+        "y": 460,
+        "wires": [
+            [
+                "50091de1ff4a7ac1"
+            ]
+        ]
+    },
+    {
+        "id": "50091de1ff4a7ac1",
+        "type": "function",
+        "z": "53b83243ce3bfc91",
+        "name": "Prep File Wipe",
+        "func": "msg.url = 'http://docker-proxy:2375/containers/suricata-ids/exec';\nmsg.method = 'POST';\nmsg.headers = { 'Content-Type': 'application/json' };\n// This command safely empties the log file inside the container\nmsg.payload = {\n    'AttachStdout': true,\n    'Tty': true,\n    'Cmd': ['sh', '-c', 'echo \"\" > /var/log/suricata/eve.json']\n};\nreturn msg;",
+        "outputs": 1,
+        "x": 320,
+        "y": 460,
+        "wires": [
+            [
+                "69cb967219e875c1"
+            ]
+        ]
+    },
+    {
+        "id": "69cb967219e875c1",
+        "type": "http request",
+        "z": "53b83243ce3bfc91",
+        "name": "Create Exec",
+        "method": "use",
+        "ret": "obj",
+        "paytoqs": "ignore",
+        "url": "",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "authType": "",
+        "senderr": false,
+        "x": 510,
+        "y": 460,
+        "wires": [
+            [
+                "4c843d3957eeccd7"
+            ]
+        ]
+    },
+    {
+        "id": "4c843d3957eeccd7",
+        "type": "function",
+        "z": "53b83243ce3bfc91",
+        "name": "Start File Wipe",
+        "func": "if (msg.payload && msg.payload.Id) {\n    msg.url = 'http://docker-proxy:2375/exec/' + msg.payload.Id + '/start';\n    msg.method = 'POST';\n    msg.headers = { 'Content-Type': 'application/json' };\n    msg.payload = { 'Detach': false, 'Tty': true };\n    return msg;\n}",
+        "outputs": 1,
+        "x": 700,
+        "y": 460,
+        "wires": [
+            [
+                "f317249ac5d48a3e"
+            ]
+        ]
+    },
+    {
+        "id": "f317249ac5d48a3e",
+        "type": "http request",
+        "z": "53b83243ce3bfc91",
+        "name": "Execute Wipe",
+        "method": "use",
+        "ret": "txt",
+        "paytoqs": "ignore",
+        "url": "",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "authType": "",
+        "senderr": false,
+        "x": 900,
+        "y": 460,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "26a3f6eb20f9e9a7",
+        "type": "ui-dropdown",
+        "z": "53b83243ce3bfc91",
+        "group": "01d38afb921c168e",
+        "name": "Model Selector",
+        "label": "Select AI Model",
+        "order": 1,
+        "width": "6",
+        "height": "1",
+        "passthru": true,
+        "multiple": false,
+        "chips": false,
+        "clearable": false,
+        "options": [
+            {
+                "label": "Gemini 3.1",
+                "value": "gemini-3.1-flash-lite-preview",
+                "type": "str"
+            },
+            {
+                "label": "Gemini 3.0 Flash",
+                "value": "gemini-3-flash-preview",
+                "type": "str"
+            },
+            {
+                "label": "Gemini 1.5 Flash (Stable)",
+                "value": "gemini-flash-latest",
+                "type": "str"
+            }
+        ],
+        "topic": "lab/security/model",
+        "topicType": "str",
+        "className": "",
+        "typeIsComboBox": true,
+        "msgTrigger": "onChange",
+        "x": 120,
+        "y": 560,
+        "wires": [
+            [
+                "aaa0320e4df4c658"
+            ]
+        ]
+    },
+    {
+        "id": "aaa0320e4df4c658",
+        "type": "mqtt out",
+        "z": "53b83243ce3bfc91",
+        "name": "",
+        "topic": "lab/security/model",
+        "qos": "1",
+        "retain": "true",
+        "broker": "ff_mqtt_broker",
+        "x": 370,
+        "y": 560,
+        "wires": []
+    },
+    {
+        "id": "dd7f612755519e71",
+        "type": "ui-button",
+        "z": "53b83243ce3bfc91",
+        "group": "01d38afb921c168e",
+        "name": "Trigger Scan",
+        "label": "Run Security Audit 🛡️",
+        "order": 2,
+        "width": "3",
+        "height": "1",
+        "emulateClick": false,
+        "className": "",
+        "icon": "gesture-tap",
+        "iconPosition": "left",
+        "payload": "SCAN_NOW",
+        "payloadType": "str",
+        "topic": "lab/security/trigger",
+        "topicType": "str",
+        "buttonColor": "",
+        "textColor": "",
+        "iconColor": "",
+        "enableClick": true,
+        "enablePointerdown": false,
+        "pointerdownPayload": "",
+        "pointerdownPayloadType": "str",
+        "enablePointerup": false,
+        "pointerupPayload": "",
+        "pointerupPayloadType": "str",
+        "x": 120,
+        "y": 620,
+        "wires": [
+            [
+                "43c1d8d02a89e143"
+            ]
+        ]
+    },
+    {
+        "id": "43c1d8d02a89e143",
+        "type": "mqtt out",
+        "z": "53b83243ce3bfc91",
+        "name": "",
+        "topic": "lab/security/trigger",
+        "qos": "",
+        "retain": "",
+        "broker": "ff_mqtt_broker",
+        "x": 370,
+        "y": 620,
+        "wires": []
+    },
+    {
+        "id": "c547116e17d82acc",
+        "type": "mqtt in",
+        "z": "53b83243ce3bfc91",
+        "name": "",
+        "topic": "lab/security/status",
+        "qos": "2",
+        "datatype": "utf8",
+        "broker": "ff_mqtt_broker",
+        "inputs": 0,
+        "x": 130,
+        "y": 700,
+        "wires": [
+            [
+                "51a079a823aeb610"
+            ]
+        ]
+    },
+    {
+        "id": "51a079a823aeb610",
+        "type": "ui-text",
+        "z": "53b83243ce3bfc91",
+        "group": "01d38afb921c168e",
+        "order": 3,
+        "width": "3",
+        "height": "1",
+        "name": "Status Display",
+        "label": "Auditor Status",
+        "format": "{{msg.payload}}",
+        "x": 380,
+        "y": 700,
+        "wires": []
+    },
+    {
+        "id": "e766ae52683828ef",
+        "type": "mqtt in",
+        "z": "53b83243ce3bfc91",
+        "name": "",
+        "topic": "lab/security/report",
+        "qos": "2",
+        "datatype": "utf8",
+        "broker": "ff_mqtt_broker",
+        "inputs": 0,
+        "x": 130,
+        "y": 780,
+        "wires": [
+            [
+                "7b63cf1e789c0bef",
+                "04be91e6f3722b0f"
+            ]
+        ]
+    },
+    {
+        "id": "7b63cf1e789c0bef",
+        "type": "debug",
+        "z": "53b83243ce3bfc91",
+        "name": "debug 1",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 300,
+        "y": 900,
+        "wires": []
+    },
+    {
+        "id": "04be91e6f3722b0f",
+        "type": "ui-template",
+        "z": "53b83243ce3bfc91",
+        "group": "01d38afb921c168e",
+        "page": "",
+        "ui": "",
+        "name": "AI Security Summary",
+        "order": 4,
+        "width": 0,
+        "height": 0,
+        "head": "",
+        "format": "<div style=\"font-family: sans-serif; line-height: 1.5;\">\n    <div v-html=\"msg.payload\"></div>\n</div>",
+        "storeOutMessages": true,
+        "passthru": true,
+        "resendOnRefresh": true,
+        "templateScope": "local",
+        "className": "",
+        "x": 420,
+        "y": 780,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "0f902d13eb7aaa73",
+        "type": "function",
+        "z": "53b83243ce3bfc91",
+        "name": "Prep Suricata Restart",
+        "func": "// Step 4: Restart Suricata so it re-attaches to Mosquitto's network space\nmsg.url = \"http://docker-proxy:2375/containers/suricata-ids/restart\";\nmsg.method = \"POST\";\nmsg.payload = {};\nreturn msg;",
+        "outputs": 1,
+        "x": 1640,
+        "y": 1000,
+        "wires": [
+            [
+                "3f91e3e609243315"
+            ]
+        ]
+    },
+    {
+        "id": "3f91e3e609243315",
+        "type": "http request",
+        "z": "53b83243ce3bfc91",
+        "name": "POST Restart Suricata",
+        "method": "use",
+        "ret": "txt",
+        "paytoqs": "ignore",
+        "url": "",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "authType": "",
+        "senderr": false,
+        "x": 1900,
+        "y": 1000,
+        "wires": [
+            [
+                "2a6bd4127eb59aec"
+            ]
+        ]
+    },
+    {
+        "id": "c227d111b8fa867d",
+        "type": "ui-switch",
+        "z": "53b83243ce3bfc91",
+        "name": "Change Mosquitto Configs",
+        "label": "Change Mosquitto Configs",
+        "group": "8356bd12d00a4d35",
+        "order": 1,
+        "width": 6,
+        "height": 1,
+        "passthru": false,
+        "decouple": false,
+        "topic": "topic",
+        "topicType": "msg",
+        "style": "default",
+        "className": "",
+        "layout": "",
+        "clickableArea": "switch",
+        "onvalue": "true",
+        "onvalueType": "bool",
+        "onicon": "mdi-lock",
+        "oncolor": "success",
+        "offvalue": "false",
+        "offvalueType": "bool",
+        "officon": "mdi-lock-open",
+        "offcolor": "error",
+        "x": 160,
+        "y": 1000,
+        "wires": [
+            [
+                "6125bf9ac8505c34"
+            ]
+        ]
+    },
+    {
+        "id": "6125bf9ac8505c34",
+        "type": "function",
+        "z": "53b83243ce3bfc91",
+        "name": "Prep File Swap Command",
+        "func": "// Tell the Mosquitto container to copy the correct profile over the active mosquitto.conf\nif (msg.payload === true) {\n    msg.cmd = [\"cp\", \"/mosquitto/config/mosquitto_hardened.conf\", \"/mosquitto/config/mosquitto.conf\"];\n    msg.notification_text = \"Broker Hardened & Restarted\";\n} else {\n    msg.cmd = [\"cp\", \"/mosquitto/config/mosquitto_vulnerable.conf\", \"/mosquitto/config/mosquitto.conf\"];\n    msg.notification_text = \"Broker Vulnerable & Restarted\";\n}\n\n// Step 1: Create the Exec instance inside iot_broker\nmsg.url = \"http://docker-proxy:2375/containers/iot_broker/exec\";\nmsg.method = \"POST\";\nmsg.payload = {\n    \"AttachStdout\": false,\n    \"AttachStderr\": false,\n    \"Tty\": false,\n    \"Cmd\": msg.cmd\n};\nreturn msg;",
+        "outputs": 1,
+        "x": 400,
+        "y": 1000,
+        "wires": [
+            [
+                "15f8c63dc688b354"
+            ]
+        ]
+    },
+    {
+        "id": "15f8c63dc688b354",
+        "type": "http request",
+        "z": "53b83243ce3bfc91",
+        "name": "Create Exec",
+        "method": "use",
+        "ret": "obj",
+        "paytoqs": "ignore",
+        "url": "",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "authType": "",
+        "senderr": false,
+        "x": 620,
+        "y": 1000,
+        "wires": [
+            [
+                "f58689c59ff854ed"
+            ]
+        ]
+    },
+    {
+        "id": "f58689c59ff854ed",
+        "type": "function",
+        "z": "53b83243ce3bfc91",
+        "name": "Start Exec Command",
+        "func": "// Step 2: Trigger the copy command we just created\nif (msg.payload && msg.payload.Id) {\n    msg.url = \"http://docker-proxy:2375/exec/\" + msg.payload.Id + \"/start\";\n    msg.method = \"POST\";\n    msg.payload = { \"Detach\": false, \"Tty\": false };\n    return msg;\n}",
+        "outputs": 1,
+        "x": 810,
+        "y": 1000,
+        "wires": [
+            [
+                "7d8b9dc089ad3abc"
+            ]
+        ]
+    },
+    {
+        "id": "7d8b9dc089ad3abc",
+        "type": "http request",
+        "z": "53b83243ce3bfc91",
+        "name": "Execute Copy",
+        "method": "use",
+        "ret": "txt",
+        "paytoqs": "ignore",
+        "url": "",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "authType": "",
+        "senderr": false,
+        "x": 1010,
+        "y": 1000,
+        "wires": [
+            [
+                "6f35b840280857d5"
+            ]
+        ]
+    },
+    {
+        "id": "6f35b840280857d5",
+        "type": "function",
+        "z": "53b83243ce3bfc91",
+        "name": "Prep Docker Restart",
+        "func": "// Step 3: Restart Mosquitto so it reads the newly copied file\nmsg.url = \"http://docker-proxy:2375/containers/iot_broker/restart\";\nmsg.method = \"POST\";\nmsg.payload = {};\nreturn msg;",
+        "outputs": 1,
+        "x": 1210,
+        "y": 1000,
+        "wires": [
+            [
+                "94400dfbe11a7123"
+            ]
+        ]
+    },
+    {
+        "id": "94400dfbe11a7123",
+        "type": "http request",
+        "z": "53b83243ce3bfc91",
+        "name": "POST Restart",
+        "method": "use",
+        "ret": "txt",
+        "paytoqs": "ignore",
+        "url": "",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "authType": "",
+        "senderr": false,
+        "x": 1410,
+        "y": 1000,
+        "wires": [
+            [
+                "0f902d13eb7aaa73"
+            ]
+        ]
+    },
+    {
+        "id": "3710f20e7818afc3",
+        "type": "ui-switch",
+        "z": "53b83243ce3bfc91",
+        "name": "Change Suricata Profile",
+        "label": "Change Suricata Profile",
+        "group": "8356bd12d00a4d35",
+        "order": 2,
+        "width": 0,
+        "height": 0,
+        "passthru": true,
+        "decouple": false,
+        "topic": "topic",
+        "topicType": "msg",
+        "style": "",
+        "className": "",
+        "layout": "",
+        "clickableArea": "switch",
+        "onvalue": "true",
+        "onvalueType": "bool",
+        "onicon": "",
+        "oncolor": "",
+        "offvalue": "false",
+        "offvalueType": "bool",
+        "officon": "",
+        "offcolor": "",
+        "x": 150,
+        "y": 1080,
+        "wires": [
+            [
+                "791108ba526ec331"
+            ]
+        ]
+    },
+    {
+        "id": "791108ba526ec331",
+        "type": "function",
+        "z": "53b83243ce3bfc91",
+        "name": "Prepare Rule Swap Exec",
+        "func": "if (msg.payload === true) {\n    msg.cmd = [\"cp\", \"/etc/suricata/rules/local.rules.ids\", \"/etc/suricata/rules/local.rules\"];\n    msg.mode_text = \"IDS Mode (Alert)\";\n} else {\n    msg.cmd = [\"cp\", \"/etc/suricata/rules/local.rules.vuln\", \"/etc/suricata/rules/local.rules\"];\n    msg.mode_text = \"Vulnerable Mode\";\n}\n\nmsg.url = \"http://docker-proxy:2375/containers/suricata-ids/exec\";\nmsg.method = \"POST\";\nmsg.payload = {\n    \"AttachStdout\": false,\n    \"AttachStderr\": false,\n    \"Tty\": false,\n    \"Cmd\": msg.cmd\n};\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 360,
+        "y": 1080,
+        "wires": [
+            [
+                "d785a52144bd695c"
+            ]
+        ]
+    },
+    {
+        "id": "d785a52144bd695c",
+        "type": "http request",
+        "z": "53b83243ce3bfc91",
+        "name": "Create CP Exec",
+        "method": "use",
+        "ret": "obj",
+        "paytoqs": "ignore",
+        "url": "",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "insecureHTTPParser": false,
+        "authType": "",
+        "senderr": false,
+        "headers": [],
+        "x": 570,
+        "y": 1080,
+        "wires": [
+            [
+                "badcf84e1dc568e6"
+            ]
+        ]
+    },
+    {
+        "id": "badcf84e1dc568e6",
+        "type": "function",
+        "z": "53b83243ce3bfc91",
+        "name": "Start CP Exec",
+        "func": "if (!msg.payload || !msg.payload.Id) {\n    return null;\n}\nmsg.url = \"http://docker-proxy:2375/exec/\" + msg.payload.Id + \"/start\";\nmsg.method = \"POST\";\nmsg.payload = {\n    \"Detach\": false,\n    \"Tty\": false\n};\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 760,
+        "y": 1080,
+        "wires": [
+            [
+                "2d1144a69f01e12d"
+            ]
+        ]
+    },
+    {
+        "id": "2d1144a69f01e12d",
+        "type": "http request",
+        "z": "53b83243ce3bfc91",
+        "name": "Run CP Exec",
+        "method": "use",
+        "ret": "txt",
+        "paytoqs": "ignore",
+        "url": "",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "insecureHTTPParser": false,
+        "authType": "",
+        "senderr": false,
+        "headers": [],
+        "x": 940,
+        "y": 1080,
+        "wires": [
+            [
+                "c6fe4759fd05c9e5"
+            ]
+        ]
+    },
+    {
+        "id": "c6fe4759fd05c9e5",
+        "type": "function",
+        "z": "53b83243ce3bfc91",
+        "name": "Prepare Reload Exec",
+        "func": "msg.url = \"http://docker-proxy:2375/containers/suricata-ids/exec\";\nmsg.method = \"POST\";\nmsg.payload = {\n    \"AttachStdout\": false,\n    \"AttachStderr\": false,\n    \"Tty\": false,\n    \"Cmd\": [\"suricatasc\", \"-c\", \"reload-rules\"]\n};\n// Ensure we pass the mode_text to the end of the flow so the notification is accurate\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 370,
+        "y": 1140,
+        "wires": [
+            [
+                "9cbfb443c4c7f83f"
+            ]
+        ]
+    },
+    {
+        "id": "9cbfb443c4c7f83f",
+        "type": "http request",
+        "z": "53b83243ce3bfc91",
+        "name": "Create Reload Exec",
+        "method": "use",
+        "ret": "obj",
+        "paytoqs": "ignore",
+        "url": "",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "insecureHTTPParser": false,
+        "authType": "",
+        "senderr": false,
+        "headers": [],
+        "x": 580,
+        "y": 1140,
+        "wires": [
+            [
+                "c6b40dfb18936b46"
+            ]
+        ]
+    },
+    {
+        "id": "c6b40dfb18936b46",
+        "type": "function",
+        "z": "53b83243ce3bfc91",
+        "name": "Start Reload Exec",
+        "func": "if (!msg.payload || !msg.payload.Id) {\n    return null;\n}\nmsg.url = \"http://docker-proxy:2375/exec/\" + msg.payload.Id + \"/start\";\nmsg.method = \"POST\";\nmsg.payload = {\n    \"Detach\": false,\n    \"Tty\": false\n};\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 780,
+        "y": 1140,
+        "wires": [
+            [
+                "0bf095aaca6eaae8"
+            ]
+        ]
+    },
+    {
+        "id": "0bf095aaca6eaae8",
+        "type": "http request",
+        "z": "53b83243ce3bfc91",
+        "name": "Run Reload Exec",
+        "method": "use",
+        "ret": "txt",
+        "paytoqs": "ignore",
+        "url": "",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "insecureHTTPParser": false,
+        "authType": "",
+        "senderr": false,
+        "headers": [],
+        "x": 970,
+        "y": 1140,
+        "wires": [
+            [
+                "8b4ae8c2eab34a92"
+            ]
+        ]
+    },
+    {
+        "id": "8b4ae8c2eab34a92",
+        "type": "function",
+        "z": "53b83243ce3bfc91",
+        "name": "Format Notification",
+        "func": "msg.topic = 'system_log';\nmsg.payload = \"🛡️ SURICATA EVENT: Ruleset automatically swapped to [\" + msg.mode_text + \"]\";\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1180,
+        "y": 1140,
+        "wires": [
+            [
+                "f101078e40659b3c",
+                "5a9e7b1d4c3ffce4"
+            ]
+        ]
+    },
+    {
+        "id": "f101078e40659b3c",
+        "type": "debug",
+        "z": "53b83243ce3bfc91",
+        "name": "Suricata Status",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 1370,
+        "y": 1120,
+        "wires": []
+    },
+    {
+        "id": "5a9e7b1d4c3ffce4",
+        "type": "ui-template",
+        "z": "53b83243ce3bfc91",
+        "group": "1384ea55c0ba1905",
+        "page": "",
+        "ui": "",
+        "name": "SOC Log View",
+        "order": 1,
+        "width": "0",
+        "height": "0",
+        "format": "<template>\n    <div class=\"soc-container\">\n        \n        <div class=\"sys-logs-wrapper\">\n            <div class=\"sys-log-header\">\n                <v-icon icon=\"mdi-console-line\" class=\"icon-space\"></v-icon> SOC AUDIT LOG (ACTIONS & ALERTS)\n            </div>\n            <div class=\"sys-log-content\">\n                <div v-if=\"logs.length === 0\" style=\"color: #64748b;\">Awaiting operator actions...</div>\n                <div v-for=\"(log, index) in logs\" :key=\"index\" class=\"log-entry\">\n                    <span class=\"log-time\">{{ log.time }}</span> \n                    <span class=\"log-msg\">{{ log.text }}</span>\n                </div>\n            </div>\n        </div>\n\n        \n        <div v-if=\"!configs?.mosquitto\" class=\"waiting\">\n            Awaiting live configuration sync...\n        </div>\n        \n        <div v-else class=\"tables-wrapper\">\n            <table class=\"soc-table mosq-table\">\n                <thead>\n                    <tr>\n                        <th>\n                            <v-icon icon=\"mdi-message-text-outline\" class=\"icon-space\"></v-icon> \n                            iot_broker : /mosquitto/config/mosquitto.conf\n                        </th>\n                    </tr>\n                </thead>\n                <tbody>\n                    <tr>\n                        <td><pre>{{ configs.mosquitto }}</pre></td>\n                    </tr>\n                </tbody>\n            </table>\n\n            <table class=\"soc-table suri-table\">\n                <thead>\n                    <tr>\n                        <th>\n                            <v-icon icon=\"mdi-shield-check\" class=\"icon-space\"></v-icon> \n                            suricata-ids : /etc/suricata/rules/local.rules\n                        </th>\n                    </tr>\n                </thead>\n                <tbody>\n                    <tr>\n                        <td><pre>{{ configs.suricata }}</pre></td>\n                    </tr>\n                </tbody>\n            </table>\n        </div>\n    </div>\n</template>\n\n<script>\nexport default {\n    data() {\n        return {\n            configs: { mosquitto: '', suricata: '' },\n            logs: []\n        }\n    },\n    watch: {\n        msg: {\n            deep: true,\n            handler(newMsg) {\n                if (!newMsg) return;\n                \n                // Handle new System Log Events\n                if (newMsg.topic === 'system_log') {\n                    const timeStr = new Date().toLocaleTimeString();\n                    this.logs.unshift({ time: `[${timeStr}]`, text: newMsg.payload });\n                    \n                    // Keep only the last 8 events to prevent the UI from getting too tall\n                    if (this.logs.length > 8) this.logs.pop();\n                } \n                // Handle Live Docker Config Polling\n                else if (newMsg.payload && newMsg.payload.mosquitto !== undefined) {\n                    this.configs = newMsg.payload;\n                }\n            }\n        }\n    }\n}\n</script>\n\n<style>\n/* Base Container */\n.soc-container {\n    width: 100%;\n    height: 100%;\n    padding: 15px;\n    background-color: #121212;\n    border-radius: 6px;\n    box-sizing: border-box;\n    overflow-y: auto;\n}\n.waiting {\n    text-align: center;\n    color: #64748b;\n    margin-top: 20px;\n    font-family: sans-serif;\n}\n.tables-wrapper {\n    display: flex;\n    flex-direction: column;\n    gap: 20px;\n}\n\n/* Global Table Styles */\n.soc-table {\n    width: 100%;\n    border-collapse: collapse;\n    font-family: sans-serif;\n    background-color: #1e293b;\n    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.5);\n}\n.soc-table th {\n    padding: 12px;\n    text-align: left;\n    color: #f1f5f9;\n    font-size: 14px;\n    font-weight: 600;\n}\n.soc-table td {\n    background-color: #0f172a;\n    padding: 15px;\n}\n.soc-table pre {\n    margin: 0;\n    font-family: monospace;\n    white-space: pre-wrap;\n    word-wrap: break-word;\n    font-size: 13px;\n}\n.icon-space { margin-right: 8px; }\n\n/* Mosquitto Specific Colors */\n.mosq-table th { border-left: 4px solid #3b82f6; }\n.mosq-table th .v-icon { color: #3b82f6; }\n.mosq-table pre { color: #38bdf8; }\n\n/* Suricata Specific Colors */\n.suri-table th { border-left: 4px solid #ef4444; }\n.suri-table th .v-icon { color: #ef4444; }\n.suri-table pre { color: #10b981; }\n\n/* --- NEW: System Logs Styles --- */\n.sys-logs-wrapper {\n    margin-bottom: 20px;\n    background-color: #1e293b;\n    border-radius: 4px;\n    border-left: 4px solid #f59e0b; /* Amber alert color */\n    box-shadow: 0 4px 6px -1px rgba(0,0,0,0.5);\n}\n.sys-log-header {\n    padding: 10px 12px;\n    color: #f1f5f9;\n    font-weight: 600;\n    font-size: 14px;\n    background-color: rgba(0,0,0,0.2);\n    border-bottom: 1px solid #334155;\n}\n.sys-log-content {\n    padding: 12px;\n    font-family: monospace;\n    font-size: 13px;\n    max-height: 140px;\n    overflow-y: auto;\n}\n.log-entry { margin-bottom: 6px; }\n.log-time { color: #94a3b8; margin-right: 8px; }\n.log-msg { color: #fbbf24; }\n</style>",
+        "storeOutMessages": true,
+        "passthru": true,
+        "resendOnRefresh": true,
+        "templateScope": "local",
+        "className": "",
+        "x": 1240,
+        "y": 160,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "2a6bd4127eb59aec",
+        "type": "function",
+        "z": "53b83243ce3bfc91",
+        "name": "Format Toast",
+        "func": "msg.topic = 'system_log';\nif (msg.statusCode >= 200 && msg.statusCode < 300) {\n    msg.payload = \"🔒 MOSQUITTO EVENT: \" + msg.notification_text;\n} else {\n    msg.payload = `❌ MOSQUITTO ERROR: Failed to restart broker (API returned ${msg.statusCode})`;\n}\nreturn msg;",
+        "outputs": 1,
+        "x": 1650,
+        "y": 1080,
+        "wires": [
+            [
+                "5a9e7b1d4c3ffce4"
+            ]
+        ]
+    },
+    {
+        "id": "a32b63ed2ad62aa1",
+        "type": "ui-switch",
+        "z": "53b83243ce3bfc91",
+        "name": "NAC Auto-Protect Mode",
+        "label": "Auto-Isolate Attackers (Active NAC)",
+        "group": "8356bd12d00a4d35",
+        "order": 3,
+        "width": 0,
+        "height": 0,
+        "passthru": true,
+        "decouple": false,
+        "topic": "nac_mode",
+        "onvalue": "true",
+        "onvalueType": "bool",
+        "offvalue": "false",
+        "offvalueType": "bool",
+        "x": 185.9999885559082,
+        "y": 171.0000057220459,
+        "wires": [
+            [
+                "803349493d477cc8"
+            ]
+        ]
+    },
+    {
+        "id": "c7ef7b0e1f9143ef",
+        "type": "function",
+        "z": "53b83243ce3bfc91",
+        "name": "Auto-Isolate Trigger",
+        "func": "let isAuto = flow.get('nac_auto');\n// FIX 1: Safely handle both boolean and string representations from the dashboard switch\nif (isAuto !== true && isAuto !== \"true\") return null;\n\nlet attackers = msg.payload || [];\nif (attackers.length === 0) return null;\n\nlet ipMap = flow.get('network_ip_map') || {};\nlet isolated = flow.get('auto_isolated') || {};\nlet apiMsgs = [];\nlet uiMsgs = [];\nlet now = Date.now();\n\nattackers.forEach(ip => {\n    // FIX 2: If the IP map hasn't updated fast enough to catch the attacker, fallback to the lab default name\n    let container = ipMap[ip] || \"iot_attacker_node\";\n\n    // FIX 3: 30-Second Cooldown. Instead of locking forever, allow re-isolation after 30 seconds for lab testing\n    if (container && (!isolated[container] || (now - isolated[container] > 30000))) {\n        isolated[container] = now;\n        apiMsgs.push({\n            url: 'http://docker-proxy:2375/networks/iot_infralab_net/disconnect',\n            method: 'POST',\n            payload: { \"Container\": container, \"Force\": true },\n            containerName: container\n        });\n        uiMsgs.push({ topic: 'system_log', payload: `⚡ [ACTIVE NAC] Threat detected! Auto-isolating ${container} (${ip})...` });\n    }\n});\n\nflow.set('auto_isolated', isolated);\n\nif (apiMsgs.length > 0) return [apiMsgs, uiMsgs];\nreturn null;",
+        "outputs": 2,
+        "timeout": "",
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 390,
+        "y": 240,
+        "wires": [
+            [
+                "d23401a13c109ee0"
+            ],
+            [
+                "5a9e7b1d4c3ffce4"
+            ]
+        ]
+    },
+    {
+        "id": "2f6836680ce01083",
+        "type": "ui-button",
+        "z": "53b83243ce3bfc91",
+        "group": "8356bd12d00a4d35",
+        "name": "Manual Isolate Btn",
+        "label": "Isolate Selected Target",
+        "order": 5,
+        "width": 0,
+        "height": 0,
+        "color": "#ffffff",
+        "bgcolor": "#ef4444",
+        "icon": "mdi-lan-disconnect",
+        "x": 150,
+        "y": 300,
+        "wires": [
+            [
+                "08d97859a5d29e9d"
+            ]
+        ]
+    },
+    {
+        "id": "08d97859a5d29e9d",
+        "type": "function",
+        "z": "53b83243ce3bfc91",
+        "name": "Prep Manual Disconnect",
+        "func": "let target = flow.get('soc_target');\nif(!target) return [null, {payload: \"⚠️ Select an IP from the dropdown first!\"}];\n\nlet apiMsg = {\n    url: 'http://docker-proxy:2375/networks/iot_infralab_net/disconnect',\n    method: 'POST',\n    payload: { \"Container\": target, \"Force\": true },\n    containerName: target\n};\n\n// Mark as isolated so auto-mode doesn't try it again later\nlet isolated = flow.get('auto_isolated') || {};\nisolated[target] = true;\nflow.set('auto_isolated', isolated);\n\nreturn [apiMsg, {payload: `Manual NAC: Isolating ${target}...`}];",
+        "outputs": 2,
+        "x": 390,
+        "y": 300,
+        "wires": [
+            [
+                "d23401a13c109ee0"
+            ],
+            [
+                "5a9e7b1d4c3ffce4"
+            ]
+        ]
+    },
+    {
+        "id": "d23401a13c109ee0",
+        "type": "http request",
+        "z": "53b83243ce3bfc91",
+        "name": "POST Network Disconnect",
+        "method": "use",
+        "ret": "txt",
+        "paytoqs": "ignore",
+        "url": "",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "authType": "",
+        "senderr": false,
+        "x": 640,
+        "y": 200,
+        "wires": [
+            [
+                "e97b5e31885b6e31"
+            ]
+        ]
+    },
+    {
+        "id": "e97b5e31885b6e31",
+        "type": "function",
+        "z": "53b83243ce3bfc91",
+        "name": "Format API Result",
+        "func": "msg.topic = 'system_log';\nif(msg.statusCode === 200 || msg.statusCode === 204 || msg.statusCode === 500) {\n    msg.payload = `✅ NAC ACTION: Successfully isolated container [${msg.containerName}] from the network.`;\n} else {\n    msg.payload = `❌ NAC FAILED: Could not isolate target. Status: ${msg.statusCode}`;\n}\nreturn msg;",
+        "outputs": 1,
+        "x": 890,
+        "y": 220,
+        "wires": [
+            [
+                "5a9e7b1d4c3ffce4"
+            ]
+        ]
+    },
+    {
+        "id": "803349493d477cc8",
+        "type": "function",
+        "z": "53b83243ce3bfc91",
+        "name": "Save State",
+        "func": "flow.set('nac_auto', msg.payload);\nmsg.topic = 'system_log';\nmsg.payload = msg.payload ? \"⚡ NAC AUTO-PROTECT: ACTIVE (Automatic Isolation Enabled)\" : \"⚠️ NAC AUTO-PROTECT: PASSIVE (Manual Review Required)\";\nreturn msg;",
+        "outputs": 1,
+        "x": 570,
+        "y": 140,
+        "wires": [
+            [
+                "5a9e7b1d4c3ffce4"
+            ]
+        ]
+    },
+    {
+        "id": "01b119705a5dc3ff",
+        "type": "inject",
+        "z": "53b83243ce3bfc91",
+        "name": "Poll Live Config Files",
+        "props": [],
+        "repeat": "5",
+        "crontab": "",
+        "once": true,
+        "onceDelay": 0.5,
+        "topic": "",
+        "x": 140,
+        "y": 1320,
+        "wires": [
+            [
+                "ba9805537f962ad2"
+            ]
+        ]
+    },
+    {
+        "id": "ba9805537f962ad2",
+        "type": "function",
+        "z": "53b83243ce3bfc91",
+        "name": "1. Prep Mosquitto Cat",
+        "func": "msg.url = \"http://docker-proxy:2375/containers/iot_broker/exec\";\nmsg.method = \"POST\";\nmsg.payload = {\n    \"AttachStdout\": true,\n    \"Tty\": true,\n    \"Cmd\": [\"cat\", \"/mosquitto/config/mosquitto.conf\"]\n};\nreturn msg;",
+        "outputs": 1,
+        "x": 360,
+        "y": 1320,
+        "wires": [
+            [
+                "877124e460d9b5d0"
+            ]
+        ]
+    },
+    {
+        "id": "877124e460d9b5d0",
+        "type": "http request",
+        "z": "53b83243ce3bfc91",
+        "name": "Create Exec",
+        "method": "use",
+        "ret": "obj",
+        "paytoqs": "ignore",
+        "url": "",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "authType": "",
+        "senderr": false,
+        "x": 550,
+        "y": 1320,
+        "wires": [
+            [
+                "693a2e29fc4dd823"
+            ]
+        ]
+    },
+    {
+        "id": "693a2e29fc4dd823",
+        "type": "function",
+        "z": "53b83243ce3bfc91",
+        "name": "Start Exec",
+        "func": "if (msg.payload && msg.payload.Id) {\n    msg.url = \"http://docker-proxy:2375/exec/\" + msg.payload.Id + \"/start\";\n    msg.method = \"POST\";\n    msg.payload = { \"Detach\": false, \"Tty\": true };\n    return msg;\n}",
+        "outputs": 1,
+        "x": 710,
+        "y": 1320,
+        "wires": [
+            [
+                "2f9bb4791d534af9"
+            ]
+        ]
+    },
+    {
+        "id": "2f9bb4791d534af9",
+        "type": "http request",
+        "z": "53b83243ce3bfc91",
+        "name": "Run Mosq Cat",
+        "method": "use",
+        "ret": "txt",
+        "paytoqs": "ignore",
+        "url": "",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "authType": "",
+        "senderr": false,
+        "x": 860,
+        "y": 1320,
+        "wires": [
+            [
+                "0c845e846f767f0e"
+            ]
+        ]
+    },
+    {
+        "id": "0c845e846f767f0e",
+        "type": "function",
+        "z": "53b83243ce3bfc91",
+        "name": "2. Save & Prep Suricata Cat",
+        "func": "// Strip hidden Docker control characters to ensure clean text\nlet cleanMosq = msg.payload.replace(/[^\\x20-\\x7E\\n\\r]/g, \"\");\n// Remove empty lines for a tighter UI\ncleanMosq = cleanMosq.split('\\n').filter(line => line.trim() !== '').join('\\n');\n\n// Store Mosquitto output safely while we fetch Suricata\nmsg.mosq_conf = cleanMosq;\n\n// Prepare Suricata command\nmsg.url = \"http://docker-proxy:2375/containers/suricata-ids/exec\";\nmsg.method = \"POST\";\nmsg.payload = {\n    \"AttachStdout\": true,\n    \"Tty\": true,\n    \"Cmd\": [\"cat\", \"/etc/suricata/rules/local.rules\"]\n};\nreturn msg;",
+        "outputs": 1,
+        "x": 1060,
+        "y": 1320,
+        "wires": [
+            [
+                "3f717cce3f84d5c3"
+            ]
+        ]
+    },
+    {
+        "id": "3f717cce3f84d5c3",
+        "type": "http request",
+        "z": "53b83243ce3bfc91",
+        "name": "Create Exec",
+        "method": "use",
+        "ret": "obj",
+        "paytoqs": "ignore",
+        "url": "",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "authType": "",
+        "senderr": false,
+        "x": 330,
+        "y": 1380,
+        "wires": [
+            [
+                "0e26d6aa9601189d"
+            ]
+        ]
+    },
+    {
+        "id": "0e26d6aa9601189d",
+        "type": "function",
+        "z": "53b83243ce3bfc91",
+        "name": "Start Exec",
+        "func": "if (msg.payload && msg.payload.Id) {\n    msg.url = \"http://docker-proxy:2375/exec/\" + msg.payload.Id + \"/start\";\n    msg.method = \"POST\";\n    msg.payload = { \"Detach\": false, \"Tty\": true };\n    return msg;\n}",
+        "outputs": 1,
+        "x": 490,
+        "y": 1380,
+        "wires": [
+            [
+                "a32d9f1d81d01ab7"
+            ]
+        ]
+    },
+    {
+        "id": "a32d9f1d81d01ab7",
+        "type": "http request",
+        "z": "53b83243ce3bfc91",
+        "name": "Run Suri Cat",
+        "method": "use",
+        "ret": "txt",
+        "paytoqs": "ignore",
+        "url": "",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "authType": "",
+        "senderr": false,
+        "x": 650,
+        "y": 1380,
+        "wires": [
+            [
+                "2c185cf0420c3e4c"
+            ]
+        ]
+    },
+    {
+        "id": "2c185cf0420c3e4c",
+        "type": "function",
+        "z": "53b83243ce3bfc91",
+        "name": "3. Format SOC Terminal",
+        "func": "let cleanSuri = msg.payload.replace(/[^\\x20-\\x7E\\n\\r]/g, \"\");\ncleanSuri = cleanSuri.split('\\n').filter(line => line.trim() !== '').join('\\n');\nlet mosq = msg.mosq_conf;\n\n// Send pure data to the Vue template\nmsg.payload = {\n    mosquitto: mosq,\n    suricata: cleanSuri\n};\n\n// CRITICAL: Force the topic so the UI knows this is file data\nmsg.topic = \"live_configs\";\n\nreturn msg;",
+        "outputs": 1,
+        "x": 850,
+        "y": 1380,
+        "wires": [
+            [
+                "5a9e7b1d4c3ffce4"
+            ]
+        ]
+    },
+    {
+        "id": "b565bc15d8e76d42",
+        "type": "ui-template",
+        "z": "53b83243ce3bfc91",
+        "group": "cf452f90a4917a01",
+        "page": "",
+        "ui": "",
+        "name": "Suricata Alert Terminal",
+        "order": 1,
+        "width": 0,
+        "height": 0,
+        "format": "<template>\n    <div class=\"suri-terminal-container\">\n        <div class=\"terminal-content\">\n            <pre v-if=\"msg && msg.payload\" :class=\"{ 'alert-text': msg.payload.includes('🚨'), 'secure-text': !msg.payload.includes('🚨') }\">{{ msg.payload }}</pre>\n            <pre v-else class=\"secure-text\">🟢 System Secure: Watching for active threats in eve.json...</pre>\n        </div>\n    </div>\n</template>\n\n<style>\n.suri-terminal-container {\n    background: #020617;\n    border: 1px solid #ef4444;\n    border-radius: 4px;\n    display: flex;\n    flex-direction: column;\n    height: 100%;\n    min-height: 280px;\n    overflow: hidden;\n}\n.terminal-content {\n    padding: 12px;\n    overflow-y: auto;\n    flex-grow: 1;\n}\n.terminal-content pre {\n    margin: 0;\n    font-family: 'JetBrains Mono', monospace;\n    font-size: 13px;\n    white-space: pre-wrap;\n    line-height: 1.5;\n}\n.alert-text { color: #f87171; }\n.secure-text { color: #4ade80; }\n</style>",
+        "storeOutMessages": true,
+        "passthru": true,
+        "resendOnRefresh": true,
+        "templateScope": "local",
+        "className": "",
+        "x": 1680,
+        "y": 320,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "bea7bfa2b9cc96e8",
+        "type": "function",
+        "z": "53b83243ce3bfc91",
+        "name": "Parse Suricata & Extract IPs",
+        "func": "let raw = msg.payload || '';\nlet lines = raw.split('\\n');\nlet alerts = [];\nlet attackerIPs = new Set();\n\nfor (let i = 0; i < lines.length; i++) {\n    let line = lines[i].trim();\n    if (!line) continue;\n    let jsonStart = line.indexOf('{\"timestamp\"');\n    if (jsonStart !== -1) {\n        try {\n            let evt = JSON.parse(line.substring(jsonStart));\n            if (evt.event_type === 'alert') {\n                let time = new Date(evt.timestamp).toLocaleTimeString();\n                let sig = evt.alert.signature;\n                let src = evt.src_ip;\n                alerts.push(`[${time}] 🚨 DETECTED: ${sig}\\n    Source: ${src}`);\n                if (evt.src_ip) attackerIPs.add(evt.src_ip);\n            }\n        } catch(e) {}\n    }\n}\n\nalerts = alerts.reverse().slice(0, 10);\n\n// FIXED: Route to the NEW dedicated terminal widget\nlet msgAlerts = { topic: 'suricata_alerts', payload: '' };\nif (alerts.length === 0) {\n    msgAlerts.payload = '🟢 System Secure: Watching for active threats in eve.json...';\n} else {\n    msgAlerts.payload = alerts.join('\\n\\n');\n}\n\nlet msgAttackers = { payload: Array.from(attackerIPs) };\nreturn [msgAlerts, msgAttackers];",
+        "outputs": 2,
+        "x": 1180,
+        "y": 380,
+        "wires": [
+            [
+                "b565bc15d8e76d42"
+            ],
+            [
+                "6c61d37b156ddc1f",
+                "c7ef7b0e1f9143ef"
+            ]
         ]
     },
     {
@@ -2110,7 +3477,7 @@
         "y": 400,
         "wires": [
             [
-                "6d74a9d5049a6aac"
+                "b06b645f5d9bfd12"
             ]
         ]
     },
@@ -2205,7 +3572,7 @@
                 "9d2629760da4dba4"
             ],
             [
-                "6d74a9d5049a6aac"
+                "b06b645f5d9bfd12"
             ]
         ]
     },
@@ -2242,7 +3609,7 @@
         "y": 40,
         "wires": [
             [
-                "6d74a9d5049a6aac"
+                "b06b645f5d9bfd12"
             ]
         ]
     },
@@ -2334,7 +3701,7 @@
         "y": 100,
         "wires": [
             [
-                "6d74a9d5049a6aac"
+                "b06b645f5d9bfd12"
             ]
         ]
     },
@@ -2394,7 +3761,7 @@
         "y": 160,
         "wires": [
             [
-                "2983b9fc8554cb8f"
+                "f9c9ced707da3789"
             ]
         ]
     },
@@ -2454,22 +3821,7 @@
         "y": 280,
         "wires": [
             [
-                "2983b9fc8554cb8f"
-            ]
-        ]
-    },
-    {
-        "id": "2983b9fc8554cb8f",
-        "type": "function",
-        "z": "b78d14cc362e1196",
-        "name": "Prep Exec Target",
-        "func": "let cmd = msg.cmd;\nmsg.url = 'http://docker-proxy:2375/containers/iot_attacker_node/exec';\nmsg.method = 'POST';\nmsg.timeout = 300000;\nmsg.payload = {\n  'AttachStdout': true,\n  'AttachStderr': true,\n  'Tty': true,\n  'Cmd': cmd\n};\nreturn msg;",
-        "outputs": 1,
-        "x": 500,
-        "y": 220,
-        "wires": [
-            [
-                "b19e09082a24eb43"
+                "f9c9ced707da3789"
             ]
         ]
     },
@@ -2502,15 +3854,13 @@
         "name": "Start Exec Trigger",
         "func": "if(!msg.payload || !msg.payload.Id) {\n  return [null, {payload: '[-] ERROR: Execution failed. Ensure Phase 0 & 1 were completed first.'}];\n}\nmsg.url = 'http://docker-proxy:2375/exec/' + msg.payload.Id + '/start';\nmsg.method = 'POST';\nmsg.timeout = 300000;\nmsg.payload = { 'Detach': false, 'Tty': true };\nreturn [msg, null];",
         "outputs": 2,
-        "x": 860,
+        "x": 870,
         "y": 220,
         "wires": [
             [
                 "2ae86581d34f9eb7"
             ],
-            [
-                "6d74a9d5049a6aac"
-            ]
+            []
         ]
     },
     {
@@ -2527,26 +3877,11 @@
         "proxy": "",
         "authType": "",
         "senderr": false,
-        "x": 1040,
+        "x": 1090,
         "y": 220,
         "wires": [
             [
-                "da5bdbca6c592c61"
-            ]
-        ]
-    },
-    {
-        "id": "da5bdbca6c592c61",
-        "type": "function",
-        "z": "b78d14cc362e1196",
-        "name": "Buffer to Terminal Format",
-        "func": "/* Formats raw Docker buffer straight to text */\nif (typeof msg.payload === 'object') {\n    msg.payload = JSON.stringify(msg.payload, null, 2);\n}\nif (!msg.payload || msg.payload.trim() === \"\") {\n    msg.payload = \"[+] Execution finished successfully (No terminal output returned).\";\n}\nreturn msg;",
-        "outputs": 1,
-        "x": 1280,
-        "y": 220,
-        "wires": [
-            [
-                "6d74a9d5049a6aac"
+                "b93b4da2d3aa8772"
             ]
         ]
     },
@@ -2638,7 +3973,7 @@
         "y": 340,
         "wires": [
             [
-                "6d74a9d5049a6aac"
+                "b06b645f5d9bfd12"
             ]
         ]
     },
@@ -2697,7 +4032,7 @@
         "y": 220,
         "wires": [
             [
-                "2983b9fc8554cb8f"
+                "f9c9ced707da3789"
             ]
         ]
     },
@@ -2716,1161 +4051,67 @@
         "y": 180,
         "wires": [
             [
-                "6d74a9d5049a6aac"
+                "b06b645f5d9bfd12"
             ]
         ]
     },
     {
-        "id": "65db73485cce2b95",
-        "type": "inject",
-        "z": "d415d47f74e99da2",
-        "name": "Poll Network",
-        "props": [],
-        "repeat": "3",
-        "crontab": "",
-        "once": true,
-        "onceDelay": 0.5,
-        "topic": "",
-        "x": 100,
-        "y": 60,
-        "wires": [
-            [
-                "0c9aa63bd05948a1"
-            ]
-        ]
-    },
-    {
-        "id": "0c9aa63bd05948a1",
-        "type": "http request",
-        "z": "d415d47f74e99da2",
-        "name": "GET Containers",
-        "method": "GET",
-        "ret": "obj",
-        "paytoqs": "ignore",
-        "url": "http://docker-proxy:2375/containers/json?all=true",
-        "tls": "",
-        "persist": false,
-        "proxy": "",
-        "authType": "",
-        "senderr": false,
-        "x": 300,
-        "y": 60,
-        "wires": [
-            [
-                "eb219cbad18c4d80"
-            ]
-        ]
-    },
-    {
-        "id": "eb219cbad18c4d80",
-        "type": "function",
-        "z": "d415d47f74e99da2",
-        "name": "Parse IPs & Update Map",
-        "func": "let html = '<table style=\"width:100%; text-align:left; border-collapse:collapse; color:#e2e8f0;\"><tr style=\"border-bottom:1px solid #555;\"><th style=\"padding:6px;\">Node Name</th><th style=\"padding:6px;\">IP Address</th><th style=\"padding:6px;\">State</th></tr>';\nlet ipMap = {};\n\nif (msg.payload && Array.isArray(msg.payload)) {\n    msg.payload.forEach(c => {\n        let name = c.Names[0].replace('/','');\n        let nets = (c.NetworkSettings && c.NetworkSettings.Networks) ? c.NetworkSettings.Networks : {};\n        let netInfo = nets['iot_infralab_net'];\n        let ip = netInfo ? netInfo.IPAddress : null;\n        let state = c.State;\n        \n        if (ip) {\n            html += `<tr style=\"border-bottom:1px solid #333;\"><td style=\"padding:6px;\">${name}</td><td style=\"padding:6px;color:#3b82f6;font-family:monospace;font-weight:bold;\">${ip}</td><td style=\"padding:6px;color:#10b981;\">${state}</td></tr>`;\n            ipMap[ip] = name;\n        } else {\n            html += `<tr style=\"border-bottom:1px solid #333;\"><td style=\"padding:6px;color:#64748b;\">${name}</td><td style=\"padding:6px;color:#ef4444;font-family:monospace;\">Disconnected</td><td style=\"padding:6px;color:#64748b;\">${state}</td></tr>`;\n        }\n    });\n}\nhtml += '</table>';\n\n// Save the live active map globally so Suricata alerts can check against it\nflow.set('network_ip_map', ipMap);\n\nreturn { payload: html };",
-        "outputs": 1,
-        "x": 530,
-        "y": 60,
-        "wires": [
-            [
-                "eb919cdb9b5ce0e8"
-            ]
-        ]
-    },
-    {
-        "id": "eb919cdb9b5ce0e8",
+        "id": "b06b645f5d9bfd12",
         "type": "ui-template",
-        "z": "d415d47f74e99da2",
-        "group": "426c92f3f4d5bb85",
-        "name": "Live Topology Table",
-        "order": 1,
-        "width": 0,
-        "height": 0,
-        "format": "<div style=\"padding:10px; background:#1e1e1e; border-radius:6px; color:#e2e8f0; max-height:200px; overflow-y:auto;\" v-html=\"msg.payload\"></div>",
-        "storeOutMessages": true,
-        "resendOnRefresh": true,
-        "templateScope": "local",
-        "className": "",
-        "x": 780,
-        "y": 60,
-        "wires": [
-            []
-        ]
-    },
-    {
-        "id": "48bead69107b66a0",
-        "type": "ui-dropdown",
-        "z": "d415d47f74e99da2",
-        "group": "8356bd12d00a4d35",
-        "name": "Target Dropdown",
-        "label": "Select Attacker IP",
-        "tooltip": "Select the IP to kick off the network",
-        "order": 1,
-        "width": 0,
-        "height": 0,
-        "passthru": true,
-        "multiple": false,
-        "options": [],
-        "payload": "",
-        "className": "",
-        "x": 1470,
-        "y": 460,
-        "wires": [
-            [
-                "890f27216709ba05"
-            ]
-        ]
-    },
-    {
-        "id": "890f27216709ba05",
-        "type": "function",
-        "z": "d415d47f74e99da2",
-        "name": "Save Target ID",
-        "func": "if(msg.payload) flow.set('soc_target', msg.payload);\nreturn msg;",
-        "outputs": 1,
-        "x": 1680,
-        "y": 460,
-        "wires": [
-            []
-        ]
-    },
-    {
-        "id": "f6cfdfe70af36781",
-        "type": "ui-button",
-        "z": "d415d47f74e99da2",
-        "group": "8356bd12d00a4d35",
-        "name": "Isolate Action",
-        "label": "Isolate IP from Lab Network",
-        "order": 2,
-        "width": 0,
-        "height": 0,
-        "tooltip": "Physically disconnects the container from br-iotlab",
-        "color": "white",
-        "bgcolor": "#ef4444",
-        "className": "",
-        "icon": "mdi-lan-disconnect",
-        "payload": "",
-        "payloadType": "str",
-        "topic": "topic",
-        "topicType": "msg",
-        "x": 90,
-        "y": 220,
-        "wires": [
-            [
-                "3ed8e965635301cf"
-            ]
-        ]
-    },
-    {
-        "id": "3ed8e965635301cf",
-        "type": "function",
-        "z": "d415d47f74e99da2",
-        "name": "Prep Docker Disconnect",
-        "func": "let target = flow.get('soc_target');\nif(!target) {\n    return [null, {payload: \"⚠️ Please select an IP address from the dropdown first.\"}];\n}\n\nmsg.url = 'http://docker-proxy:2375/networks/iot_infralab_net/disconnect';\nmsg.method = 'POST';\nmsg.payload = {\n    \"Container\": target,\n    \"Force\": true\n};\n\nlet log = { payload: `Executing Network Isolation (NAC) on node ID: [${target}]...` };\nreturn [msg, log];",
-        "outputs": 2,
-        "x": 310,
-        "y": 220,
-        "wires": [
-            [
-                "b1e12a2825059772"
-            ],
-            [
-                "84761a78668b9c18"
-            ]
-        ]
-    },
-    {
-        "id": "b1e12a2825059772",
-        "type": "http request",
-        "z": "d415d47f74e99da2",
-        "name": "POST Network Disconnect",
-        "method": "use",
-        "ret": "txt",
-        "paytoqs": "ignore",
-        "url": "",
-        "tls": "",
-        "persist": false,
-        "proxy": "",
-        "authType": "",
-        "senderr": false,
-        "x": 570,
-        "y": 220,
-        "wires": [
-            [
-                "c4579c5e3989747c"
-            ]
-        ]
-    },
-    {
-        "id": "c4579c5e3989747c",
-        "type": "function",
-        "z": "d415d47f74e99da2",
-        "name": "Format Output",
-        "func": "if(msg.statusCode === 200) {\n    msg.payload = \"✅ SUCCESS: Attacker IP has been physically disconnected from the IoT Network.\\nReconnaissance and Lateral Movement neutralized.\";\n} else {\n    msg.payload = \"❌ FAILED: Could not isolate IP. Error Status: \" + msg.statusCode + \"\\n\" + msg.payload;\n}\nreturn msg;",
-        "outputs": 1,
-        "x": 800,
-        "y": 220,
-        "wires": [
-            [
-                "84761a78668b9c18"
-            ]
-        ]
-    },
-    {
-        "id": "84761a78668b9c18",
-        "type": "ui-template",
-        "z": "d415d47f74e99da2",
-        "group": "1384ea55c0ba1905",
-        "name": "SOC Log View",
-        "order": 1,
-        "width": 6,
-        "height": 5,
-        "format": "<pre style=\"background:#0f172a;color:#38bdf8;padding:15px;height:250px;overflow-y:auto;font-family:monospace;margin:0;border-radius:4px;white-space:pre-wrap;\" v-text=\"msg.payload||'Awaiting SOC actions...' \"></pre>",
-        "storeOutMessages": true,
-        "resendOnRefresh": true,
-        "templateScope": "local",
-        "className": "",
-        "x": 1000,
-        "y": 220,
-        "wires": [
-            []
-        ]
-    },
-    {
-        "id": "54d3ace31a119017",
-        "type": "inject",
-        "z": "d415d47f74e99da2",
-        "name": "Poll Suricata Alerts",
-        "props": [],
-        "repeat": "1.5",
-        "crontab": "",
-        "once": true,
-        "onceDelay": 0.1,
-        "topic": "",
-        "payload": "",
-        "payloadType": "date",
-        "x": 162,
-        "y": 380.9999885559082,
-        "wires": [
-            [
-                "8d8f9ea92bf18fdb"
-            ]
-        ]
-    },
-    {
-        "id": "8d8f9ea92bf18fdb",
-        "type": "function",
-        "z": "d415d47f74e99da2",
-        "name": "Create Exec tail",
-        "func": "msg.url = 'http://docker-proxy:2375/containers/suricata-ids/exec';\nmsg.method = 'POST';\nmsg.headers = { 'Content-Type': 'application/json' };\nmsg.payload = {\n    'AttachStdout': true,\n    'Tty': true,\n    'Cmd': ['tail', '-n', '15', '/var/log/suricata/eve.json']\n};\nreturn msg;",
-        "outputs": 1,
-        "x": 362,
-        "y": 380.9999885559082,
-        "wires": [
-            [
-                "a06976b9776bd36d"
-            ]
-        ]
-    },
-    {
-        "id": "a06976b9776bd36d",
-        "type": "http request",
-        "z": "d415d47f74e99da2",
-        "name": "POST Create Exec",
-        "method": "use",
-        "ret": "obj",
-        "paytoqs": "ignore",
-        "url": "",
-        "tls": "",
-        "persist": false,
-        "proxy": "",
-        "authType": "",
-        "senderr": false,
-        "x": 552,
-        "y": 380.9999885559082,
-        "wires": [
-            [
-                "3bf362abe5cdf2b8"
-            ]
-        ]
-    },
-    {
-        "id": "3bf362abe5cdf2b8",
-        "type": "function",
-        "z": "d415d47f74e99da2",
-        "name": "Start Exec",
-        "func": "if (msg.payload && msg.payload.Id) {\n    msg.url = 'http://docker-proxy:2375/exec/' + msg.payload.Id + '/start';\n    msg.method = 'POST';\n    msg.headers = { 'Content-Type': 'application/json' };\n    msg.payload = { 'Detach': false, 'Tty': true };\n    return msg;\n}",
-        "outputs": 1,
-        "x": 732,
-        "y": 380.9999885559082,
-        "wires": [
-            [
-                "fb47530090725ff3"
-            ]
-        ]
-    },
-    {
-        "id": "fb47530090725ff3",
-        "type": "http request",
-        "z": "d415d47f74e99da2",
-        "name": "POST Start Exec",
-        "method": "use",
-        "ret": "txt",
-        "paytoqs": "ignore",
-        "url": "",
-        "tls": "",
-        "persist": false,
-        "proxy": "",
-        "authType": "",
-        "senderr": false,
-        "x": 912,
-        "y": 380.9999885559082,
-        "wires": [
-            [
-                "65c23a3bd747246c"
-            ]
-        ]
-    },
-    {
-        "id": "65c23a3bd747246c",
-        "type": "function",
-        "z": "d415d47f74e99da2",
-        "name": "Parse Suricata & Extract IPs",
-        "func": "let raw = msg.payload || '';\nlet lines = raw.split('\\n');\nlet alerts = [];\nlet attackerIPs = new Set(); // Store unique attacker IPs\n\nfor (let i = 0; i < lines.length; i++) {\n    let line = lines[i].trim();\n    if (!line) continue;\n    \n    let jsonStart = line.indexOf('{\"timestamp\"');\n    if (jsonStart !== -1) {\n        try {\n            let jsonStr = line.substring(jsonStart);\n            let evt = JSON.parse(jsonStr);\n            if (evt.event_type === 'alert') {\n                let time = new Date(evt.timestamp).toLocaleTimeString();\n                let sig = evt.alert.signature;\n                let src = evt.src_ip + (evt.src_port ? ':' + evt.src_port : '');\n                let dst = evt.dest_ip + (evt.dest_port ? ':' + evt.dest_port : '');\n                alerts.push(`[${time}] 🚨 DETECTED: ${sig}\\n    Target: ${src} -> ${dst}`);\n                \n                // Add the absolute Source IP as a known attacker\n                if (evt.src_ip) attackerIPs.add(evt.src_ip);\n            }\n        } catch(e) {}\n    }\n}\n\nalerts = alerts.reverse().slice(0, 15);\n\nlet msgAlerts = { payload: '' };\nif (alerts.length === 0) {\n    msgAlerts.payload = '🟢 System Secure: Watching for active threats in eve.json...';\n} else {\n    msgAlerts.payload = alerts.join('\\n\\n');\n}\n\n// Pass unique Attackers to the second output for the NAC Dropdown correlation\nlet msgAttackers = { payload: Array.from(attackerIPs) };\n\nreturn [msgAlerts, msgAttackers];",
-        "outputs": 2,
-        "x": 1162,
-        "y": 380.9999885559082,
-        "wires": [
-            [
-                "badfe3aaa39b3edd"
-            ],
-            [
-                "f0af5eabbe7b73e8"
-            ]
-        ]
-    },
-    {
-        "id": "f0af5eabbe7b73e8",
-        "type": "function",
-        "z": "d415d47f74e99da2",
-        "name": "Correlate Attackers for NAC",
-        "func": "let attackers = msg.payload || [];\nlet ipMap = flow.get('network_ip_map') || {};\nlet options = [];\n\n// If there are no attackers, completely hide the dropdown options\nif (attackers.length === 0) {\n    return { options: [], payload: null };\n}\n\n// If attackers exist, map their IPs to live container names for the dropdown\nattackers.forEach(ip => {\n    let containerName = ipMap[ip];\n    if (containerName) {\n         options.push({ \n             label: `🚨 ${ip} (Node: ${containerName})`, \n             value: containerName, \n             type: 'str' \n         });\n    } else {\n        // In case the IPs have left the network, or it's external\n         options.push({ \n             label: `🚨 ${ip} (Unknown Device)`, \n             value: ip, \n             type: 'str' \n         });\n    }\n});\n\n// Auto-select the first attacker just to make the UI faster for the SOC operator\nlet firstTarget = options.length > 0 ? options[0].value : null;\nreturn { options: options, payload: firstTarget };",
-        "outputs": 1,
-        "x": 1220,
-        "y": 460,
-        "wires": [
-            [
-                "48bead69107b66a0"
-            ]
-        ]
-    },
-    {
-        "id": "f032f4b1e436557e",
-        "type": "ui-button",
-        "z": "d415d47f74e99da2",
-        "group": "cf452f90a4917a01",
-        "name": "Clear Alerts Btn",
-        "label": "Acknowledge & Clear Alerts",
-        "order": 2,
-        "width": 6,
-        "height": 0,
-        "emulateClick": false,
-        "tooltip": "Wipes the eve.json log file in the container",
-        "color": "white",
-        "bgcolor": "#4b5563",
-        "className": "",
-        "icon": "fa-trash",
-        "iconPosition": "left",
-        "payload": "",
-        "payloadType": "str",
-        "topic": "topic",
-        "topicType": "msg",
-        "x": 120,
-        "y": 460,
-        "wires": [
-            [
-                "f1612f3d89555e34"
-            ]
-        ]
-    },
-    {
-        "id": "f1612f3d89555e34",
-        "type": "function",
-        "z": "d415d47f74e99da2",
-        "name": "Prep File Wipe",
-        "func": "msg.url = 'http://docker-proxy:2375/containers/suricata-ids/exec';\nmsg.method = 'POST';\nmsg.headers = { 'Content-Type': 'application/json' };\n// This command safely empties the log file inside the container\nmsg.payload = {\n    'AttachStdout': true,\n    'Tty': true,\n    'Cmd': ['sh', '-c', 'echo \"\" > /var/log/suricata/eve.json']\n};\nreturn msg;",
-        "outputs": 1,
-        "x": 320,
-        "y": 460,
-        "wires": [
-            [
-                "3cc4d3e06e78a65a"
-            ]
-        ]
-    },
-    {
-        "id": "3cc4d3e06e78a65a",
-        "type": "http request",
-        "z": "d415d47f74e99da2",
-        "name": "Create Exec",
-        "method": "use",
-        "ret": "obj",
-        "paytoqs": "ignore",
-        "url": "",
-        "tls": "",
-        "persist": false,
-        "proxy": "",
-        "authType": "",
-        "senderr": false,
-        "x": 510,
-        "y": 460,
-        "wires": [
-            [
-                "49b987bbe34e84fd"
-            ]
-        ]
-    },
-    {
-        "id": "49b987bbe34e84fd",
-        "type": "function",
-        "z": "d415d47f74e99da2",
-        "name": "Start File Wipe",
-        "func": "if (msg.payload && msg.payload.Id) {\n    msg.url = 'http://docker-proxy:2375/exec/' + msg.payload.Id + '/start';\n    msg.method = 'POST';\n    msg.headers = { 'Content-Type': 'application/json' };\n    msg.payload = { 'Detach': false, 'Tty': true };\n    return msg;\n}",
-        "outputs": 1,
-        "x": 700,
-        "y": 460,
-        "wires": [
-            [
-                "ee472f922e32cd78"
-            ]
-        ]
-    },
-    {
-        "id": "ee472f922e32cd78",
-        "type": "http request",
-        "z": "d415d47f74e99da2",
-        "name": "Execute Wipe",
-        "method": "use",
-        "ret": "txt",
-        "paytoqs": "ignore",
-        "url": "",
-        "tls": "",
-        "persist": false,
-        "proxy": "",
-        "authType": "",
-        "senderr": false,
-        "x": 900,
-        "y": 460,
-        "wires": [
-            []
-        ]
-    },
-    {
-        "id": "d93be06a2dce1120",
-        "type": "ui-dropdown",
-        "z": "d415d47f74e99da2",
-        "group": "01d38afb921c168e",
-        "name": "Model Selector",
-        "label": "Select AI Model",
-        "order": 1,
-        "width": "6",
-        "height": "1",
-        "passthru": true,
-        "multiple": false,
-        "chips": false,
-        "clearable": false,
-        "options": [
-            {
-                "label": "Gemini 3.1",
-                "value": "gemini-3.1-flash-lite-preview",
-                "type": "str"
-            },
-            {
-                "label": "Gemini 3.0 Flash",
-                "value": "gemini-3-flash-preview",
-                "type": "str"
-            },
-            {
-                "label": "Gemini 1.5 Flash (Stable)",
-                "value": "gemini-flash-latest",
-                "type": "str"
-            }
-        ],
-        "topic": "lab/security/model",
-        "topicType": "str",
-        "className": "",
-        "typeIsComboBox": true,
-        "msgTrigger": "onChange",
-        "x": 120,
-        "y": 560,
-        "wires": [
-            [
-                "b308d287a834d5c2"
-            ]
-        ]
-    },
-    {
-        "id": "b308d287a834d5c2",
-        "type": "mqtt out",
-        "z": "d415d47f74e99da2",
-        "name": "",
-        "topic": "lab/security/model",
-        "qos": "1",
-        "retain": "true",
-        "broker": "ff_mqtt_broker",
-        "x": 370,
-        "y": 560,
-        "wires": []
-    },
-    {
-        "id": "a80ecd1079a9722a",
-        "type": "ui-button",
-        "z": "d415d47f74e99da2",
-        "group": "01d38afb921c168e",
-        "name": "Trigger Scan",
-        "label": "Run Security Audit 🛡️",
-        "order": 2,
-        "width": "3",
-        "height": "1",
-        "emulateClick": false,
-        "className": "",
-        "icon": "gesture-tap",
-        "iconPosition": "left",
-        "payload": "SCAN_NOW",
-        "payloadType": "str",
-        "topic": "lab/security/trigger",
-        "topicType": "str",
-        "buttonColor": "",
-        "textColor": "",
-        "iconColor": "",
-        "enableClick": true,
-        "enablePointerdown": false,
-        "pointerdownPayload": "",
-        "pointerdownPayloadType": "str",
-        "enablePointerup": false,
-        "pointerupPayload": "",
-        "pointerupPayloadType": "str",
-        "x": 120,
-        "y": 620,
-        "wires": [
-            [
-                "bd288db68fac88a1"
-            ]
-        ]
-    },
-    {
-        "id": "bd288db68fac88a1",
-        "type": "mqtt out",
-        "z": "d415d47f74e99da2",
-        "name": "",
-        "topic": "lab/security/trigger",
-        "qos": "",
-        "retain": "",
-        "broker": "ff_mqtt_broker",
-        "x": 370,
-        "y": 620,
-        "wires": []
-    },
-    {
-        "id": "28151b661cffb467",
-        "type": "mqtt in",
-        "z": "d415d47f74e99da2",
-        "name": "",
-        "topic": "lab/security/status",
-        "qos": "2",
-        "datatype": "utf8",
-        "broker": "ff_mqtt_broker",
-        "inputs": 0,
-        "x": 130,
-        "y": 700,
-        "wires": [
-            [
-                "638584429b5f8242"
-            ]
-        ]
-    },
-    {
-        "id": "638584429b5f8242",
-        "type": "ui-text",
-        "z": "d415d47f74e99da2",
-        "group": "01d38afb921c168e",
-        "order": 3,
-        "width": "3",
-        "height": "1",
-        "name": "Status Display",
-        "label": "Auditor Status",
-        "format": "{{msg.payload}}",
-        "x": 380,
-        "y": 700,
-        "wires": []
-    },
-    {
-        "id": "7ac46aa1d06debf2",
-        "type": "mqtt in",
-        "z": "d415d47f74e99da2",
-        "name": "",
-        "topic": "lab/security/report",
-        "qos": "2",
-        "datatype": "utf8",
-        "broker": "ff_mqtt_broker",
-        "inputs": 0,
-        "x": 130,
-        "y": 780,
-        "wires": [
-            [
-                "a7ca6fc2492dd05a",
-                "09e298371cded1de"
-            ]
-        ]
-    },
-    {
-        "id": "a7ca6fc2492dd05a",
-        "type": "debug",
-        "z": "d415d47f74e99da2",
-        "name": "debug 1",
-        "active": true,
-        "tosidebar": true,
-        "console": false,
-        "tostatus": false,
-        "complete": "false",
-        "statusVal": "",
-        "statusType": "auto",
-        "x": 300,
-        "y": 900,
-        "wires": []
-    },
-    {
-        "id": "09e298371cded1de",
-        "type": "ui-template",
-        "z": "d415d47f74e99da2",
-        "group": "01d38afb921c168e",
+        "z": "b78d14cc362e1196",
+        "group": "a70e7057f4859509",
         "page": "",
         "ui": "",
-        "name": "AI Security Summary",
-        "order": 4,
-        "width": 0,
-        "height": 0,
-        "head": "",
-        "format": "<div style=\"font-family: sans-serif; line-height: 1.5;\">\n    <div v-html=\"msg.payload\"></div>\n</div>",
-        "storeOutMessages": true,
-        "passthru": true,
-        "resendOnRefresh": true,
-        "templateScope": "local",
-        "className": "",
-        "x": 420,
-        "y": 780,
-        "wires": [
-            []
-        ]
-    },
-    {
-        "id": "badfe3aaa39b3edd",
-        "type": "ui-template",
-        "z": "d415d47f74e99da2",
-        "group": "cf452f90a4917a01",
-        "page": "",
-        "ui": "",
-        "name": "Suricata IDS Alerts",
+        "name": "Hacker Terminal",
         "order": 1,
-        "width": 6,
-        "height": "",
-        "format": "<div>\n    <pre style=\"background:#111;padding:15px;height:250px;overflow-y:auto;font-family:monospace;margin:0;white-space:pre-wrap;border:1px solid #3b82f6;border-radius:4px;\"><span :style=\"{color: msg?.payload?.includes('🚨') ? '#ef4444' : '#10b981'}\" v-text=\"msg?.payload || 'Shields up. Waiting for IDS alerts...'\"></span></pre>\n</div>",
+        "width": 0,
+        "height": 0,
+        "format": "<template>\n    <div class=\"hacker-terminal\">\n        <div v-html=\"msg.payload || '<span class=\\'prompt\\'>root@iot-attacker:~#</span> <span class=\\'waiting-text\\'>Awaiting target node deployment...</span>'\"></div>\n    </div>\n</template>\n\n<style>\n.hacker-terminal {\n    background: #0f172a;\n    padding: 15px;\n    height: 100%;\n    min-height: 450px;\n    overflow-y: auto;\n    font-family: monospace;\n    margin: 0;\n    border-radius: 4px;\n    box-sizing: border-box;\n    color: #10b981; /* Default terminal green */\n}\n.prompt { color: #38bdf8; font-weight: bold; }\n.cmd-text { color: #f8fafc; }\n.output-success { color: #10b981; white-space: pre-wrap; margin-top: 10px; }\n.output-blocked { color: #94a3b8; white-space: pre-wrap; margin-top: 10px; }\n.waiting-text { color: #64748b; }\n.alert-box {\n    color: #ef4444;\n    font-weight: bold;\n    padding: 10px;\n    border: 1px solid #ef4444;\n    background: rgba(239, 68, 68, 0.1);\n    border-radius: 4px;\n    margin-top: 15px;\n}\n.alert-sub {\n    font-size: 12px;\n    color: #fca5a5;\n    font-weight: normal;\n}\n</style>",
         "storeOutMessages": true,
         "passthru": true,
         "resendOnRefresh": true,
         "templateScope": "local",
         "className": "",
-        "x": 1470,
-        "y": 380,
+        "x": 1600,
+        "y": 300,
         "wires": [
             []
         ]
     },
     {
-        "id": "999c9dc5465ee1f9",
+        "id": "f9c9ced707da3789",
         "type": "function",
-        "z": "d415d47f74e99da2",
-        "name": "Prep Suricata Restart",
-        "func": "// Step 4: Restart Suricata so it re-attaches to Mosquitto's network space\nmsg.url = \"http://docker-proxy:2375/containers/suricata-ids/restart\";\nmsg.method = \"POST\";\nmsg.payload = {};\nreturn msg;",
+        "z": "b78d14cc362e1196",
+        "name": "Prep Exec Target",
+        "func": "let cmd = msg.cmd;\n\n// SAVE THE COMMAND: Store it so the terminal can print what was just run\nmsg.executed_cmd = cmd.join(' ');\n\nmsg.url = 'http://docker-proxy:2375/containers/iot_attacker_node/exec';\nmsg.method = 'POST';\nmsg.timeout = 300000;\nmsg.payload = {\n  'AttachStdout': true,\n  'AttachStderr': true,\n  'Tty': true,\n  'Cmd': cmd\n};\nreturn msg;",
         "outputs": 1,
-        "x": 1640,
-        "y": 1000,
+        "x": 490,
+        "y": 220,
         "wires": [
             [
-                "4c52fc413694fa18"
+                "b19e09082a24eb43"
             ]
         ]
     },
     {
-        "id": "4c52fc413694fa18",
-        "type": "http request",
-        "z": "d415d47f74e99da2",
-        "name": "POST Restart Suricata",
-        "method": "use",
-        "ret": "txt",
-        "paytoqs": "ignore",
-        "url": "",
-        "tls": "",
-        "persist": false,
-        "proxy": "",
-        "authType": "",
-        "senderr": false,
-        "x": 1900,
-        "y": 1000,
-        "wires": [
-            [
-                "7a4ce5455d7d080a"
-            ]
-        ]
-    },
-    {
-        "id": "e221237c50ec7708",
-        "type": "ui-switch",
-        "z": "d415d47f74e99da2",
-        "name": "Security Mode Switch",
-        "label": "Enable Strict Security Policies",
-        "group": "8356bd12d00a4d35",
-        "order": 3,
-        "width": 6,
-        "height": 1,
-        "passthru": false,
-        "decouple": false,
-        "topic": "topic",
-        "topicType": "msg",
-        "style": "default",
-        "className": "",
-        "layout": "",
-        "clickableArea": "switch",
-        "onvalue": "true",
-        "onvalueType": "bool",
-        "onicon": "mdi-lock",
-        "oncolor": "success",
-        "offvalue": "false",
-        "offvalueType": "bool",
-        "officon": "mdi-lock-open",
-        "offcolor": "error",
-        "x": 140,
-        "y": 1000,
-        "wires": [
-            [
-                "4884960ef43bbee5"
-            ]
-        ]
-    },
-    {
-        "id": "4884960ef43bbee5",
+        "id": "b93b4da2d3aa8772",
         "type": "function",
-        "z": "d415d47f74e99da2",
-        "name": "Prep File Swap Command",
-        "func": "// Tell the Mosquitto container to copy the correct profile over the active mosquitto.conf\nif (msg.payload === true) {\n    msg.cmd = [\"cp\", \"/mosquitto/config/mosquitto_hardened.conf\", \"/mosquitto/config/mosquitto.conf\"];\n    msg.notification_text = \"Broker Hardened & Restarted\";\n} else {\n    msg.cmd = [\"cp\", \"/mosquitto/config/mosquitto_vulnerable.conf\", \"/mosquitto/config/mosquitto.conf\"];\n    msg.notification_text = \"Broker Vulnerable & Restarted\";\n}\n\n// Step 1: Create the Exec instance inside iot_broker\nmsg.url = \"http://docker-proxy:2375/containers/iot_broker/exec\";\nmsg.method = \"POST\";\nmsg.payload = {\n    \"AttachStdout\": false,\n    \"AttachStderr\": false,\n    \"Tty\": false,\n    \"Cmd\": msg.cmd\n};\nreturn msg;",
+        "z": "b78d14cc362e1196",
+        "name": "Buffer to Terminal Format",
+        "func": "let rawCmd = msg.executed_cmd || \"unknown command\";\n\n// 1. Reconstruct the dynamic terminal prompt using CSS classes\nlet output = `<span class=\"prompt\">root@iot-attacker:~#</span> <span class=\"cmd-text\">${rawCmd}</span><br>`;\n\nif (typeof msg.payload === 'object') {\n    msg.payload = JSON.stringify(msg.payload, null, 2);\n}\n\nlet resultText = msg.payload || \"\";\nif (resultText.trim() === \"\") {\n    resultText = \"[+] Execution finished successfully (No terminal output returned).\";\n}\n\n// 2. Threat Analysis: Smarter detection for IPS/NAC blocks\nlet isBlocked = false;\nlet lowerResult = resultText.toLowerCase();\n\n// Look for definitive network disconnects or firewall drops, \n// completely ignoring standard numbers like '104' to prevent false positives.\nif (lowerResult.includes(\"host seems down\") || \n    (lowerResult.includes(\"filtered\") && rawCmd.includes(\"nmap\")) || \n    lowerResult.includes(\"connection refused\") ||\n    lowerResult.includes(\"reset by peer\") ||\n    lowerResult.includes(\"[errno 104]\") ||\n    lowerResult.includes(\"error 104\")) { \n    isBlocked = true;\n}\n\n// 3. Format the raw output (Escape HTML tags)\nresultText = resultText.replace(/</g, \"&lt;\").replace(/>/g, \"&gt;\");\nlet outputClass = isBlocked ? \"output-blocked\" : \"output-success\";\noutput += `<div class=\"${outputClass}\">${resultText}</div>`;\n\n// 4. Inject the Red Blocked Alert ONLY if actually blocked\nif (isBlocked) {\n    output += `<div class=\"alert-box\">`;\n    output += `🚨 EXPLOIT FAILED: CONNECTION INTERCEPTED BY IPS/NAC 🚨<br>`;\n    output += `<span class=\"alert-sub\">The target forcefully rejected the attack (Dropped packets / TCP Reset / Connection Severed).</span>`;\n    output += `</div>`;\n}\n\nmsg.payload = output;\nreturn msg;",
         "outputs": 1,
-        "x": 400,
-        "y": 1000,
-        "wires": [
-            [
-                "444740c195eafce8"
-            ]
-        ]
-    },
-    {
-        "id": "444740c195eafce8",
-        "type": "http request",
-        "z": "d415d47f74e99da2",
-        "name": "Create Exec",
-        "method": "use",
-        "ret": "obj",
-        "paytoqs": "ignore",
-        "url": "",
-        "tls": "",
-        "persist": false,
-        "proxy": "",
-        "authType": "",
-        "senderr": false,
-        "x": 620,
-        "y": 1000,
-        "wires": [
-            [
-                "0727ac8512aa12e1"
-            ]
-        ]
-    },
-    {
-        "id": "0727ac8512aa12e1",
-        "type": "function",
-        "z": "d415d47f74e99da2",
-        "name": "Start Exec Command",
-        "func": "// Step 2: Trigger the copy command we just created\nif (msg.payload && msg.payload.Id) {\n    msg.url = \"http://docker-proxy:2375/exec/\" + msg.payload.Id + \"/start\";\n    msg.method = \"POST\";\n    msg.payload = { \"Detach\": false, \"Tty\": false };\n    return msg;\n}",
-        "outputs": 1,
-        "x": 810,
-        "y": 1000,
-        "wires": [
-            [
-                "0355f269da5ac73d"
-            ]
-        ]
-    },
-    {
-        "id": "0355f269da5ac73d",
-        "type": "http request",
-        "z": "d415d47f74e99da2",
-        "name": "Execute Copy",
-        "method": "use",
-        "ret": "txt",
-        "paytoqs": "ignore",
-        "url": "",
-        "tls": "",
-        "persist": false,
-        "proxy": "",
-        "authType": "",
-        "senderr": false,
-        "x": 1010,
-        "y": 1000,
-        "wires": [
-            [
-                "016c4c521257bdd2"
-            ]
-        ]
-    },
-    {
-        "id": "016c4c521257bdd2",
-        "type": "function",
-        "z": "d415d47f74e99da2",
-        "name": "Prep Docker Restart",
-        "func": "// Step 3: Restart Mosquitto so it reads the newly copied file\nmsg.url = \"http://docker-proxy:2375/containers/iot_broker/restart\";\nmsg.method = \"POST\";\nmsg.payload = {};\nreturn msg;",
-        "outputs": 1,
-        "x": 1210,
-        "y": 1000,
-        "wires": [
-            [
-                "d3ed7ff1f022cc26"
-            ]
-        ]
-    },
-    {
-        "id": "d3ed7ff1f022cc26",
-        "type": "http request",
-        "z": "d415d47f74e99da2",
-        "name": "POST Restart",
-        "method": "use",
-        "ret": "txt",
-        "paytoqs": "ignore",
-        "url": "",
-        "tls": "",
-        "persist": false,
-        "proxy": "",
-        "authType": "",
-        "senderr": false,
-        "x": 1410,
-        "y": 1000,
-        "wires": [
-            [
-                "999c9dc5465ee1f9"
-            ]
-        ]
-    },
-    {
-        "id": "7a4ce5455d7d080a",
-        "type": "function",
-        "z": "d415d47f74e99da2",
-        "name": "Format Toast",
-        "func": "if (msg.statusCode >= 200 && msg.statusCode < 300) {\n    msg.payload = msg.notification_text;\n} else {\n    msg.payload = `Error restarting broker: API returned ${msg.statusCode}`;\n}\nreturn msg;",
-        "outputs": 1,
-        "x": 1610,
-        "y": 1060,
-        "wires": [
-            [
-                "1fbd4634cc588220"
-            ]
-        ]
-    },
-    {
-        "id": "1fbd4634cc588220",
-        "type": "ui-notification",
-        "z": "d415d47f74e99da2",
-        "ui": "8bcc34ca17387ebb",
-        "position": "top right",
-        "displayTime": "3",
-        "outputs": 1,
-        "allowDismiss": true,
-        "name": "Security Toast",
-        "x": 1860,
-        "y": 1060,
-        "wires": [
-            []
-        ],
-        "icon": "shield"
-    },
-    {
-        "id": "d5e5132002b03689",
-        "type": "ui-switch",
-        "z": "d415d47f74e99da2",
-        "name": "Suricata IPS Mode",
-        "label": "Suricata IPS Mode",
-        "group": "8356bd12d00a4d35",
-        "order": 4,
-        "width": 0,
-        "height": 0,
-        "passthru": true,
-        "decouple": false,
-        "topic": "topic",
-        "topicType": "msg",
-        "style": "",
-        "className": "",
-        "layout": "",
-        "clickableArea": "switch",
-        "onvalue": "true",
-        "onvalueType": "bool",
-        "onicon": "",
-        "oncolor": "",
-        "offvalue": "false",
-        "offvalueType": "bool",
-        "officon": "",
-        "offcolor": "",
-        "x": 130,
-        "y": 1080,
-        "wires": [
-            [
-                "3d44e82b44f028b7"
-            ]
-        ]
-    },
-    {
-        "id": "3d44e82b44f028b7",
-        "type": "function",
-        "z": "d415d47f74e99da2",
-        "name": "Prepare Rule Swap Exec",
-        "func": "if (msg.payload === true) {\n    msg.cmd = [\"cp\", \"/etc/suricata/rules/local.rules.ips\", \"/etc/suricata/rules/local.rules\"];\n    msg.mode_text = \"IPS Mode (Reject)\";\n} else {\n    msg.cmd = [\"cp\", \"/etc/suricata/rules/local.rules.ids\", \"/etc/suricata/rules/local.rules\"];\n    msg.mode_text = \"IDS Mode (Alert)\";\n}\n\nmsg.url = \"http://docker-proxy:2375/containers/suricata-ids/exec\";\nmsg.method = \"POST\";\nmsg.payload = {\n    \"AttachStdout\": false,\n    \"AttachStderr\": false,\n    \"Tty\": false,\n    \"Cmd\": msg.cmd\n};\nreturn msg;",
-        "outputs": 1,
-        "timeout": 0,
+        "timeout": "",
         "noerr": 0,
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 360,
-        "y": 1080,
-        "wires": [
-            [
-                "97d8ea2c9302a288"
-            ]
-        ]
-    },
-    {
-        "id": "97d8ea2c9302a288",
-        "type": "http request",
-        "z": "d415d47f74e99da2",
-        "name": "Create CP Exec",
-        "method": "use",
-        "ret": "obj",
-        "paytoqs": "ignore",
-        "url": "",
-        "tls": "",
-        "persist": false,
-        "proxy": "",
-        "insecureHTTPParser": false,
-        "authType": "",
-        "senderr": false,
-        "headers": [],
-        "x": 570,
-        "y": 1080,
-        "wires": [
-            [
-                "9aca90685806f95c"
-            ]
-        ]
-    },
-    {
-        "id": "9aca90685806f95c",
-        "type": "function",
-        "z": "d415d47f74e99da2",
-        "name": "Start CP Exec",
-        "func": "if (!msg.payload || !msg.payload.Id) {\n    return null;\n}\nmsg.url = \"http://docker-proxy:2375/exec/\" + msg.payload.Id + \"/start\";\nmsg.method = \"POST\";\nmsg.payload = {\n    \"Detach\": false,\n    \"Tty\": false\n};\nreturn msg;",
-        "outputs": 1,
-        "timeout": 0,
-        "noerr": 0,
-        "initialize": "",
-        "finalize": "",
-        "libs": [],
-        "x": 760,
-        "y": 1080,
-        "wires": [
-            [
-                "0d680b4937690bdc"
-            ]
-        ]
-    },
-    {
-        "id": "0d680b4937690bdc",
-        "type": "http request",
-        "z": "d415d47f74e99da2",
-        "name": "Run CP Exec",
-        "method": "use",
-        "ret": "txt",
-        "paytoqs": "ignore",
-        "url": "",
-        "tls": "",
-        "persist": false,
-        "proxy": "",
-        "insecureHTTPParser": false,
-        "authType": "",
-        "senderr": false,
-        "headers": [],
-        "x": 940,
-        "y": 1080,
-        "wires": [
-            [
-                "bb318d105a6af2b3"
-            ]
-        ]
-    },
-    {
-        "id": "bb318d105a6af2b3",
-        "type": "function",
-        "z": "d415d47f74e99da2",
-        "name": "Prepare Reload Exec",
-        "func": "msg.url = \"http://docker-proxy:2375/containers/suricata-ids/exec\";\nmsg.method = \"POST\";\nmsg.payload = {\n    \"AttachStdout\": false,\n    \"AttachStderr\": false,\n    \"Tty\": false,\n    \"Cmd\": [\"suricatasc\", \"-c\", \"reload-rules\"]\n};\n// Ensure we pass the mode_text to the end of the flow so the notification is accurate\nreturn msg;",
-        "outputs": 1,
-        "timeout": 0,
-        "noerr": 0,
-        "initialize": "",
-        "finalize": "",
-        "libs": [],
-        "x": 370,
-        "y": 1140,
-        "wires": [
-            [
-                "f62e0f18dbf91dc1"
-            ]
-        ]
-    },
-    {
-        "id": "f62e0f18dbf91dc1",
-        "type": "http request",
-        "z": "d415d47f74e99da2",
-        "name": "Create Reload Exec",
-        "method": "use",
-        "ret": "obj",
-        "paytoqs": "ignore",
-        "url": "",
-        "tls": "",
-        "persist": false,
-        "proxy": "",
-        "insecureHTTPParser": false,
-        "authType": "",
-        "senderr": false,
-        "headers": [],
-        "x": 580,
-        "y": 1140,
-        "wires": [
-            [
-                "7398359bf04b2234"
-            ]
-        ]
-    },
-    {
-        "id": "7398359bf04b2234",
-        "type": "function",
-        "z": "d415d47f74e99da2",
-        "name": "Start Reload Exec",
-        "func": "if (!msg.payload || !msg.payload.Id) {\n    return null;\n}\nmsg.url = \"http://docker-proxy:2375/exec/\" + msg.payload.Id + \"/start\";\nmsg.method = \"POST\";\nmsg.payload = {\n    \"Detach\": false,\n    \"Tty\": false\n};\nreturn msg;",
-        "outputs": 1,
-        "timeout": 0,
-        "noerr": 0,
-        "initialize": "",
-        "finalize": "",
-        "libs": [],
-        "x": 780,
-        "y": 1140,
-        "wires": [
-            [
-                "0f79df0f1ccb8549"
-            ]
-        ]
-    },
-    {
-        "id": "0f79df0f1ccb8549",
-        "type": "http request",
-        "z": "d415d47f74e99da2",
-        "name": "Run Reload Exec",
-        "method": "use",
-        "ret": "txt",
-        "paytoqs": "ignore",
-        "url": "",
-        "tls": "",
-        "persist": false,
-        "proxy": "",
-        "insecureHTTPParser": false,
-        "authType": "",
-        "senderr": false,
-        "headers": [],
-        "x": 970,
-        "y": 1140,
-        "wires": [
-            [
-                "90a21e80e2863965"
-            ]
-        ]
-    },
-    {
-        "id": "90a21e80e2863965",
-        "type": "function",
-        "z": "d415d47f74e99da2",
-        "name": "Format Notification",
-        "func": "msg.payload = \"Suricata successfully switched to: \" + msg.mode_text;\nreturn msg;",
-        "outputs": 1,
-        "timeout": 0,
-        "noerr": 0,
-        "initialize": "",
-        "finalize": "",
-        "libs": [],
-        "x": 1180,
-        "y": 1140,
-        "wires": [
-            [
-                "9fa3f1bee18469d1",
-                "280e44875fd04e69"
-            ]
-        ]
-    },
-    {
-        "id": "9fa3f1bee18469d1",
-        "type": "debug",
-        "z": "d415d47f74e99da2",
-        "name": "Suricata Status",
-        "active": true,
-        "tosidebar": true,
-        "console": false,
-        "tostatus": false,
-        "complete": "payload",
-        "targetType": "msg",
-        "statusVal": "",
-        "statusType": "auto",
-        "x": 1370,
-        "y": 1120,
-        "wires": []
-    },
-    {
-        "id": "280e44875fd04e69",
-        "type": "ui-notification",
-        "z": "d415d47f74e99da2",
-        "ui": "8bcc34ca17387ebb",
-        "position": "top right",
-        "colorDefault": false,
-        "color": "#000000",
-        "displayTime": "",
-        "showCountdown": false,
-        "outputs": 1,
-        "allowDismiss": true,
-        "dismissText": "",
-        "allowConfirm": false,
-        "confirmText": "",
-        "raw": false,
-        "className": "",
-        "name": "Notify UI",
         "x": 1350,
-        "y": 1160,
+        "y": 220,
         "wires": [
-            []
-        ],
-        "icon": "mdi-shield-check"
+            [
+                "b06b645f5d9bfd12"
+            ]
+        ]
     },
     {
         "id": "030bec7b7de86264",
@@ -3915,7 +4156,7 @@
         "type": "debug",
         "z": "4acab47cf7e84e94",
         "name": "debug 4",
-        "active": false,
+        "active": true,
         "tosidebar": true,
         "console": false,
         "tostatus": false,
@@ -4084,9 +4325,7 @@
         "x": 130,
         "y": 360,
         "wires": [
-            [
-                "http_stop_grafana"
-            ]
+            []
         ]
     },
     {

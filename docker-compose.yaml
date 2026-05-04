@@ -27,8 +27,7 @@ services:
     ports:
       - "1880:1880"
     volumes:
-      - ./infrastructure/nodered/NodeRed_Data:/data
-      # NOTICE: We removed the direct docker.sock mount here for better security!
+      - ./src/simulation/nodered/NodeRed_Data:/data
     restart: unless-stopped
     depends_on:
       - mosquitto
@@ -114,11 +113,11 @@ services:
       - mosquitto
 
   security-auditor:
-    build: ./simulation/security-auditor
+    build: ./src/simulation/auditor_security
     container_name: security_auditor
     networks:
       iot_infralab_net:
-        ipv4_address: 172.18.0.5
+        ipv4_address: 172.18.0.10
     env_file:
       - .env
     cap_add:

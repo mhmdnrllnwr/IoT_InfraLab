@@ -15,9 +15,9 @@ __pycache__/
 
 # --- Node-RED Dynamic Data & Secrets ---
 # We keep flows.json and package.json (code), but ignore secrets and installed modules
-infrastructure/nodered/NodeRed_Data/*_cred.json
-infrastructure/nodered/NodeRed_Data/node_modules/
-infrastructure/nodered/NodeRed_Data/.sessions.json
+src/simulation/nodered/NodeRed_Data/*_cred.json
+src/simulation/nodered/NodeRed_Data/node_modules/
+src/simulation/nodered/NodeRed_Data/.sessions.json
 
 # --- Suricata Runtime & Logs ---
 infrastructure/suricata/run/*
@@ -46,7 +46,7 @@ infrastructure/grafana/data/*
 .DS_Store
 
 # Ignore planning markdown files
-z-planning/code.md
-z-planning/feat.md
-z-planning/fix.md
-z-planning/future.md
+text/code.md
+text/feat.md
+text/fix.md
+text/future.md

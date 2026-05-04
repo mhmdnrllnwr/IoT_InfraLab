@@ -1,13 +1,5 @@
 [
     {
-        "id": "eb55a95600a94083",
-        "type": "tab",
-        "label": "Register & Login",
-        "disabled": false,
-        "info": "",
-        "env": []
-    },
-    {
         "id": "89c26b2630a7d108",
         "type": "tab",
         "label": "Node Management",
@@ -99,7 +91,7 @@
                 "cols": "12"
             }
         ],
-        "order": 2,
+        "order": 1,
         "className": "",
         "visible": true,
         "disabled": false
@@ -255,7 +247,7 @@
                 "cols": "12"
             }
         ],
-        "order": 4,
+        "order": 2,
         "className": "",
         "visible": true,
         "disabled": false
@@ -416,7 +408,7 @@
                 "cols": "12"
             }
         ],
-        "order": 5,
+        "order": 4,
         "className": "",
         "visible": "true",
         "disabled": "false"
@@ -475,42 +467,6 @@
         "visible": "true",
         "disabled": "false",
         "groupType": "default"
-    },
-    {
-        "id": "c9c134051265326b",
-        "type": "ui-page",
-        "name": "Front Page",
-        "ui": "8bcc34ca17387ebb",
-        "path": "/page5",
-        "icon": "home",
-        "layout": "grid",
-        "theme": "c382198a61249f47",
-        "breakpoints": [
-            {
-                "name": "Default",
-                "px": "0",
-                "cols": "3"
-            },
-            {
-                "name": "Tablet",
-                "px": "576",
-                "cols": "6"
-            },
-            {
-                "name": "Small Desktop",
-                "px": "768",
-                "cols": "9"
-            },
-            {
-                "name": "Desktop",
-                "px": "1024",
-                "cols": "12"
-            }
-        ],
-        "order": 1,
-        "className": "",
-        "visible": "true",
-        "disabled": "false"
     },
     {
         "id": "599a1bcf052a2d6b",

@@ -44,3 +44,9 @@ infrastructure/grafana/data/*
 .vscode/
 .idea/
 .DS_Store
+
+# Ignore planning markdown files
+z-planning/code.md
+z-planning/feat.md
+z-planning/fix.md
+z-planning/future.md

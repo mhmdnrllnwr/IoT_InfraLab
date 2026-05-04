@@ -68,5 +68,75 @@
     "profile": "erratic",
     "interval": 5,
     "saved_at": "2026-03-19T08:12:35.695Z"
+  },
+  {
+    "id": "Humidity1",
+    "types": "humidity",
+    "profile": "normal",
+    "interval": 5,
+    "saved_at": "2026-04-08T06:30:05.743Z"
+  },
+  {
+    "id": "Humidity2",
+    "types": "humidity",
+    "profile": "normal",
+    "interval": 5,
+    "saved_at": "2026-04-08T06:30:10.213Z"
+  },
+  {
+    "id": "Humidity3",
+    "types": "humidity",
+    "profile": "normal",
+    "interval": 5,
+    "saved_at": "2026-04-08T06:30:13.383Z"
+  },
+  {
+    "id": "Humidity4",
+    "types": "humidity",
+    "profile": "normal",
+    "interval": 5,
+    "saved_at": "2026-04-08T06:30:17.592Z"
+  },
+  {
+    "id": "Humidity5",
+    "types": "humidity",
+    "profile": "normal",
+    "interval": 5,
+    "saved_at": "2026-04-08T06:30:20.407Z"
+  },
+  {
+    "id": "Temperature1",
+    "types": "temperature",
+    "profile": "normal",
+    "interval": 5,
+    "saved_at": "2026-04-08T06:30:34.505Z"
+  },
+  {
+    "id": "Temperature2",
+    "types": "temperature",
+    "profile": "normal",
+    "interval": 5,
+    "saved_at": "2026-04-08T06:30:45.113Z"
+  },
+  {
+    "id": "Temperature3",
+    "types": "temperature",
+    "profile": "normal",
+    "interval": 5,
+    "saved_at": "2026-04-08T06:30:48.201Z"
+  },
+  {
+    "id": "Temperature4",
+    "types": "temperature",
+    "profile": "normal",
+    "interval": 5,
+    "saved_at": "2026-04-08T06:30:51.418Z"
+  },
+  {
+    "id": "Temperature5",
+    "types": "temperature",
+    "profile": "normal",
+    "interval": 5,
+    "saved_at": "2026-04-08T06:30:54.664Z"
   }
 ]

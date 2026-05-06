@@ -4,12 +4,28 @@ import random
 import os
 import json
 
+from opentelemetry import trace
+from opentelemetry.exporter.otlp.proto.grpc.trace_exporter import OTLPSpanExporter
+from opentelemetry.sdk.trace import TracerProvider
+from opentelemetry.sdk.trace.export import BatchSpanProcessor
+from opentelemetry.sdk.resources import Resource
+
 # Environment variables from Docker (Passed by Node-RED)
 SENSOR_ID = os.getenv("SENSOR_ID", "sensor_node")
 SENSOR_TYPES = [s.strip() for s in os.getenv("SENSOR_TYPES", "temperature").split(',')]
 NODE_PROFILE = os.getenv("NODE_PROFILE", "normal").lower()
 INTERVAL = int(os.getenv("INTERVAL", "5"))
 MQTT_BROKER = os.getenv("MQTT_BROKER", "mosquitto")
+OTEL_ENDPOINT = os.getenv("OTEL_EXPORTER_OTLP_ENDPOINT", "http://otel-collector:4317")
+
+# OpenTelemetry configuration
+resource = Resource(attributes={"service.name": os.getenv("OTEL_SERVICE_NAME", f"iot-sensor-node-{SENSOR_ID}")})
+trace.set_tracer_provider(TracerProvider(resource=resource))
+otlp_exporter = OTLPSpanExporter(endpoint=OTEL_ENDPOINT, insecure=True)
+span_processor = BatchSpanProcessor(otlp_exporter)
+trace.get_tracer_provider().add_span_processor(span_processor)
+
+tracer = trace.get_tracer(__name__)
 
 # For the "failing" profile
 start_time = time.time()
@@ -74,12 +90,13 @@ def main():
                 "sensor_id": SENSOR_ID,
                 "profile": NODE_PROFILE,
                 "readings": readings,
-                "timestamp": int(time.time())
+                "timestamp": time.time()
             })
             
-            client.publish(topic, payload)
-            print(f"[{SENSOR_ID}] Published: {payload}")
-            
+            with tracer.start_as_current_span(f"mqtt_publish_{topic}"):
+                client.publish(topic, payload)
+                print(f"[{SENSOR_ID}] Published: {payload}")
+                
             time.sleep(INTERVAL)
     except KeyboardInterrupt:
         print(f"\n[{SENSOR_ID}] Shutting down...")

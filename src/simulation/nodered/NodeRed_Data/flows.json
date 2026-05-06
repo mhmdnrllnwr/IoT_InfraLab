@@ -373,7 +373,7 @@
         "order": 3,
         "showTitle": true,
         "className": "",
-        "visible": "true",
+        "visible": false,
         "disabled": "false",
         "groupType": "default"
     },
@@ -3452,8 +3452,8 @@
         "type": "function",
         "z": "53b83243ce3bfc91",
         "name": "Parse Suricata & Extract IPs",
-        "func": "let raw = msg.payload || '';\nlet lines = raw.split('\\n');\nlet alerts = [];\nlet attackerIPs = new Set();\n\nfor (let i = 0; i < lines.length; i++) {\n    let line = lines[i].trim();\n    if (!line) continue;\n    let jsonStart = line.indexOf('{\"timestamp\"');\n    if (jsonStart !== -1) {\n        try {\n            let evt = JSON.parse(line.substring(jsonStart));\n            if (evt.event_type === 'alert') {\n                let time = new Date(evt.timestamp).toLocaleTimeString();\n                let sig = evt.alert.signature;\n                let src = evt.src_ip;\n                alerts.push(`[${time}] 🚨 DETECTED: ${sig}\\n    Source: ${src}`);\n                if (evt.src_ip) attackerIPs.add(evt.src_ip);\n            }\n        } catch(e) {}\n    }\n}\n\nalerts = alerts.reverse().slice(0, 10);\n\n// FIXED: Route to the NEW dedicated terminal widget\nlet msgAlerts = { topic: 'suricata_alerts', payload: '' };\nif (alerts.length === 0) {\n    msgAlerts.payload = '🟢 System Secure: Watching for active threats in eve.json...';\n} else {\n    msgAlerts.payload = alerts.join('\\n\\n');\n}\n\nlet msgAttackers = { payload: Array.from(attackerIPs) };\nreturn [msgAlerts, msgAttackers];",
-        "outputs": 2,
+        "func": "let raw = msg.payload || '';\nlet lines = raw.split('\\n');\nlet alerts = [];\nlet attackerIPs = new Set();\nlet newSOCMsgs = [];\n\nlet lastAlertTime = flow.get('last_suricata_alert_time') || 0;\nlet highestTime = lastAlertTime;\n\nfor (let i = 0; i < lines.length; i++) {\n    let line = lines[i].trim();\n    if (!line) continue;\n    let jsonStart = line.indexOf('{\"timestamp\"');\n    if (jsonStart !== -1) {\n        try {\n            let evt = JSON.parse(line.substring(jsonStart));\n            if (evt.event_type === 'alert') {\n                let evtTime = new Date(evt.timestamp).getTime();\n                let time = new Date(evt.timestamp).toLocaleTimeString();\n                let sig = evt.alert.signature;\n                let src = evt.src_ip;\n                alerts.push(`[${time}] 🚨 DETECTED: ${sig}\\n    Source: ${src}`);\n                if (evt.src_ip) attackerIPs.add(evt.src_ip);\n                \n                if (evtTime > lastAlertTime) {\n                    newSOCMsgs.push({ topic: 'system_log', payload: `🚨 SURICATA ALARM: ${sig} (Source: ${src})` });\n                    if (evtTime > highestTime) highestTime = evtTime;\n                }\n            }\n        } catch(e) {}\n    }\n}\nflow.set('last_suricata_alert_time', highestTime);\n\nalerts = alerts.reverse().slice(0, 10);\n\nlet msgAlerts = { topic: 'suricata_alerts', payload: '' };\nif (alerts.length === 0) {\n    msgAlerts.payload = '🟢 System Secure: Watching for active threats in eve.json...';\n} else {\n    msgAlerts.payload = alerts.join('\\n\\n');\n}\n\nlet msgAttackers = { payload: Array.from(attackerIPs) };\n\nreturn [msgAlerts, msgAttackers, newSOCMsgs];",
+        "outputs": 3,
         "x": 1180,
         "y": 380,
         "wires": [
@@ -3463,6 +3463,9 @@
             [
                 "6c61d37b156ddc1f",
                 "c7ef7b0e1f9143ef"
+            ],
+            [
+                "5a9e7b1d4c3ffce4"
             ]
         ]
     },

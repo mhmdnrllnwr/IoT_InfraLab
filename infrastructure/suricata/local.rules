@@ -3,5 +3,5 @@
 # ==========================================
 
 # Safelist internal management traffic
-pass ip 172.18.0.5 any <> any any (msg:"Safelisting Security Auditor"; sid:9900001; rev:1;)
-pass ip 172.18.0.7 any <> any any (msg:"Safelisting Node-RED"; sid:9900002; rev:1;)
+pass ip 172.18.0.100 any <> any any (msg:"Safelisting Security Auditor"; sid:9900001; rev:1;)
+pass ip 172.18.0.25 any <> any any (msg:"Safelisting Node-RED"; sid:9900002; rev:1;)

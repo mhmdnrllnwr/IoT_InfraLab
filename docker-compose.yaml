@@ -23,7 +23,7 @@ services:
     user: "root"
     networks:
       iot_infralab_net:
-        ipv4_address: 172.18.0.7
+        ipv4_address: 172.18.0.25
     ports:
       - "1880:1880"
     volumes:
@@ -60,6 +60,53 @@ services:
   # ----------------------------------------
   # THE ANALYTICS ZONE (Time-Series & Dashboard)
   # ----------------------------------------
+  otel-collector:
+    image: otel/opentelemetry-collector-contrib:latest
+    container_name: otel_collector
+    networks:
+      - iot_infralab_net
+    ports:
+      - "4317:4317" # OTLP gRPC
+      - "4318:4318" # OTLP HTTP
+    volumes:
+      - ./infrastructure/otel/otel-config.yaml:/etc/otelcol-contrib/config.yaml:ro
+    restart: unless-stopped
+    depends_on:
+      - tempo
+      - influxdb
+
+  loki:
+    image: grafana/loki:latest
+    container_name: loki
+    networks:
+      - iot_infralab_net
+    ports:
+      - "3100:3100"
+    restart: unless-stopped
+
+  tempo:
+    image: grafana/tempo:latest
+    container_name: tempo
+    networks:
+      - iot_infralab_net
+    command: [ "-config.file=/etc/tempo.yaml" ]
+    volumes:
+      - ./infrastructure/tempo/tempo-config.yaml:/etc/tempo.yaml:ro
+    restart: unless-stopped
+
+  promtail:
+    image: grafana/promtail:latest
+    container_name: promtail
+    networks:
+      - iot_infralab_net
+    volumes:
+      - ./infrastructure/suricata/logs:/var/log/suricata:ro
+      - ./infrastructure/promtail/promtail-config.yaml:/etc/promtail/config.yml:ro
+    command: -config.file=/etc/promtail/config.yml
+    restart: unless-stopped
+    depends_on:
+      - loki
+
   influxdb:
     image: influxdb:2.7
     container_name: influxdb
@@ -81,6 +128,7 @@ services:
       - "3000:3000"
     volumes:
       - ./infrastructure/grafana/data:/var/lib/grafana
+      - ./infrastructure/grafana/provisioning/datasources:/etc/grafana/provisioning/datasources:ro
     restart: unless-stopped
     #restart: "no"
     depends_on:
@@ -117,7 +165,7 @@ services:
     container_name: security_auditor
     networks:
       iot_infralab_net:
-        ipv4_address: 172.18.0.10
+        ipv4_address: 172.18.0.100
     env_file:
       - .env
     cap_add:

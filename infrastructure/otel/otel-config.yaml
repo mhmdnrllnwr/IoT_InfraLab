@@ -1,0 +1,32 @@
+receivers:
+  otlp:
+    protocols:
+      grpc:
+        endpoint: "0.0.0.0:4317"
+      http:
+        endpoint: "0.0.0.0:4318"
+
+exporters:
+  otlp/tempo:
+    endpoint: "tempo:4317"
+    tls:
+      insecure: true
+  debug:
+    verbosity: detailed
+  influxdb:
+    endpoint: http://influxdb:8086
+    org: your-org-name
+    bucket: your-bucket-name
+    token: your-token-placeholder
+
+processors:
+  batch:
+    timeout: 5s
+    send_batch_size: 10
+
+service:
+  pipelines:
+    traces:
+      receivers: [otlp]
+      processors: [batch]
+      exporters: [otlp/tempo, debug]

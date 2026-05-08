@@ -102,8 +102,10 @@
         "name": "Create Sensor Node",
         "page": "ui_page_management",
         "width": "6",
-        "order": 1,
-        "showTitle": true
+        "order": 2,
+        "showTitle": true,
+        "visible": true,
+        "disabled": false
     },
     {
         "id": "ui_group_deploy_log",
@@ -111,7 +113,7 @@
         "name": "Deployment Log",
         "page": "ui_page_management",
         "width": "6",
-        "order": 2,
+        "order": 3,
         "showTitle": true
     },
     {
@@ -120,7 +122,7 @@
         "name": "Saved Configurations",
         "page": "ui_page_management",
         "width": "6",
-        "order": 3,
+        "order": 4,
         "showTitle": true
     },
     {
@@ -129,7 +131,7 @@
         "name": "Active Sensors",
         "page": "ui_page_management",
         "width": "6",
-        "order": 5,
+        "order": 6,
         "showTitle": true,
         "visible": true,
         "disabled": false
@@ -140,7 +142,7 @@
         "name": "Node Control",
         "page": "ui_page_management",
         "width": "6",
-        "order": 4,
+        "order": 5,
         "showTitle": true
     },
     {
@@ -149,7 +151,7 @@
         "name": "Live Sensor Feed",
         "page": "ui_page_management",
         "width": "6",
-        "order": 6,
+        "order": 7,
         "showTitle": true
     },
     {
@@ -469,6 +471,20 @@
         "groupType": "default"
     },
     {
+        "id": "e900fa4283c2f1cd",
+        "type": "ui-group",
+        "name": "Manage Sensor Type",
+        "page": "ui_page_management",
+        "width": 6,
+        "height": 1,
+        "order": 1,
+        "showTitle": true,
+        "className": "",
+        "visible": "true",
+        "disabled": "false",
+        "groupType": "default"
+    },
+    {
         "id": "599a1bcf052a2d6b",
         "type": "ui-text-input",
         "z": "89c26b2630a7d108",
@@ -494,7 +510,7 @@
         "iconPosition": "left",
         "iconInnerPosition": "inside",
         "x": 140,
-        "y": 120,
+        "y": 180,
         "wires": [
             [
                 "6ab43fba25710a01"
@@ -509,80 +525,6 @@
         "func": "flow.set('cfg_node_id', msg.payload);\nreturn msg;",
         "outputs": 1,
         "x": 340,
-        "y": 120,
-        "wires": [
-            []
-        ]
-    },
-    {
-        "id": "d888d3d4aeb2a954",
-        "type": "ui-dropdown",
-        "z": "89c26b2630a7d108",
-        "group": "ui_group_create",
-        "name": "Sensors Dropdown",
-        "label": "Sensor Types",
-        "tooltip": "",
-        "order": 2,
-        "width": 0,
-        "height": 0,
-        "passthru": true,
-        "multiple": true,
-        "chips": false,
-        "clearable": false,
-        "options": [
-            {
-                "label": "Temperature",
-                "value": "temperature",
-                "type": "str"
-            },
-            {
-                "label": "Vibration",
-                "value": "vibration",
-                "type": "str"
-            },
-            {
-                "label": "Pressure",
-                "value": "pressure",
-                "type": "str"
-            },
-            {
-                "label": "Humidity",
-                "value": "humidity",
-                "type": "str"
-            },
-            {
-                "label": "Power Draw",
-                "value": "power_draw",
-                "type": "str"
-            },
-            {
-                "label": "Flow Rate",
-                "value": "flow_rate",
-                "type": "str"
-            }
-        ],
-        "payload": "",
-        "topic": "topic",
-        "topicType": "msg",
-        "className": "",
-        "typeIsComboBox": true,
-        "msgTrigger": "onChange",
-        "x": 150,
-        "y": 180,
-        "wires": [
-            [
-                "be2df5d237542d84"
-            ]
-        ]
-    },
-    {
-        "id": "be2df5d237542d84",
-        "type": "function",
-        "z": "89c26b2630a7d108",
-        "name": "Save Sensors",
-        "func": "flow.set('cfg_sensors', msg.payload);\nreturn msg;",
-        "outputs": 1,
-        "x": 350,
         "y": 180,
         "wires": [
             []
@@ -762,6 +704,7 @@
         "z": "89c26b2630a7d108",
         "name": "Read Configs (Check)",
         "filename": "/data/saved_sensors.json",
+        "filenameType": "str",
         "format": "utf8",
         "x": 600,
         "y": 340,
@@ -834,7 +777,7 @@
         "type": "function",
         "z": "89c26b2630a7d108",
         "name": "Build Docker Cmd",
-        "func": "let cfg = msg.payload;\n\nmsg.sensor_config = cfg;\nmsg.url = 'http://docker-proxy:2375/containers/create?name=' + cfg.id;\nmsg.payload = {\n    \"Image\": \"iot-sensor\",\n    \"Env\": [\n        \"SENSOR_ID=\" + cfg.id,\n        \"SENSOR_TYPES=\" + cfg.types,\n        \"NODE_PROFILE=\" + cfg.profile,\n        \"INTERVAL=\" + cfg.interval,\n        \"MQTT_BROKER=mosquitto\"\n    ],\n    \"HostConfig\": {\n        \"NetworkMode\": \"iot_infralab_net\",\n        \"AutoRemove\": true\n    }\n};\nreturn msg;",
+        "func": "let cfg = msg.payload;\n\nmsg.sensor_config = cfg;\nmsg.url = 'http://docker-proxy:2375/containers/create?name=' + cfg.id;\nmsg.payload = {\n    \"Image\": \"iot-sensor\",\n    \"Env\": [\n        \"SENSOR_ID=\" + cfg.id,\n        \"SENSOR_TYPES=\" + cfg.types,\n        \"NODE_PROFILE=\" + cfg.profile,\n        \"INTERVAL=\" + cfg.interval,\n        \"MQTT_BROKER=mosquitto\"\n    ],\n    \"HostConfig\": {\n        \"NetworkMode\": \"iot_infralab_net\",\n        \"AutoRemove\": true,\n        \"Binds\": [\"D:/IoT_InfraLab/config:/app/config\"]\n    }\n};\nreturn msg;",
         "outputs": 1,
         "x": 210,
         "y": 500,
@@ -2113,6 +2056,293 @@
         "x": 745,
         "y": 760,
         "wires": []
+    },
+    {
+        "id": "513c1950ef69e389",
+        "type": "inject",
+        "z": "89c26b2630a7d108",
+        "name": "Load on Boot",
+        "props": [],
+        "repeat": "",
+        "crontab": "",
+        "once": true,
+        "onceDelay": 0.5,
+        "x": 1510,
+        "y": 120,
+        "wires": [
+            [
+                "b001f5a2ea9edced"
+            ]
+        ]
+    },
+    {
+        "id": "b001f5a2ea9edced",
+        "type": "file in",
+        "z": "89c26b2630a7d108",
+        "name": "Read sensor_types.json",
+        "filename": "/data/sensor_types.json",
+        "format": "utf8",
+        "chunk": false,
+        "x": 1750,
+        "y": 120,
+        "wires": [
+            [
+                "41a12cd7d803d01c"
+            ]
+        ]
+    },
+    {
+        "id": "41a12cd7d803d01c",
+        "type": "function",
+        "z": "89c26b2630a7d108",
+        "name": "Update All Dropdowns",
+        "func": "let data = {};\ntry {\n    data = JSON.parse(msg.payload);\n} catch(e) { return null; }\n\nglobal.set('sensorTypesDB', data);\n\nlet opts = Object.keys(data).map(key => ({\n    label: key.charAt(0).toUpperCase() + key.slice(1).replace(/_/g, ' '),\n    value: key\n}));\n\nmsg.options = opts;\nmsg.payload = \"\";\nreturn msg;",
+        "outputs": 1,
+        "x": 2030,
+        "y": 120,
+        "wires": [
+            [
+                "84229573cbb609c6",
+                "554a1a12eae4d72b"
+            ]
+        ]
+    },
+    {
+        "id": "554a1a12eae4d72b",
+        "type": "ui-dropdown",
+        "z": "89c26b2630a7d108",
+        "group": "e900fa4283c2f1cd",
+        "name": "Select Sensor Type",
+        "label": "Load Existing Layout",
+        "order": 1,
+        "width": 0,
+        "height": 0,
+        "passthru": true,
+        "options": [],
+        "x": 2300,
+        "y": 80,
+        "wires": [
+            [
+                "856603363f3089d0"
+            ]
+        ]
+    },
+    {
+        "id": "84229573cbb609c6",
+        "type": "ui-dropdown",
+        "z": "89c26b2630a7d108",
+        "group": "ui_group_create",
+        "name": "Sensors Dropdown",
+        "label": "Sensor Types",
+        "order": 2,
+        "width": 0,
+        "height": 0,
+        "passthru": true,
+        "multiple": true,
+        "options": [],
+        "x": 2300,
+        "y": 160,
+        "wires": [
+            [
+                "96f5a377bc015803"
+            ]
+        ]
+    },
+    {
+        "id": "856603363f3089d0",
+        "type": "function",
+        "z": "89c26b2630a7d108",
+        "name": "Fill Form Info",
+        "func": "let typeName = msg.payload;\nglobal.set('lastSelectedId', typeName);\nlet db = global.get('sensorTypesDB') || {};\n\nif (typeName && db[typeName]) {\n    msg.payload = {\n        typeName: typeName,\n        min: db[typeName].range[0],\n        max: db[typeName].range[1]\n    };\n    return msg;\n} return null;",
+        "outputs": 1,
+        "x": 2550,
+        "y": 80,
+        "wires": [
+            [
+                "b2eb713f526ac7dd"
+            ]
+        ]
+    },
+    {
+        "id": "d6643cfede4e4159",
+        "type": "ui-button",
+        "z": "89c26b2630a7d108",
+        "group": "e900fa4283c2f1cd",
+        "name": "Delete Button",
+        "label": "Delete Selected Type",
+        "order": 2,
+        "width": 0,
+        "height": 0,
+        "emulateClick": false,
+        "color": "#ffffff",
+        "className": "",
+        "icon": "mdi-delete",
+        "iconPosition": "left",
+        "payload": "delete",
+        "payloadType": "str",
+        "topic": "delete",
+        "topicType": "str",
+        "buttonColor": "",
+        "textColor": "",
+        "iconColor": "",
+        "enableClick": true,
+        "enablePointerdown": false,
+        "pointerdownPayload": "",
+        "pointerdownPayloadType": "str",
+        "enablePointerup": false,
+        "pointerupPayload": "",
+        "pointerupPayloadType": "str",
+        "x": 2760,
+        "y": 140,
+        "wires": [
+            [
+                "23b437e91f3ea332"
+            ]
+        ]
+    },
+    {
+        "id": "23b437e91f3ea332",
+        "type": "function",
+        "z": "89c26b2630a7d108",
+        "name": "CRUD Logic Engine",
+        "func": "let db = global.get('sensorTypesDB') || {};\n\nif (msg.topic === \"save\") {\n    let d = msg.payload;\n    let safeName = d.typeName.toLowerCase().replace(/ /g, \"_\");\n    \n    db[safeName] = {\n        range: [parseFloat(d.min), parseFloat(d.max)]\n    };\n}\nelse if (msg.topic === \"delete\") {\n    let selectedId = global.get('lastSelectedId');\n    if(selectedId && db[selectedId]) {\n        delete db[selectedId];\n    }\n}\n\nmsg.payload = JSON.stringify(db, null, 2);\nmsg.topic = \"cmd/system/reload\";\nreturn msg;",
+        "outputs": 1,
+        "x": 3020,
+        "y": 100,
+        "wires": [
+            [
+                "097b94979be78346",
+                "72eb64a18962cff1",
+                "e720ca2ebb3ab43c"
+            ]
+        ]
+    },
+    {
+        "id": "097b94979be78346",
+        "type": "file",
+        "z": "89c26b2630a7d108",
+        "name": "Write sensor_types.json",
+        "filename": "/data/sensor_types.json",
+        "filenameType": "str",
+        "appendNewline": false,
+        "createDir": true,
+        "overwriteFile": "true",
+        "encoding": "none",
+        "x": 3320,
+        "y": 60,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "72eb64a18962cff1",
+        "type": "mqtt out",
+        "z": "89c26b2630a7d108",
+        "name": "MQTT: cmd/system/reload",
+        "topic": "cmd/system/reload",
+        "qos": "1",
+        "retain": "",
+        "respTopic": "",
+        "contentType": "",
+        "userProps": "",
+        "correl": "",
+        "expiry": "",
+        "broker": "ff_mqtt_broker",
+        "x": 3320,
+        "y": 140,
+        "wires": []
+    },
+    {
+        "id": "96f5a377bc015803",
+        "type": "function",
+        "z": "89c26b2630a7d108",
+        "name": "Save Sensors",
+        "func": "flow.set('cfg_sensors', msg.payload);\nreturn msg;",
+        "outputs": 1,
+        "x": 2520,
+        "y": 160,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "e720ca2ebb3ab43c",
+        "type": "delay",
+        "z": "89c26b2630a7d108",
+        "name": "",
+        "pauseType": "delay",
+        "timeout": "500",
+        "timeoutUnits": "milliseconds",
+        "rate": "1",
+        "nbRateUnits": "1",
+        "rateUnits": "second",
+        "randomFirst": "1",
+        "randomLast": "5",
+        "randomUnits": "seconds",
+        "drop": false,
+        "allowrate": false,
+        "outputs": 1,
+        "x": 3290,
+        "y": 280,
+        "wires": [
+            [
+                "b001f5a2ea9edced"
+            ]
+        ]
+    },
+    {
+        "id": "b2eb713f526ac7dd",
+        "type": "ui-form",
+        "z": "89c26b2630a7d108",
+        "name": "Sensor Editor",
+        "group": "e900fa4283c2f1cd",
+        "label": "",
+        "order": 3,
+        "width": 0,
+        "height": 0,
+        "options": [
+            {
+                "label": "Sensor Type Name (ID)",
+                "key": "typeName",
+                "type": "text",
+                "required": true,
+                "rows": null
+            },
+            {
+                "label": "Minimum Value",
+                "key": "min",
+                "type": "number",
+                "required": true,
+                "rows": null
+            },
+            {
+                "label": "Maximum Value",
+                "key": "max",
+                "type": "number",
+                "required": true,
+                "rows": null
+            }
+        ],
+        "formValue": {
+            "typeName": "",
+            "min": "",
+            "max": ""
+        },
+        "submit": "Save / Create",
+        "cancel": "Clear",
+        "resetOnSubmit": false,
+        "topic": "save",
+        "topicType": "str",
+        "splitLayout": false,
+        "className": "",
+        "dropdownOptions": [],
+        "x": 2780,
+        "y": 80,
+        "wires": [
+            [
+                "23b437e91f3ea332"
+            ]
+        ]
     },
     {
         "id": "fce8349266f9f819",

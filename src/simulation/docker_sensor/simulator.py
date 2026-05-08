@@ -18,6 +18,41 @@ INTERVAL = int(os.getenv("INTERVAL", "5"))
 MQTT_BROKER = os.getenv("MQTT_BROKER", "mosquitto")
 OTEL_ENDPOINT = os.getenv("OTEL_EXPORTER_OTLP_ENDPOINT", "http://otel-collector:4317")
 
+# Global variables for dynamic config
+DYNAMIC_BLUEPRINTS = {}
+BASE_RANGES = {}
+CONFIG_FILE = "/app/config/sensor_settings.json"
+SENSOR_TYPES_FILE = "/app/config/sensor_types.json"
+
+def load_config():
+    global SENSOR_TYPES, DYNAMIC_BLUEPRINTS, BASE_RANGES
+    
+    if os.path.exists(SENSOR_TYPES_FILE):
+        try:
+            with open(SENSOR_TYPES_FILE, 'r') as f:
+                BASE_RANGES = json.load(f)
+        except Exception as e:
+            print(f"[{SENSOR_ID}] Error loading sensor types: {e}")
+
+    if os.path.exists(CONFIG_FILE):
+        try:
+            with open(CONFIG_FILE, 'r') as f:
+                config = json.load(f)
+                
+                # Extract blueprints if defined
+                if "blueprints" in config:
+                    DYNAMIC_BLUEPRINTS = config["blueprints"]
+                
+                # Check if this sensor has a specific override
+                sensors = config.get("sensors", {})
+                if SENSOR_ID in sensors:
+                    sensor_conf = sensors[SENSOR_ID]
+                    if "types" in sensor_conf:
+                        SENSOR_TYPES = [s.strip() for s in sensor_conf["types"]]
+            print(f"[{SENSOR_ID}] Config reloaded. New types: {SENSOR_TYPES}")
+        except Exception as e:
+            print(f"[{SENSOR_ID}] Error loading config: {e}")
+
 # OpenTelemetry configuration
 resource = Resource(attributes={"service.name": os.getenv("OTEL_SERVICE_NAME", f"iot-sensor-node-{SENSOR_ID}")})
 trace.set_tracer_provider(TracerProvider(resource=resource))
@@ -31,16 +66,13 @@ tracer = trace.get_tracer(__name__)
 start_time = time.time()
 
 def get_sensor_value(s_type, profile, elapsed):
-    # Base expected ranges for factory environment
-    ranges = {
-        "temperature": (40.0, 45.0),
-        "vibration": (0.5, 1.2),
-        "pressure": (90.0, 105.0),
-        "humidity": (30.0, 40.0),
-        "flow_rate": (50.0, 60.0),
-        "power_draw": (220.0, 230.0)
-    }
+    # Use loaded base ranges
+    ranges = dict(BASE_RANGES)
     
+    # Overwrite range if defined dynamically
+    if s_type in DYNAMIC_BLUEPRINTS and "range" in DYNAMIC_BLUEPRINTS[s_type]:
+        ranges[s_type] = tuple(DYNAMIC_BLUEPRINTS[s_type]["range"])
+
     base_min, base_max = ranges.get(s_type, (0.0, 100.0))
     val = random.uniform(base_min, base_max)
 
@@ -62,13 +94,23 @@ def get_sensor_value(s_type, profile, elapsed):
 def on_connect(client, userdata, flags, rc):
     if rc == 0:
         print(f"[{SENSOR_ID}] Connected to MQTT broker: {MQTT_BROKER}")
+        client.subscribe("cmd/system/reload")
     else:
         print(f"[{SENSOR_ID}] Failed to connect, return code {rc}")
+
+def on_message(client, userdata, msg):
+    if msg.topic == "cmd/system/reload":
+        print(f"[{SENSOR_ID}] Received reload command!")
+        load_config()
 
 def main():
     client = mqtt.Client(SENSOR_ID)
     client.on_connect = on_connect
+    client.on_message = on_message
     
+    # Load initial config if present
+    load_config()
+
     try:
         client.connect(MQTT_BROKER, 1883, 60)
         client.loop_start()

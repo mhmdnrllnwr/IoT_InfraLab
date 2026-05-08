@@ -102,8 +102,10 @@
         "name": "Create Sensor Node",
         "page": "ui_page_management",
         "width": "6",
-        "order": 1,
-        "showTitle": true
+        "order": 2,
+        "showTitle": true,
+        "visible": true,
+        "disabled": false
     },
     {
         "id": "ui_group_deploy_log",
@@ -111,7 +113,7 @@
         "name": "Deployment Log",
         "page": "ui_page_management",
         "width": "6",
-        "order": 2,
+        "order": 3,
         "showTitle": true
     },
     {
@@ -120,7 +122,7 @@
         "name": "Saved Configurations",
         "page": "ui_page_management",
         "width": "6",
-        "order": 3,
+        "order": 4,
         "showTitle": true
     },
     {
@@ -129,7 +131,7 @@
         "name": "Active Sensors",
         "page": "ui_page_management",
         "width": "6",
-        "order": 5,
+        "order": 6,
         "showTitle": true,
         "visible": true,
         "disabled": false
@@ -140,7 +142,7 @@
         "name": "Node Control",
         "page": "ui_page_management",
         "width": "6",
-        "order": 4,
+        "order": 5,
         "showTitle": true
     },
     {
@@ -149,7 +151,7 @@
         "name": "Live Sensor Feed",
         "page": "ui_page_management",
         "width": "6",
-        "order": 6,
+        "order": 7,
         "showTitle": true
     },
     {
@@ -373,7 +375,7 @@
         "order": 3,
         "showTitle": true,
         "className": "",
-        "visible": "true",
+        "visible": false,
         "disabled": "false",
         "groupType": "default"
     },
@@ -469,6 +471,20 @@
         "groupType": "default"
     },
     {
+        "id": "e900fa4283c2f1cd",
+        "type": "ui-group",
+        "name": "Manage Sensor Type",
+        "page": "ui_page_management",
+        "width": 6,
+        "height": 1,
+        "order": 1,
+        "showTitle": true,
+        "className": "",
+        "visible": "true",
+        "disabled": "false",
+        "groupType": "default"
+    },
+    {
         "id": "599a1bcf052a2d6b",
         "type": "ui-text-input",
         "z": "89c26b2630a7d108",
@@ -494,7 +510,7 @@
         "iconPosition": "left",
         "iconInnerPosition": "inside",
         "x": 140,
-        "y": 120,
+        "y": 180,
         "wires": [
             [
                 "6ab43fba25710a01"
@@ -509,80 +525,6 @@
         "func": "flow.set('cfg_node_id', msg.payload);\nreturn msg;",
         "outputs": 1,
         "x": 340,
-        "y": 120,
-        "wires": [
-            []
-        ]
-    },
-    {
-        "id": "d888d3d4aeb2a954",
-        "type": "ui-dropdown",
-        "z": "89c26b2630a7d108",
-        "group": "ui_group_create",
-        "name": "Sensors Dropdown",
-        "label": "Sensor Types",
-        "tooltip": "",
-        "order": 2,
-        "width": 0,
-        "height": 0,
-        "passthru": true,
-        "multiple": true,
-        "chips": false,
-        "clearable": false,
-        "options": [
-            {
-                "label": "Temperature",
-                "value": "temperature",
-                "type": "str"
-            },
-            {
-                "label": "Vibration",
-                "value": "vibration",
-                "type": "str"
-            },
-            {
-                "label": "Pressure",
-                "value": "pressure",
-                "type": "str"
-            },
-            {
-                "label": "Humidity",
-                "value": "humidity",
-                "type": "str"
-            },
-            {
-                "label": "Power Draw",
-                "value": "power_draw",
-                "type": "str"
-            },
-            {
-                "label": "Flow Rate",
-                "value": "flow_rate",
-                "type": "str"
-            }
-        ],
-        "payload": "",
-        "topic": "topic",
-        "topicType": "msg",
-        "className": "",
-        "typeIsComboBox": true,
-        "msgTrigger": "onChange",
-        "x": 150,
-        "y": 180,
-        "wires": [
-            [
-                "be2df5d237542d84"
-            ]
-        ]
-    },
-    {
-        "id": "be2df5d237542d84",
-        "type": "function",
-        "z": "89c26b2630a7d108",
-        "name": "Save Sensors",
-        "func": "flow.set('cfg_sensors', msg.payload);\nreturn msg;",
-        "outputs": 1,
-        "x": 350,
         "y": 180,
         "wires": [
             []
@@ -740,7 +682,7 @@
         "type": "function",
         "z": "89c26b2630a7d108",
         "name": "Construct Config & Validate",
-        "func": "let action = msg.payload || 'save';\nlet n_id = flow.get('cfg_node_id');\nlet s_types = flow.get('cfg_sensors');\nlet prof = flow.get('cfg_profile');\nlet intrvl = flow.get('cfg_interval');\n\nlet errors = [];\nif (!n_id || n_id.trim() === '') errors.push(\"\u26a0\ufe0f Validation Error: Node ID is missing!\");\nif (!s_types || s_types.length === 0) errors.push(\"\u26a0\ufe0f Validation Error: Sensor Types not selected!\");\nif (!prof || prof.trim() === '') errors.push(\"\u26a0\ufe0f Validation Error: Behavior Profile not selected!\");\n\nif (errors.length > 0) {\n    return [null, null, { payload: errors.join('\\n') }];\n}\n\nif (Array.isArray(s_types)) s_types = s_types.join(',');\nintrvl = intrvl || 5;\n\nmsg.new_config = {\n    id: n_id,\n    types: s_types,\n    profile: prof,\n    interval: intrvl,\n    saved_at: new Date().toISOString()\n};\n\nmsg.payload = msg.new_config;\n\nif (action === 'run') {\n    let logMsg = { payload: `\ud83d\ude80 Deploying Node [${n_id}] directly (Run Only)...` };\n    return [null, msg, logMsg];\n} else {\n    return [msg, null, null];\n}",
+        "func": "let action = msg.payload || 'save';\nlet n_id = flow.get('cfg_node_id');\nlet s_types = flow.get('cfg_sensors');\nlet prof = flow.get('cfg_profile');\nlet intrvl = flow.get('cfg_interval');\n\nlet errors = [];\nif (!n_id || n_id.trim() === '') errors.push(\"⚠️ Validation Error: Node ID is missing!\");\nif (!s_types || s_types.length === 0) errors.push(\"⚠️ Validation Error: Sensor Types not selected!\");\nif (!prof || prof.trim() === '') errors.push(\"⚠️ Validation Error: Behavior Profile not selected!\");\n\nif (errors.length > 0) {\n    return [null, null, { payload: errors.join('\\n') }];\n}\n\nif (Array.isArray(s_types)) s_types = s_types.join(',');\nintrvl = intrvl || 5;\n\nmsg.new_config = {\n    id: n_id,\n    types: s_types,\n    profile: prof,\n    interval: intrvl,\n    saved_at: new Date().toISOString()\n};\n\nmsg.payload = msg.new_config;\n\nif (action === 'run') {\n    let logMsg = { payload: `🚀 Deploying Node [${n_id}] directly (Run Only)...` };\n    return [null, msg, logMsg];\n} else {\n    return [msg, null, null];\n}",
         "outputs": 3,
         "x": 360,
         "y": 360,
@@ -762,6 +704,7 @@
         "z": "89c26b2630a7d108",
         "name": "Read Configs (Check)",
         "filename": "/data/saved_sensors.json",
+        "filenameType": "str",
         "format": "utf8",
         "x": 600,
         "y": 340,
@@ -776,7 +719,7 @@
         "type": "function",
         "z": "89c26b2630a7d108",
         "name": "Check ID & Append",
-        "func": "let configs = [];\ntry {\n    if (msg.payload) {\n        configs = JSON.parse(msg.payload);\n    }\n} catch(e) { }\n\n// Check if ID exists!\nlet exists = configs.findIndex(c => c.id === msg.new_config.id);\nif (exists >= 0) {\n    // HALT operation on fail\n    return [null, null, { payload: `\u274c FAILED: Saved Configuration '${msg.new_config.id}' already exists!` }];\n}\n\nconfigs.push(msg.new_config);\nmsg.payload = JSON.stringify(configs, null, 2);\n\n// Returns [save command, next docker deploy step, log/error msg]\nreturn [msg, { payload: msg.new_config }, { payload: `\u2705 Configuration [${msg.new_config.id}] saved... Dispatching deployment.`}];",
+        "func": "let configs = [];\ntry {\n    if (msg.payload) {\n        configs = JSON.parse(msg.payload);\n    }\n} catch(e) { }\n\n// Check if ID exists!\nlet exists = configs.findIndex(c => c.id === msg.new_config.id);\nif (exists >= 0) {\n    // HALT operation on fail\n    return [null, null, { payload: `❌ FAILED: Saved Configuration '${msg.new_config.id}' already exists!` }];\n}\n\nconfigs.push(msg.new_config);\nmsg.payload = JSON.stringify(configs, null, 2);\n\n// Returns [save command, next docker deploy step, log/error msg]\nreturn [msg, { payload: msg.new_config }, { payload: `✅ Configuration [${msg.new_config.id}] saved... Dispatching deployment.`}];",
         "outputs": 3,
         "x": 810,
         "y": 340,
@@ -834,7 +777,7 @@
         "type": "function",
         "z": "89c26b2630a7d108",
         "name": "Build Docker Cmd",
-        "func": "let cfg = msg.payload;\n\nmsg.sensor_config = cfg;\nmsg.url = 'http://docker-proxy:2375/containers/create?name=' + cfg.id;\nmsg.payload = {\n    \"Image\": \"iot-sensor\",\n    \"Env\": [\n        \"SENSOR_ID=\" + cfg.id,\n        \"SENSOR_TYPES=\" + cfg.types,\n        \"NODE_PROFILE=\" + cfg.profile,\n        \"INTERVAL=\" + cfg.interval,\n        \"MQTT_BROKER=mosquitto\"\n    ],\n    \"HostConfig\": {\n        \"NetworkMode\": \"iot_infralab_net\",\n        \"AutoRemove\": true\n    }\n};\nreturn msg;",
+        "func": "let cfg = msg.payload;\n\nmsg.sensor_config = cfg;\nmsg.url = 'http://docker-proxy:2375/containers/create?name=' + cfg.id;\nmsg.payload = {\n    \"Image\": \"iot-sensor\",\n    \"Env\": [\n        \"SENSOR_ID=\" + cfg.id,\n        \"SENSOR_TYPES=\" + cfg.types,\n        \"NODE_PROFILE=\" + cfg.profile,\n        \"INTERVAL=\" + cfg.interval,\n        \"MQTT_BROKER=mosquitto\"\n    ],\n    \"HostConfig\": {\n        \"NetworkMode\": \"iot_infralab_net\",\n        \"AutoRemove\": true,\n        \"Binds\": [\"D:/IoT_InfraLab/config:/app/config\"]\n    }\n};\nreturn msg;",
         "outputs": 1,
         "x": 210,
         "y": 500,
@@ -871,7 +814,7 @@
         "type": "function",
         "z": "89c26b2630a7d108",
         "name": "Build Start Request",
-        "func": "if(!msg.payload.Id){\n    msg.payload = '\u274c Create Error: ' + JSON.stringify(msg.payload);\n    return [null, msg];\n}\nlet logMsg = { payload: '\u21b3 Container ID: ' + msg.payload.Id.substring(0,12) + '. Starting...' };\nmsg.url = 'http://docker-proxy:2375/containers/' + msg.payload.Id + '/start';\nmsg.payload = {};\nreturn [msg, logMsg];",
+        "func": "if(!msg.payload.Id){\n    msg.payload = '❌ Create Error: ' + JSON.stringify(msg.payload);\n    return [null, msg];\n}\nlet logMsg = { payload: '↳ Container ID: ' + msg.payload.Id.substring(0,12) + '. Starting...' };\nmsg.url = 'http://docker-proxy:2375/containers/' + msg.payload.Id + '/start';\nmsg.payload = {};\nreturn [msg, logMsg];",
         "outputs": 2,
         "x": 690,
         "y": 500,
@@ -911,7 +854,7 @@
         "type": "function",
         "z": "89c26b2630a7d108",
         "name": "Deployment Success Log",
-        "func": "if(msg.statusCode === 204){\n    msg.payload = \"\u2705 Node dynamically deployed on network.\\n\";\n} else {\n    msg.payload = \"\u274c Error starting node.\\n\" + msg.payload;\n}\nreturn msg;",
+        "func": "if(msg.statusCode === 204){\n    msg.payload = \"✅ Node dynamically deployed on network.\\n\";\n} else {\n    msg.payload = \"❌ Error starting node.\\n\" + msg.payload;\n}\nreturn msg;",
         "outputs": 1,
         "x": 1170,
         "y": 500,
@@ -1095,7 +1038,7 @@
         "type": "function",
         "z": "89c26b2630a7d108",
         "name": "Log Start Mass",
-        "func": "return { payload: \"\ud83d\ude80 INITIATING MASS DEPLOYMENT of all saved configurations...\"};",
+        "func": "return { payload: \"🚀 INITIATING MASS DEPLOYMENT of all saved configurations...\"};",
         "outputs": 1,
         "x": 560,
         "y": 580,
@@ -1178,7 +1121,7 @@
         "type": "function",
         "z": "89c26b2630a7d108",
         "name": "Clear Array Log",
-        "func": "msg.payload = \"[]\";\nreturn [msg, { payload: \"\ud83d\uddd1\ufe0f All saved configurations have been purged.\" }];",
+        "func": "msg.payload = \"[]\";\nreturn [msg, { payload: \"🗑️ All saved configurations have been purged.\" }];",
         "outputs": 2,
         "x": 340,
         "y": 760,
@@ -1324,7 +1267,7 @@
         "type": "function",
         "z": "89c26b2630a7d108",
         "name": "Prep Request",
-        "func": "let target_node = flow.get('cfg_target_node');\nlet action = flow.get('cfg_target_action');\nif(!target_node || !action) { return [null, { payload: '\u26a0\ufe0f Select Node and Action' }]; }\n\nif(action === 'delete') {\n    msg.method = 'DELETE';\n    msg.url = 'http://docker-proxy:2375/containers/' + target_node + '?force=true';\n} else if (action === 'kill') {\n    msg.method = 'POST';\n    msg.url = 'http://docker-proxy:2375/containers/' + target_node + '/kill';\n} else {\n    msg.method = 'POST';\n    msg.url = 'http://docker-proxy:2375/containers/' + target_node + '/' + action;\n}\nlet log = { payload: `Executing ${action.toUpperCase()} on node: ${target_node}...` };\nreturn [msg, log];",
+        "func": "let target_node = flow.get('cfg_target_node');\nlet action = flow.get('cfg_target_action');\nif(!target_node || !action) { return [null, { payload: '⚠️ Select Node and Action' }]; }\n\nif(action === 'delete') {\n    msg.method = 'DELETE';\n    msg.url = 'http://docker-proxy:2375/containers/' + target_node + '?force=true';\n} else if (action === 'kill') {\n    msg.method = 'POST';\n    msg.url = 'http://docker-proxy:2375/containers/' + target_node + '/kill';\n} else {\n    msg.method = 'POST';\n    msg.url = 'http://docker-proxy:2375/containers/' + target_node + '/' + action;\n}\nlet log = { payload: `Executing ${action.toUpperCase()} on node: ${target_node}...` };\nreturn [msg, log];",
         "outputs": 2,
         "x": 340,
         "y": 980,
@@ -1364,7 +1307,7 @@
         "type": "function",
         "z": "89c26b2630a7d108",
         "name": "Action Result",
-        "func": "if(msg.statusCode >= 200 && msg.statusCode < 300) {\n    msg.payload = '\u2705 Action completed successfully.\\n';\n} else {\n    msg.payload = '\u274c Action failed: ' + msg.payload + '\\n';\n}\nreturn msg;",
+        "func": "if(msg.statusCode >= 200 && msg.statusCode < 300) {\n    msg.payload = '✅ Action completed successfully.\\n';\n} else {\n    msg.payload = '❌ Action failed: ' + msg.payload + '\\n';\n}\nreturn msg;",
         "outputs": 1,
         "x": 710,
         "y": 980,
@@ -1407,7 +1350,7 @@
         "type": "function",
         "z": "89c26b2630a7d108",
         "name": "Log Kill All",
-        "func": "return { payload: '\ud83d\udd25 ALL SENSORS EVACUATION TRIGGERED...' };",
+        "func": "return { payload: '🔥 ALL SENSORS EVACUATION TRIGGERED...' };",
         "outputs": 1,
         "x": 310,
         "y": 1020,
@@ -1444,7 +1387,7 @@
         "type": "function",
         "z": "89c26b2630a7d108",
         "name": "Extract IDs to Kill",
-        "func": "let sensors = [];\nif(msg.payload && Array.isArray(msg.payload)){\n    sensors = msg.payload.filter(c => c.Image === 'iot-sensor' || c.Image === 'iot-sensor:latest');\n}\nif(sensors.length === 0) {\n    return [null, { payload: \"\u21b3 No sensors bound...\" }];\n}\nlet msgs = sensors.map(s => {\n    return {\n        url: 'http://docker-proxy:2375/containers/' + s.Id + '?force=true',\n        method: 'DELETE'\n    };\n});\nreturn [msgs, { payload: `\u21b3 Wiping out ${msgs.length} engines...` }];",
+        "func": "let sensors = [];\nif(msg.payload && Array.isArray(msg.payload)){\n    sensors = msg.payload.filter(c => c.Image === 'iot-sensor' || c.Image === 'iot-sensor:latest');\n}\nif(sensors.length === 0) {\n    return [null, { payload: \"↳ No sensors bound...\" }];\n}\nlet msgs = sensors.map(s => {\n    return {\n        url: 'http://docker-proxy:2375/containers/' + s.Id + '?force=true',\n        method: 'DELETE'\n    };\n});\nreturn [msgs, { payload: `↳ Wiping out ${msgs.length} engines...` }];",
         "outputs": 2,
         "x": 530,
         "y": 1060,
@@ -1579,7 +1522,7 @@
         "type": "function",
         "z": "89c26b2630a7d108",
         "name": "Activate Stream",
-        "func": "let target = flow.get('cfg_monitor_node');\nif (!target) { msg.payload = \"\u26a0\ufe0f ERROR: No sensor selected.\"; return msg; }\n\nflow.set('sensor_monitor_active', true);\nflow.set('mqtt_terminal_logs', []);\nmsg.payload = `[SYSTEM] Connected to Mosquitto Broker.\\nListening for MQTT telemetry matching [${target}]...`;\nreturn msg;",
+        "func": "let target = flow.get('cfg_monitor_node');\nif (!target) { msg.payload = \"⚠️ ERROR: No sensor selected.\"; return msg; }\n\nflow.set('sensor_monitor_active', true);\nflow.set('mqtt_terminal_logs', []);\nmsg.payload = `[SYSTEM] Connected to Mosquitto Broker.\\nListening for MQTT telemetry matching [${target}]...`;\nreturn msg;",
         "outputs": 1,
         "x": 380,
         "y": 1140,
@@ -1668,7 +1611,7 @@
         "type": "function",
         "z": "89c26b2630a7d108",
         "name": "Verify Selection",
-        "func": "let target_id = flow.get('cfg_target_del_id');\nif(!target_id || target_id === 'none') {\n    return [null, { payload: \"\u26a0\ufe0f Error: No configuration selected to delete!\" }];\n}\nreturn [msg, null];",
+        "func": "let target_id = flow.get('cfg_target_del_id');\nif(!target_id || target_id === 'none') {\n    return [null, { payload: \"⚠️ Error: No configuration selected to delete!\" }];\n}\nreturn [msg, null];",
         "outputs": 2,
         "x": 130,
         "y": 1360,
@@ -1699,7 +1642,7 @@
         "type": "function",
         "z": "89c26b2630a7d108",
         "name": "Filter Delete",
-        "func": "let target_id = flow.get('cfg_target_del_id');\nlet configs = [];\n\ntry { \n    if(msg.payload) configs = JSON.parse(msg.payload); \n} catch(e) { }\n\nlet filtered = configs.filter(c => c.id !== target_id);\nmsg.payload = JSON.stringify(filtered, null, 2);\n\n// Clear the current selection so we don't accidentally double delete\nflow.set('cfg_target_del_id', null);\n\nreturn [msg, { payload: `\ud83d\uddd1\ufe0f Deleted saved configuration: [${target_id}]` }];",
+        "func": "let target_id = flow.get('cfg_target_del_id');\nlet configs = [];\n\ntry { \n    if(msg.payload) configs = JSON.parse(msg.payload); \n} catch(e) { }\n\nlet filtered = configs.filter(c => c.id !== target_id);\nmsg.payload = JSON.stringify(filtered, null, 2);\n\n// Clear the current selection so we don't accidentally double delete\nflow.set('cfg_target_del_id', null);\n\nreturn [msg, { payload: `🗑️ Deleted saved configuration: [${target_id}]` }];",
         "outputs": 2,
         "x": 490,
         "y": 1360,
@@ -2028,7 +1971,7 @@
         "type": "function",
         "z": "89c26b2630a7d108",
         "name": "Filter Multiple Deletes",
-        "func": "let target_ids = flow.get('cfg_target_del_ids');\n\n// Check if array exists and has elements\nif(!target_ids || !Array.isArray(target_ids) || target_ids.length === 0) {\n    return [null, { payload: \"\u26a0\ufe0f Error: No configurations selected to delete!\" }];\n}\n\nlet configs = [];\ntry { \n    if(msg.payload) configs = JSON.parse(msg.payload); \n} catch(e) { }\n\n// Filter out ANY config whose ID exists in the target_ids array\nlet filtered = configs.filter(c => !target_ids.includes(c.id));\nmsg.payload = JSON.stringify(filtered, null, 2);\n\n// Clear the selection after processing\nflow.set('cfg_target_del_ids', []);\n\nreturn [msg, { payload: `\ud83d\uddd1\ufe0f Deleted configs: [${target_ids.join(', ')}]` }];",
+        "func": "let target_ids = flow.get('cfg_target_del_ids');\n\n// Check if array exists and has elements\nif(!target_ids || !Array.isArray(target_ids) || target_ids.length === 0) {\n    return [null, { payload: \"⚠️ Error: No configurations selected to delete!\" }];\n}\n\nlet configs = [];\ntry { \n    if(msg.payload) configs = JSON.parse(msg.payload); \n} catch(e) { }\n\n// Filter out ANY config whose ID exists in the target_ids array\nlet filtered = configs.filter(c => !target_ids.includes(c.id));\nmsg.payload = JSON.stringify(filtered, null, 2);\n\n// Clear the selection after processing\nflow.set('cfg_target_del_ids', []);\n\nreturn [msg, { payload: `🗑️ Deleted configs: [${target_ids.join(', ')}]` }];",
         "outputs": 2,
         "x": 520,
         "y": 700,
@@ -2113,6 +2056,293 @@
         "x": 745,
         "y": 760,
         "wires": []
+    },
+    {
+        "id": "513c1950ef69e389",
+        "type": "inject",
+        "z": "89c26b2630a7d108",
+        "name": "Load on Boot",
+        "props": [],
+        "repeat": "",
+        "crontab": "",
+        "once": true,
+        "onceDelay": 0.5,
+        "x": 1510,
+        "y": 120,
+        "wires": [
+            [
+                "b001f5a2ea9edced"
+            ]
+        ]
+    },
+    {
+        "id": "b001f5a2ea9edced",
+        "type": "file in",
+        "z": "89c26b2630a7d108",
+        "name": "Read sensor_types.json",
+        "filename": "/data/sensor_types.json",
+        "format": "utf8",
+        "chunk": false,
+        "x": 1750,
+        "y": 120,
+        "wires": [
+            [
+                "41a12cd7d803d01c"
+            ]
+        ]
+    },
+    {
+        "id": "41a12cd7d803d01c",
+        "type": "function",
+        "z": "89c26b2630a7d108",
+        "name": "Update All Dropdowns",
+        "func": "let data = {};\ntry {\n    data = JSON.parse(msg.payload);\n} catch(e) { return null; }\n\nglobal.set('sensorTypesDB', data);\n\nlet opts = Object.keys(data).map(key => ({\n    label: key.charAt(0).toUpperCase() + key.slice(1).replace(/_/g, ' '),\n    value: key\n}));\n\nmsg.options = opts;\nmsg.payload = \"\";\nreturn msg;",
+        "outputs": 1,
+        "x": 2030,
+        "y": 120,
+        "wires": [
+            [
+                "84229573cbb609c6",
+                "554a1a12eae4d72b"
+            ]
+        ]
+    },
+    {
+        "id": "554a1a12eae4d72b",
+        "type": "ui-dropdown",
+        "z": "89c26b2630a7d108",
+        "group": "e900fa4283c2f1cd",
+        "name": "Select Sensor Type",
+        "label": "Load Existing Layout",
+        "order": 1,
+        "width": 0,
+        "height": 0,
+        "passthru": true,
+        "options": [],
+        "x": 2300,
+        "y": 80,
+        "wires": [
+            [
+                "856603363f3089d0"
+            ]
+        ]
+    },
+    {
+        "id": "84229573cbb609c6",
+        "type": "ui-dropdown",
+        "z": "89c26b2630a7d108",
+        "group": "ui_group_create",
+        "name": "Sensors Dropdown",
+        "label": "Sensor Types",
+        "order": 2,
+        "width": 0,
+        "height": 0,
+        "passthru": true,
+        "multiple": true,
+        "options": [],
+        "x": 2300,
+        "y": 160,
+        "wires": [
+            [
+                "96f5a377bc015803"
+            ]
+        ]
+    },
+    {
+        "id": "856603363f3089d0",
+        "type": "function",
+        "z": "89c26b2630a7d108",
+        "name": "Fill Form Info",
+        "func": "let typeName = msg.payload;\nglobal.set('lastSelectedId', typeName);\nlet db = global.get('sensorTypesDB') || {};\n\nif (typeName && db[typeName]) {\n    msg.payload = {\n        typeName: typeName,\n        min: db[typeName].range[0],\n        max: db[typeName].range[1]\n    };\n    return msg;\n} return null;",
+        "outputs": 1,
+        "x": 2550,
+        "y": 80,
+        "wires": [
+            [
+                "b2eb713f526ac7dd"
+            ]
+        ]
+    },
+    {
+        "id": "d6643cfede4e4159",
+        "type": "ui-button",
+        "z": "89c26b2630a7d108",
+        "group": "e900fa4283c2f1cd",
+        "name": "Delete Button",
+        "label": "Delete Selected Type",
+        "order": 2,
+        "width": 0,
+        "height": 0,
+        "emulateClick": false,
+        "color": "#ffffff",
+        "className": "",
+        "icon": "mdi-delete",
+        "iconPosition": "left",
+        "payload": "delete",
+        "payloadType": "str",
+        "topic": "delete",
+        "topicType": "str",
+        "buttonColor": "",
+        "textColor": "",
+        "iconColor": "",
+        "enableClick": true,
+        "enablePointerdown": false,
+        "pointerdownPayload": "",
+        "pointerdownPayloadType": "str",
+        "enablePointerup": false,
+        "pointerupPayload": "",
+        "pointerupPayloadType": "str",
+        "x": 2760,
+        "y": 140,
+        "wires": [
+            [
+                "23b437e91f3ea332"
+            ]
+        ]
+    },
+    {
+        "id": "23b437e91f3ea332",
+        "type": "function",
+        "z": "89c26b2630a7d108",
+        "name": "CRUD Logic Engine",
+        "func": "let db = global.get('sensorTypesDB') || {};\n\nif (msg.topic === \"save\") {\n    let d = msg.payload;\n    let safeName = d.typeName.toLowerCase().replace(/ /g, \"_\");\n    \n    db[safeName] = {\n        range: [parseFloat(d.min), parseFloat(d.max)]\n    };\n}\nelse if (msg.topic === \"delete\") {\n    let selectedId = global.get('lastSelectedId');\n    if(selectedId && db[selectedId]) {\n        delete db[selectedId];\n    }\n}\n\nmsg.payload = JSON.stringify(db, null, 2);\nmsg.topic = \"cmd/system/reload\";\nreturn msg;",
+        "outputs": 1,
+        "x": 3020,
+        "y": 100,
+        "wires": [
+            [
+                "097b94979be78346",
+                "72eb64a18962cff1",
+                "e720ca2ebb3ab43c"
+            ]
+        ]
+    },
+    {
+        "id": "097b94979be78346",
+        "type": "file",
+        "z": "89c26b2630a7d108",
+        "name": "Write sensor_types.json",
+        "filename": "/data/sensor_types.json",
+        "filenameType": "str",
+        "appendNewline": false,
+        "createDir": true,
+        "overwriteFile": "true",
+        "encoding": "none",
+        "x": 3320,
+        "y": 60,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "72eb64a18962cff1",
+        "type": "mqtt out",
+        "z": "89c26b2630a7d108",
+        "name": "MQTT: cmd/system/reload",
+        "topic": "cmd/system/reload",
+        "qos": "1",
+        "retain": "",
+        "respTopic": "",
+        "contentType": "",
+        "userProps": "",
+        "correl": "",
+        "expiry": "",
+        "broker": "ff_mqtt_broker",
+        "x": 3320,
+        "y": 140,
+        "wires": []
+    },
+    {
+        "id": "96f5a377bc015803",
+        "type": "function",
+        "z": "89c26b2630a7d108",
+        "name": "Save Sensors",
+        "func": "flow.set('cfg_sensors', msg.payload);\nreturn msg;",
+        "outputs": 1,
+        "x": 2520,
+        "y": 160,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "e720ca2ebb3ab43c",
+        "type": "delay",
+        "z": "89c26b2630a7d108",
+        "name": "",
+        "pauseType": "delay",
+        "timeout": "500",
+        "timeoutUnits": "milliseconds",
+        "rate": "1",
+        "nbRateUnits": "1",
+        "rateUnits": "second",
+        "randomFirst": "1",
+        "randomLast": "5",
+        "randomUnits": "seconds",
+        "drop": false,
+        "allowrate": false,
+        "outputs": 1,
+        "x": 3290,
+        "y": 280,
+        "wires": [
+            [
+                "b001f5a2ea9edced"
+            ]
+        ]
+    },
+    {
+        "id": "b2eb713f526ac7dd",
+        "type": "ui-form",
+        "z": "89c26b2630a7d108",
+        "name": "Sensor Editor",
+        "group": "e900fa4283c2f1cd",
+        "label": "",
+        "order": 3,
+        "width": 0,
+        "height": 0,
+        "options": [
+            {
+                "label": "Blueprint Name (ID)",
+                "key": "typeName",
+                "type": "text",
+                "required": true,
+                "rows": null
+            },
+            {
+                "label": "Minimum Value",
+                "key": "min",
+                "type": "number",
+                "required": true,
+                "rows": null
+            },
+            {
+                "label": "Maximum Value",
+                "key": "max",
+                "type": "number",
+                "required": true,
+                "rows": null
+            }
+        ],
+        "formValue": {
+            "typeName": "",
+            "min": "",
+            "max": ""
+        },
+        "submit": "Save / Create",
+        "cancel": "Clear",
+        "resetOnSubmit": false,
+        "topic": "save",
+        "topicType": "str",
+        "splitLayout": false,
+        "className": "",
+        "dropdownOptions": [],
+        "x": 2780,
+        "y": 80,
+        "wires": [
+            [
+                "23b437e91f3ea332"
+            ]
+        ]
     },
     {
         "id": "fce8349266f9f819",
@@ -2326,7 +2556,7 @@
         "type": "function",
         "z": "53b83243ce3bfc91",
         "name": "Correlate Attackers for NAC",
-        "func": "let attackers = msg.payload || [];\nlet ipMap = flow.get('network_ip_map') || {};\nlet options = [];\n\n// If there are no attackers, completely hide the dropdown options\nif (attackers.length === 0) {\n    return { options: [], payload: null };\n}\n\n// If attackers exist, map their IPs to live container names for the dropdown\nattackers.forEach(ip => {\n    let containerName = ipMap[ip];\n    if (containerName) {\n         options.push({ \n             label: `\ud83d\udea8 ${ip} (Node: ${containerName})`, \n             value: containerName, \n             type: 'str' \n         });\n    } else {\n        // In case the IPs have left the network, or it's external\n         options.push({ \n             label: `\ud83d\udea8 ${ip} (Unknown Device)`, \n             value: ip, \n             type: 'str' \n         });\n    }\n});\n\n// Auto-select the first attacker just to make the UI faster for the SOC operator\nlet firstTarget = options.length > 0 ? options[0].value : null;\nreturn { options: options, payload: firstTarget };",
+        "func": "let attackers = msg.payload || [];\nlet ipMap = flow.get('network_ip_map') || {};\nlet options = [];\n\n// If there are no attackers, completely hide the dropdown options\nif (attackers.length === 0) {\n    return { options: [], payload: null };\n}\n\n// If attackers exist, map their IPs to live container names for the dropdown\nattackers.forEach(ip => {\n    let containerName = ipMap[ip];\n    if (containerName) {\n         options.push({ \n             label: `🚨 ${ip} (Node: ${containerName})`, \n             value: containerName, \n             type: 'str' \n         });\n    } else {\n        // In case the IPs have left the network, or it's external\n         options.push({ \n             label: `🚨 ${ip} (Unknown Device)`, \n             value: ip, \n             type: 'str' \n         });\n    }\n});\n\n// Auto-select the first attacker just to make the UI faster for the SOC operator\nlet firstTarget = options.length > 0 ? options[0].value : null;\nreturn { options: options, payload: firstTarget };",
         "outputs": 1,
         "x": 1220,
         "y": 460,
@@ -2500,7 +2730,7 @@
         "z": "53b83243ce3bfc91",
         "group": "01d38afb921c168e",
         "name": "Trigger Scan",
-        "label": "Run Security Audit \ud83d\udee1\ufe0f",
+        "label": "Run Security Audit 🛡️",
         "order": 2,
         "width": "3",
         "height": "1",
@@ -3032,7 +3262,7 @@
         "type": "function",
         "z": "53b83243ce3bfc91",
         "name": "Format Notification",
-        "func": "msg.topic = 'system_log';\nmsg.payload = \"\ud83d\udee1\ufe0f SURICATA EVENT: Ruleset automatically swapped to [\" + msg.mode_text + \"]\";\nreturn msg;",
+        "func": "msg.topic = 'system_log';\nmsg.payload = \"🛡️ SURICATA EVENT: Ruleset automatically swapped to [\" + msg.mode_text + \"]\";\nreturn msg;",
         "outputs": 1,
         "timeout": 0,
         "noerr": 0,
@@ -3093,7 +3323,7 @@
         "type": "function",
         "z": "53b83243ce3bfc91",
         "name": "Format Toast",
-        "func": "msg.topic = 'system_log';\nif (msg.statusCode >= 200 && msg.statusCode < 300) {\n    msg.payload = \"\ud83d\udd12 MOSQUITTO EVENT: \" + msg.notification_text;\n} else {\n    msg.payload = `\u274c MOSQUITTO ERROR: Failed to restart broker (API returned ${msg.statusCode})`;\n}\nreturn msg;",
+        "func": "msg.topic = 'system_log';\nif (msg.statusCode >= 200 && msg.statusCode < 300) {\n    msg.payload = \"🔒 MOSQUITTO EVENT: \" + msg.notification_text;\n} else {\n    msg.payload = `❌ MOSQUITTO ERROR: Failed to restart broker (API returned ${msg.statusCode})`;\n}\nreturn msg;",
         "outputs": 1,
         "x": 1650,
         "y": 1080,
@@ -3133,7 +3363,7 @@
         "type": "function",
         "z": "53b83243ce3bfc91",
         "name": "Auto-Isolate Trigger",
-        "func": "let isAuto = flow.get('nac_auto');\n// FIX 1: Safely handle both boolean and string representations from the dashboard switch\nif (isAuto !== true && isAuto !== \"true\") return null;\n\nlet attackers = msg.payload || [];\nif (attackers.length === 0) return null;\n\nlet ipMap = flow.get('network_ip_map') || {};\nlet isolated = flow.get('auto_isolated') || {};\nlet apiMsgs = [];\nlet uiMsgs = [];\nlet now = Date.now();\n\nattackers.forEach(ip => {\n    // FIX 2: If the IP map hasn't updated fast enough to catch the attacker, fallback to the lab default name\n    let container = ipMap[ip] || \"iot_attacker_node\";\n\n    // FIX 3: 30-Second Cooldown. Instead of locking forever, allow re-isolation after 30 seconds for lab testing\n    if (container && (!isolated[container] || (now - isolated[container] > 30000))) {\n        isolated[container] = now;\n        apiMsgs.push({\n            url: 'http://docker-proxy:2375/networks/iot_infralab_net/disconnect',\n            method: 'POST',\n            payload: { \"Container\": container, \"Force\": true },\n            containerName: container\n        });\n        uiMsgs.push({ topic: 'system_log', payload: `\u26a1 [ACTIVE NAC] Threat detected! Auto-isolating ${container} (${ip})...` });\n    }\n});\n\nflow.set('auto_isolated', isolated);\n\nif (apiMsgs.length > 0) return [apiMsgs, uiMsgs];\nreturn null;",
+        "func": "let isAuto = flow.get('nac_auto');\n// FIX 1: Safely handle both boolean and string representations from the dashboard switch\nif (isAuto !== true && isAuto !== \"true\") return null;\n\nlet attackers = msg.payload || [];\nif (attackers.length === 0) return null;\n\nlet ipMap = flow.get('network_ip_map') || {};\nlet isolated = flow.get('auto_isolated') || {};\nlet apiMsgs = [];\nlet uiMsgs = [];\nlet now = Date.now();\n\nattackers.forEach(ip => {\n    // FIX 2: If the IP map hasn't updated fast enough to catch the attacker, fallback to the lab default name\n    let container = ipMap[ip] || \"iot_attacker_node\";\n\n    // FIX 3: 30-Second Cooldown. Instead of locking forever, allow re-isolation after 30 seconds for lab testing\n    if (container && (!isolated[container] || (now - isolated[container] > 30000))) {\n        isolated[container] = now;\n        apiMsgs.push({\n            url: 'http://docker-proxy:2375/networks/iot_infralab_net/disconnect',\n            method: 'POST',\n            payload: { \"Container\": container, \"Force\": true },\n            containerName: container\n        });\n        uiMsgs.push({ topic: 'system_log', payload: `⚡ [ACTIVE NAC] Threat detected! Auto-isolating ${container} (${ip})...` });\n    }\n});\n\nflow.set('auto_isolated', isolated);\n\nif (apiMsgs.length > 0) return [apiMsgs, uiMsgs];\nreturn null;",
         "outputs": 2,
         "timeout": "",
         "noerr": 0,
@@ -3177,7 +3407,7 @@
         "type": "function",
         "z": "53b83243ce3bfc91",
         "name": "Prep Manual Disconnect",
-        "func": "let target = flow.get('soc_target');\nif(!target) return [null, {payload: \"\u26a0\ufe0f Select an IP from the dropdown first!\"}];\n\nlet apiMsg = {\n    url: 'http://docker-proxy:2375/networks/iot_infralab_net/disconnect',\n    method: 'POST',\n    payload: { \"Container\": target, \"Force\": true },\n    containerName: target\n};\n\n// Mark as isolated so auto-mode doesn't try it again later\nlet isolated = flow.get('auto_isolated') || {};\nisolated[target] = true;\nflow.set('auto_isolated', isolated);\n\nreturn [apiMsg, {payload: `Manual NAC: Isolating ${target}...`}];",
+        "func": "let target = flow.get('soc_target');\nif(!target) return [null, {payload: \"⚠️ Select an IP from the dropdown first!\"}];\n\nlet apiMsg = {\n    url: 'http://docker-proxy:2375/networks/iot_infralab_net/disconnect',\n    method: 'POST',\n    payload: { \"Container\": target, \"Force\": true },\n    containerName: target\n};\n\n// Mark as isolated so auto-mode doesn't try it again later\nlet isolated = flow.get('auto_isolated') || {};\nisolated[target] = true;\nflow.set('auto_isolated', isolated);\n\nreturn [apiMsg, {payload: `Manual NAC: Isolating ${target}...`}];",
         "outputs": 2,
         "x": 390,
         "y": 300,
@@ -3217,7 +3447,7 @@
         "type": "function",
         "z": "53b83243ce3bfc91",
         "name": "Format API Result",
-        "func": "msg.topic = 'system_log';\nif(msg.statusCode === 200 || msg.statusCode === 204 || msg.statusCode === 500) {\n    msg.payload = `\u2705 NAC ACTION: Successfully isolated container [${msg.containerName}] from the network.`;\n} else {\n    msg.payload = `\u274c NAC FAILED: Could not isolate target. Status: ${msg.statusCode}`;\n}\nreturn msg;",
+        "func": "msg.topic = 'system_log';\nif(msg.statusCode === 200 || msg.statusCode === 204 || msg.statusCode === 500) {\n    msg.payload = `✅ NAC ACTION: Successfully isolated container [${msg.containerName}] from the network.`;\n} else {\n    msg.payload = `❌ NAC FAILED: Could not isolate target. Status: ${msg.statusCode}`;\n}\nreturn msg;",
         "outputs": 1,
         "x": 890,
         "y": 220,
@@ -3232,7 +3462,7 @@
         "type": "function",
         "z": "53b83243ce3bfc91",
         "name": "Save State",
-        "func": "flow.set('nac_auto', msg.payload);\nmsg.topic = 'system_log';\nmsg.payload = msg.payload ? \"\u26a1 NAC AUTO-PROTECT: ACTIVE (Automatic Isolation Enabled)\" : \"\u26a0\ufe0f NAC AUTO-PROTECT: PASSIVE (Manual Review Required)\";\nreturn msg;",
+        "func": "flow.set('nac_auto', msg.payload);\nmsg.topic = 'system_log';\nmsg.payload = msg.payload ? \"⚡ NAC AUTO-PROTECT: ACTIVE (Automatic Isolation Enabled)\" : \"⚠️ NAC AUTO-PROTECT: PASSIVE (Manual Review Required)\";\nreturn msg;",
         "outputs": 1,
         "x": 570,
         "y": 140,
@@ -3435,7 +3665,7 @@
         "order": 1,
         "width": 0,
         "height": 0,
-        "format": "<template>\n    <div class=\"suri-terminal-container\">\n        <div class=\"terminal-content\">\n            <pre v-if=\"msg && msg.payload\" :class=\"{ 'alert-text': msg.payload.includes('\ud83d\udea8'), 'secure-text': !msg.payload.includes('\ud83d\udea8') }\">{{ msg.payload }}</pre>\n            <pre v-else class=\"secure-text\">\ud83d\udfe2 System Secure: Watching for active threats in eve.json...</pre>\n        </div>\n    </div>\n</template>\n\n<style>\n.suri-terminal-container {\n    background: #020617;\n    border: 1px solid #ef4444;\n    border-radius: 4px;\n    display: flex;\n    flex-direction: column;\n    height: 100%;\n    min-height: 280px;\n    overflow: hidden;\n}\n.terminal-content {\n    padding: 12px;\n    overflow-y: auto;\n    flex-grow: 1;\n}\n.terminal-content pre {\n    margin: 0;\n    font-family: 'JetBrains Mono', monospace;\n    font-size: 13px;\n    white-space: pre-wrap;\n    line-height: 1.5;\n}\n.alert-text { color: #f87171; }\n.secure-text { color: #4ade80; }\n</style>",
+        "format": "<template>\n    <div class=\"suri-terminal-container\">\n        <div class=\"terminal-content\">\n            <pre v-if=\"msg && msg.payload\" :class=\"{ 'alert-text': msg.payload.includes('🚨'), 'secure-text': !msg.payload.includes('🚨') }\">{{ msg.payload }}</pre>\n            <pre v-else class=\"secure-text\">🟢 System Secure: Watching for active threats in eve.json...</pre>\n        </div>\n    </div>\n</template>\n\n<style>\n.suri-terminal-container {\n    background: #020617;\n    border: 1px solid #ef4444;\n    border-radius: 4px;\n    display: flex;\n    flex-direction: column;\n    height: 100%;\n    min-height: 280px;\n    overflow: hidden;\n}\n.terminal-content {\n    padding: 12px;\n    overflow-y: auto;\n    flex-grow: 1;\n}\n.terminal-content pre {\n    margin: 0;\n    font-family: 'JetBrains Mono', monospace;\n    font-size: 13px;\n    white-space: pre-wrap;\n    line-height: 1.5;\n}\n.alert-text { color: #f87171; }\n.secure-text { color: #4ade80; }\n</style>",
         "storeOutMessages": true,
         "passthru": true,
         "resendOnRefresh": true,
@@ -3452,7 +3682,7 @@
         "type": "function",
         "z": "53b83243ce3bfc91",
         "name": "Parse Suricata & Extract IPs",
-        "func": "let raw = msg.payload || '';\nlet lines = raw.split('\\n');\nlet alerts = [];\nlet attackerIPs = new Set();\nlet newSOCMsgs = [];\n\nlet lastAlertTime = flow.get('last_suricata_alert_time') || 0;\nlet highestTime = lastAlertTime;\n\nfor (let i = 0; i < lines.length; i++) {\n    let line = lines[i].trim();\n    if (!line) continue;\n    let jsonStart = line.indexOf('{\"timestamp\"');\n    if (jsonStart !== -1) {\n        try {\n            let evt = JSON.parse(line.substring(jsonStart));\n            if (evt.event_type === 'alert') {\n                let evtTime = new Date(evt.timestamp).getTime();\n                let time = new Date(evt.timestamp).toLocaleTimeString();\n                let sig = evt.alert.signature;\n                let src = evt.src_ip;\n                alerts.push(`[${time}] \ud83d\udea8 DETECTED: ${sig}\\n    Source: ${src}`);\n                if (evt.src_ip) attackerIPs.add(evt.src_ip);\n                \n                if (evtTime > lastAlertTime) {\n                    newSOCMsgs.push({ topic: 'system_log', payload: `\ud83d\udea8 SURICATA ALARM: ${sig} (Source: ${src})` });\n                    if (evtTime > highestTime) highestTime = evtTime;\n                }\n            }\n        } catch(e) {}\n    }\n}\nflow.set('last_suricata_alert_time', highestTime);\n\nalerts = alerts.reverse().slice(0, 10);\n\nlet msgAlerts = { topic: 'suricata_alerts', payload: '' };\nif (alerts.length === 0) {\n    msgAlerts.payload = '\ud83d\udfe2 System Secure: Watching for active threats in eve.json...';\n} else {\n    msgAlerts.payload = alerts.join('\\n\\n');\n}\n\nlet msgAttackers = { payload: Array.from(attackerIPs) };\n\nreturn [msgAlerts, msgAttackers, newSOCMsgs];",
+        "func": "let raw = msg.payload || '';\nlet lines = raw.split('\\n');\nlet alerts = [];\nlet attackerIPs = new Set();\nlet newSOCMsgs = [];\n\nlet lastAlertTime = flow.get('last_suricata_alert_time') || 0;\nlet highestTime = lastAlertTime;\n\nfor (let i = 0; i < lines.length; i++) {\n    let line = lines[i].trim();\n    if (!line) continue;\n    let jsonStart = line.indexOf('{\"timestamp\"');\n    if (jsonStart !== -1) {\n        try {\n            let evt = JSON.parse(line.substring(jsonStart));\n            if (evt.event_type === 'alert') {\n                let evtTime = new Date(evt.timestamp).getTime();\n                let time = new Date(evt.timestamp).toLocaleTimeString();\n                let sig = evt.alert.signature;\n                let src = evt.src_ip;\n                alerts.push(`[${time}] 🚨 DETECTED: ${sig}\\n    Source: ${src}`);\n                if (evt.src_ip) attackerIPs.add(evt.src_ip);\n                \n                if (evtTime > lastAlertTime) {\n                    newSOCMsgs.push({ topic: 'system_log', payload: `🚨 SURICATA ALARM: ${sig} (Source: ${src})` });\n                    if (evtTime > highestTime) highestTime = evtTime;\n                }\n            }\n        } catch(e) {}\n    }\n}\nflow.set('last_suricata_alert_time', highestTime);\n\nalerts = alerts.reverse().slice(0, 10);\n\nlet msgAlerts = { topic: 'suricata_alerts', payload: '' };\nif (alerts.length === 0) {\n    msgAlerts.payload = '🟢 System Secure: Watching for active threats in eve.json...';\n} else {\n    msgAlerts.payload = alerts.join('\\n\\n');\n}\n\nlet msgAttackers = { payload: Array.from(attackerIPs) };\n\nreturn [msgAlerts, msgAttackers, newSOCMsgs];",
         "outputs": 3,
         "x": 1180,
         "y": 380,
@@ -4101,7 +4331,7 @@
         "type": "function",
         "z": "b78d14cc362e1196",
         "name": "Buffer to Terminal Format",
-        "func": "let rawCmd = msg.executed_cmd || \"unknown command\";\n\n// 1. Reconstruct the dynamic terminal prompt using CSS classes\nlet output = `<span class=\"prompt\">root@iot-attacker:~#</span> <span class=\"cmd-text\">${rawCmd}</span><br>`;\n\nif (typeof msg.payload === 'object') {\n    msg.payload = JSON.stringify(msg.payload, null, 2);\n}\n\nlet resultText = msg.payload || \"\";\nif (resultText.trim() === \"\") {\n    resultText = \"[+] Execution finished successfully (No terminal output returned).\";\n}\n\n// 2. Threat Analysis: Smarter detection for IPS/NAC blocks\nlet isBlocked = false;\nlet lowerResult = resultText.toLowerCase();\n\n// Look for definitive network disconnects or firewall drops, \n// completely ignoring standard numbers like '104' to prevent false positives.\nif (lowerResult.includes(\"host seems down\") || \n    (lowerResult.includes(\"filtered\") && rawCmd.includes(\"nmap\")) || \n    lowerResult.includes(\"connection refused\") ||\n    lowerResult.includes(\"reset by peer\") ||\n    lowerResult.includes(\"[errno 104]\") ||\n    lowerResult.includes(\"error 104\")) { \n    isBlocked = true;\n}\n\n// 3. Format the raw output (Escape HTML tags)\nresultText = resultText.replace(/</g, \"&lt;\").replace(/>/g, \"&gt;\");\nlet outputClass = isBlocked ? \"output-blocked\" : \"output-success\";\noutput += `<div class=\"${outputClass}\">${resultText}</div>`;\n\n// 4. Inject the Red Blocked Alert ONLY if actually blocked\nif (isBlocked) {\n    output += `<div class=\"alert-box\">`;\n    output += `\ud83d\udea8 EXPLOIT FAILED: CONNECTION INTERCEPTED BY IPS/NAC \ud83d\udea8<br>`;\n    output += `<span class=\"alert-sub\">The target forcefully rejected the attack (Dropped packets / TCP Reset / Connection Severed).</span>`;\n    output += `</div>`;\n}\n\nmsg.payload = output;\nreturn msg;",
+        "func": "let rawCmd = msg.executed_cmd || \"unknown command\";\n\n// 1. Reconstruct the dynamic terminal prompt using CSS classes\nlet output = `<span class=\"prompt\">root@iot-attacker:~#</span> <span class=\"cmd-text\">${rawCmd}</span><br>`;\n\nif (typeof msg.payload === 'object') {\n    msg.payload = JSON.stringify(msg.payload, null, 2);\n}\n\nlet resultText = msg.payload || \"\";\nif (resultText.trim() === \"\") {\n    resultText = \"[+] Execution finished successfully (No terminal output returned).\";\n}\n\n// 2. Threat Analysis: Smarter detection for IPS/NAC blocks\nlet isBlocked = false;\nlet lowerResult = resultText.toLowerCase();\n\n// Look for definitive network disconnects or firewall drops, \n// completely ignoring standard numbers like '104' to prevent false positives.\nif (lowerResult.includes(\"host seems down\") || \n    (lowerResult.includes(\"filtered\") && rawCmd.includes(\"nmap\")) || \n    lowerResult.includes(\"connection refused\") ||\n    lowerResult.includes(\"reset by peer\") ||\n    lowerResult.includes(\"[errno 104]\") ||\n    lowerResult.includes(\"error 104\")) { \n    isBlocked = true;\n}\n\n// 3. Format the raw output (Escape HTML tags)\nresultText = resultText.replace(/</g, \"&lt;\").replace(/>/g, \"&gt;\");\nlet outputClass = isBlocked ? \"output-blocked\" : \"output-success\";\noutput += `<div class=\"${outputClass}\">${resultText}</div>`;\n\n// 4. Inject the Red Blocked Alert ONLY if actually blocked\nif (isBlocked) {\n    output += `<div class=\"alert-box\">`;\n    output += `🚨 EXPLOIT FAILED: CONNECTION INTERCEPTED BY IPS/NAC 🚨<br>`;\n    output += `<span class=\"alert-sub\">The target forcefully rejected the attack (Dropped packets / TCP Reset / Connection Severed).</span>`;\n    output += `</div>`;\n}\n\nmsg.payload = output;\nreturn msg;",
         "outputs": 1,
         "timeout": "",
         "noerr": 0,
@@ -4198,7 +4428,7 @@
         "z": "4acab47cf7e84e94",
         "group": "f57ba6f4611ca27c",
         "name": "Power ON Grafana",
-        "label": "\u25b6\ufe0f Power ON Grafana",
+        "label": "▶️ Power ON Grafana",
         "order": 1,
         "width": 6,
         "height": "1",
@@ -4237,7 +4467,7 @@
         "z": "4acab47cf7e84e94",
         "group": "f57ba6f4611ca27c",
         "name": "Power OFF Grafana",
-        "label": "\u23f9\ufe0f Power OFF Grafana",
+        "label": "⏹️ Power OFF Grafana",
         "order": 3,
         "width": 6,
         "height": "1",
@@ -4359,7 +4589,7 @@
         "order": 2,
         "width": 12,
         "height": 1,
-        "format": "<template>\n    <v-btn \n        color=\"#f59e0b\" \n        variant=\"elevated\" \n        block\n        class=\"text-none font-weight-bold\"\n        style=\"color: white !important;\"\n        href=\"http://localhost:3000/\" \n        target=\"_blank\"\n        prepend-icon=\"mdi-chart-line\">\n        \ud83d\udcca Open Grafana Dashboard\n    </v-btn>\n</template>",
+        "format": "<template>\n    <v-btn \n        color=\"#f59e0b\" \n        variant=\"elevated\" \n        block\n        class=\"text-none font-weight-bold\"\n        style=\"color: white !important;\"\n        href=\"http://localhost:3000/\" \n        target=\"_blank\"\n        prepend-icon=\"mdi-chart-line\">\n        📊 Open Grafana Dashboard\n    </v-btn>\n</template>",
         "storeOutMessages": true,
         "passthru": true,
         "resendOnRefresh": true,

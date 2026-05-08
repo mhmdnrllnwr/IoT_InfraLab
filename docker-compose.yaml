@@ -28,6 +28,7 @@ services:
       - "1880:1880"
     volumes:
       - ./src/simulation/nodered/NodeRed_Data:/data
+      - ./config:/data/config
     restart: unless-stopped
     depends_on:
       - mosquitto
@@ -184,3 +185,5 @@ networks:
         - subnet: 172.18.0.0/24
     driver_opts:
       com.docker.network.bridge.name: br-iotlab
+
+volumes: {}

@@ -1,0 +1,50 @@
+{
+  "temperature": {
+    "range": [
+      40,
+      45
+    ]
+  },
+  "vibration": {
+    "range": [
+      0.5,
+      1.2
+    ]
+  },
+  "pressure": {
+    "range": [
+      90,
+      105
+    ]
+  },
+  "humidity": {
+    "range": [
+      30,
+      40
+    ]
+  },
+  "flow_rate": {
+    "range": [
+      50,
+      60
+    ]
+  },
+  "power_draw": {
+    "range": [
+      220,
+      230
+    ]
+  },
+  "rain": {
+    "range": [
+      20,
+      110
+    ]
+  },
+  "rain_fall": {
+    "range": [
+      1,
+      134
+    ]
+  }
+}

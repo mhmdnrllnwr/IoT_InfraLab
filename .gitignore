@@ -44,6 +44,12 @@ infrastructure/grafana/data/*
 .vscode/
 .idea/
 .DS_Store
+.mcp.json
+
+# Claude Code
+CLAUDE.md
+implementation.md
+.claude/settings.local.json
 
 # Ignore planning markdown files
 text/code.md

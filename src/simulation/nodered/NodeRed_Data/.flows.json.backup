@@ -546,6 +546,28 @@
         "className": ""
     },
     {
+        "id": "15fda9040c2be0a3",
+        "type": "ui-spacer",
+        "group": "01d38afb921c168e",
+        "name": "spacer",
+        "tooltip": "",
+        "order": 6,
+        "width": 1,
+        "height": 1,
+        "className": ""
+    },
+    {
+        "id": "ff81fca82d76d3a9",
+        "type": "ui-spacer",
+        "group": "7d01403463477825",
+        "name": "spacer",
+        "tooltip": "",
+        "order": 7,
+        "width": "2",
+        "height": "2",
+        "className": ""
+    },
+    {
         "id": "599a1bcf052a2d6b",
         "type": "ui-text-input",
         "z": "89c26b2630a7d108",

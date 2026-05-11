@@ -546,6 +546,17 @@
         "className": ""
     },
     {
+        "id": "15fda9040c2be0a3",
+        "type": "ui-spacer",
+        "group": "01d38afb921c168e",
+        "name": "spacer",
+        "tooltip": "",
+        "order": 6,
+        "width": 1,
+        "height": 1,
+        "className": ""
+    },
+    {
         "id": "599a1bcf052a2d6b",
         "type": "ui-text-input",
         "z": "89c26b2630a7d108",
@@ -2440,9 +2451,29 @@
         "order": 1,
         "width": "0",
         "height": "0",
-        "format": "<div style=\"background:#1e1e1e;border-radius:8px;padding:24px;text-align:center;color:#e0e0e0;\">\n  <div id=\"hlp-status\" style=\"font-size:18px;font-weight:600;margin-bottom:12px;\">Checking...</div>\n  <div id=\"hlp-desc\" style=\"font-size:13px;color:#999;margin-bottom:16px;\">Node Management tour</div>\n  <button id=\"hlp-btn\" style=\"padding:10px 28px;border:none;border-radius:6px;font-size:15px;cursor:pointer;color:#fff;transition:background .2s;\">Loading...</button>\n</div>\n<img src=\"x\" style=\"display:none\" onerror=\"\n(function(){\n  if(window.__hlp) return; window.__hlp=1;\n  setTimeout(function(){\n    var st=document.getElementById('hlp-status');\n    var desc=document.getElementById('hlp-desc');\n    var btn=document.getElementById('hlp-btn');\n    if(!st||!btn) return;\n    function update(){\n      var done=localStorage.getItem('tour_nm_done');\n      if(!done){\n        st.textContent='Tour Active';\n        desc.textContent='Will auto-play on Node Management page';\n        btn.textContent='Reset Tour';\n        btn.style.background='#10b981';\n      } else {\n        st.textContent='Tour Completed';\n        desc.textContent='Tour already shown on Node Management';\n        btn.textContent='Re-enable Tour';\n        btn.style.background='#0094CE';\n      }\n    }\n    update();\n    btn.onclick=function(){\n      localStorage.removeItem('tour_nm_done');\n      update();\n    };\n  },600);\n})();\n\">",
+        "format": "<div style=\"background:#1e1e1e;border-radius:8px;padding:24px;color:#e0e0e0;\">\n  <div style=\"text-align:center;margin-bottom:20px;\">\n    <div id=\"hlp-status\" style=\"font-size:18px;font-weight:600;margin-bottom:8px;\">Checking...</div>\n    <div id=\"hlp-desc\" style=\"font-size:13px;color:#999;margin-bottom:12px;\">Node Management tour</div>\n    <button id=\"hlp-btn\" style=\"padding:10px 28px;border:none;border-radius:6px;font-size:15px;cursor:pointer;color:#fff;\">Loading...</button>\n  </div>\n  <hr style=\"border-color:#444;margin:16px 0;\">\n  <div style=\"text-align:center;\">\n    <div id=\"hlp-soc-status\" style=\"font-size:18px;font-weight:600;margin-bottom:8px;\">Checking...</div>\n    <div id=\"hlp-soc-desc\" style=\"font-size:13px;color:#999;margin-bottom:12px;\">Security Operations tour</div>\n    <button id=\"hlp-soc-btn\" style=\"padding:10px 28px;border:none;border-radius:6px;font-size:15px;cursor:pointer;color:#fff;\">Loading...</button>\n  </div>\n</div>\n<img src=\"x\" style=\"display:none\" onerror=\"\n(function(){\n  if(window.__hlp) return; window.__hlp=1;\n  setTimeout(function(){\n    function makeToggle(stId,descId,btnId,key,page){\n      var st=document.getElementById(stId);\n      var desc=document.getElementById(descId);\n      var btn=document.getElementById(btnId);\n      if(!st||!btn) return;\n      function update(){\n        var done=localStorage.getItem(key);\n        if(!done){\n          st.textContent='Tour Active';\n          desc.textContent='Will auto-play on '+page+' page';\n          btn.textContent='Reset Tour';\n          btn.style.background='#10b981';\n        } else {\n          st.textContent='Tour Completed';\n          desc.textContent='Tour already shown on '+page;\n          btn.textContent='Re-enable Tour';\n          btn.style.background='#0094CE';\n        }\n      }\n      update();\n      btn.onclick=function(){ localStorage.removeItem(key); update(); };\n    }\n    makeToggle('hlp-status','hlp-desc','hlp-btn','tour_nm_done','Node Management');\n    makeToggle('hlp-soc-status','hlp-soc-desc','hlp-soc-btn','tour_soc_done','Security Operations');\n  },600);\n})();\n\">",
         "storeOutMessages": true,
         "passthru": true,
+        "resendOnRefresh": true,
+        "templateScope": "local",
+        "className": "",
+        "x": 0,
+        "y": 0,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "tour_soc",
+        "type": "ui-template",
+        "z": "53b83243ce3bfc91",
+        "group": "01d38afb921c168e",
+        "name": "Tour: Security Operations",
+        "order": 5,
+        "width": 0,
+        "height": 0,
+        "format": "<link rel=\"stylesheet\" href=\"https://cdn.jsdelivr.net/npm/driver.js@1.3.1/dist/driver.css\"/>\n<img src=\"x\" style=\"display:none\" onerror=\"\n(function(){\n  if(window.__tsoc) return; window.__tsoc=1;\n  if(localStorage.getItem('tour_soc_done')) return;\n  var s=document.createElement('script');\n  s.src='https://cdn.jsdelivr.net/npm/driver.js@1.3.1/dist/driver.js.iife.js';\n  s.onload=function(){\n    setTimeout(function(){\n      var d=window.driver.js.driver({\n        showProgress:true,\n        animate:true,\n        opacity:0.75,\n        allowClose:true,\n        stagePadding:10,\n        popoverOffset:10,\n        steps:[\n{element:'#nrdb-ui-group-426c92f3f4d5bb85',popover:{title:'Active Network Topology',description:'Live view of all containers on iot_infralab_net. Shows IP addresses, hostnames, and connection status.',side:'top',align:'start'}},\n{element:'#nrdb-ui-widget-e2536164d2e97496',popover:{title:'1-1. Live Topology Table',description:'Auto-refreshing table of network members. Polls Docker every 3 seconds for real-time topology.',side:'bottom',align:'start'}},\n{element:'#nrdb-ui-group-8356bd12d00a4d35',popover:{title:'Security Controls',description:'Network security toolkit: isolate attackers, toggle Suricata mode, enable auto-protection.',side:'top',align:'start'}},\n{element:'#nrdb-ui-widget-c227d111b8fa867d',popover:{title:'2-1. Change Mosquitto Configs',description:'Toggle between default and vulnerable Mosquitto config. Reloads broker on change.',side:'bottom',align:'start'}},\n{element:'#nrdb-ui-widget-3710f20e7818afc3',popover:{title:'2-2. Change Suricata Profile',description:'Switch between IDS (alert-only), IPS (block), and Vulnerable (disabled) modes.',side:'bottom',align:'start'}},\n{element:'#nrdb-ui-widget-a32b63ed2ad62aa1',popover:{title:'2-3. Auto-Isolate Attackers',description:'Active NAC: automatically disconnects attacker containers from the lab network.',side:'bottom',align:'start'}},\n{element:'#nrdb-ui-widget-be08aa46efe093b0',popover:{title:'2-4. Select Attacker IP',description:'Dropdown of IPs correlated from Suricata alerts. Pick a target for manual isolation.',side:'bottom',align:'start'}},\n{element:'#nrdb-ui-widget-2f6836680ce01083',popover:{title:'2-5. Isolate Selected Target',description:'Disconnects the selected container from iot_infralab_net via Docker API.',side:'bottom',align:'start'}},\n{element:'#nrdb-ui-group-01d38afb921c168e',popover:{title:'AI Port Vulnerability Assessment',description:'AI-powered network security scanner. Uses Google Gemini to analyze open ports.',side:'top',align:'start'}},\n{element:'#nrdb-ui-widget-26a3f6eb20f9e9a7',popover:{title:'3-1. Select AI Model',description:'Choose which Gemini model to use for vulnerability analysis (e.g. gemini-2.0-flash).',side:'bottom',align:'start'}},\n{element:'#nrdb-ui-widget-dd7f612755519e71',popover:{title:'3-2. Run Security Audit',description:'Triggers a full nmap scan of 172.18.0.0/24 then feeds results to Gemini AI for analysis.',side:'left',align:'start'}},\n{element:'#nrdb-ui-widget-51a079a823aeb610',popover:{title:'3-3. Auditor Status',description:'Shows current status: idle, scanning, cooldown, or error. Includes cooldown countdown.',side:'bottom',align:'start'}},\n{element:'#nrdb-ui-widget-04be91e6f3722b0f',popover:{title:'3-4. AI Security Summary',description:'HTML report from Gemini AI. Shows detected vulnerabilities, risk levels, and recommendations.',side:'left',align:'start'}},\n{element:'#nrdb-ui-group-1384ea55c0ba1905',popover:{title:'Logs & Rules',description:'System audit log and live config display for Mosquitto and Suricata.',side:'top',align:'start'}},\n{element:'#nrdb-ui-widget-5a9e7b1d4c3ffce4',popover:{title:'4-1. SOC Log View',description:'Shows last 8 SOC actions plus real-time Mosquitto and Suricata configuration states.',side:'left',align:'start'}}\n        ],\n        onDestroyed:function(){ localStorage.setItem('tour_soc_done','1'); },\n        onCloseClick:function(){ localStorage.setItem('tour_soc_done','1'); d.destroy(); }\n      });\n      d.drive();\n    },1200);\n  };\n  document.head.appendChild(s);\n})();\n\">",
+        "storeOutMessages": true,
         "resendOnRefresh": true,
         "templateScope": "local",
         "className": "",

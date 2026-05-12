@@ -1,0 +1,293 @@
+{
+  "title": "Security Operations (SOC)",
+  "uid": "security-operations",
+  "tags": [
+    "infralab",
+    "security",
+    "alerts",
+    "ids-ips",
+    "loki"
+  ],
+  "schemaVersion": 39,
+  "version": 1,
+  "time": {
+    "from": "now-15m",
+    "to": "now"
+  },
+  "timepicker": {
+    "refresh_intervals": [
+      "5s",
+      "10s",
+      "30s",
+      "1m",
+      "5m",
+      "15m",
+      "30m",
+      "1h"
+    ]
+  },
+  "timezone": "browser",
+  "editable": true,
+  "graphTooltip": 1,
+  "templating": {
+    "list": [
+      {
+        "name": "attack_type",
+        "type": "query",
+        "datasource": {
+          "type": "loki",
+          "uid": "Loki"
+        },
+        "query": "label_values({job=\"suricata\"} | json | event_type=\"alert\", alert_signature)"
+      },
+      {
+        "name": "src_ip",
+        "type": "query",
+        "datasource": {
+          "type": "loki",
+          "uid": "Loki"
+        },
+        "query": "label_values({job=\"suricata\"} | json | event_type=\"alert\", src_ip)"
+      }
+    ]
+  },
+  "panels": [
+    {
+      "type": "stat",
+      "title": "Total Alerts",
+      "gridPos": {
+        "h": 3,
+        "w": 4,
+        "x": 0,
+        "y": 1
+      },
+      "datasource": {
+        "type": "loki",
+        "uid": "Loki"
+      },
+      "targets": [
+        {
+          "expr": "count_over_time({job=\"suricata\"} | json | event_type=\"alert\" [$__range])"
+        }
+      ]
+    },
+    {
+      "type": "stat",
+      "title": "Alert Rate",
+      "gridPos": {
+        "h": 3,
+        "w": 4,
+        "x": 4,
+        "y": 1
+      },
+      "datasource": {
+        "type": "loki",
+        "uid": "Loki"
+      },
+      "targets": [
+        {
+          "expr": "rate({job=\"suricata\"} | json | event_type=\"alert\" [$__rate_interval])"
+        }
+      ]
+    },
+    {
+      "type": "stat",
+      "title": "IPS Mode",
+      "gridPos": {
+        "h": 3,
+        "w": 4,
+        "x": 8,
+        "y": 1
+      },
+      "datasource": {
+        "type": "loki",
+        "uid": "Loki"
+      },
+      "targets": [
+        {
+          "expr": "count_over_time({job=\"suricata\"} | json | event_type=\"alert\" | alert_severity=\"3\" [$__range])"
+        }
+      ]
+    },
+    {
+      "type": "stat",
+      "title": "Active MQTT Connections",
+      "gridPos": {
+        "h": 3,
+        "w": 4,
+        "x": 12,
+        "y": 1
+      },
+      "datasource": {
+        "type": "loki",
+        "uid": "Loki"
+      },
+      "targets": [
+        {
+          "expr": "count_over_time({job=\"mosquitto\"} |= \"New connection\" [$__range])"
+        }
+      ]
+    },
+    {
+      "type": "stat",
+      "title": "Unique Attackers",
+      "gridPos": {
+        "h": 3,
+        "w": 4,
+        "x": 16,
+        "y": 1
+      },
+      "datasource": {
+        "type": "loki",
+        "uid": "Loki"
+      },
+      "targets": [
+        {
+          "expr": "count(count by(src_ip) (count_over_time({job=\"suricata\"} | json | event_type=\"alert\" [$__range])))"
+        }
+      ]
+    },
+    {
+      "type": "stat",
+      "title": "Severity 1",
+      "gridPos": {
+        "h": 3,
+        "w": 4,
+        "x": 20,
+        "y": 1
+      },
+      "datasource": {
+        "type": "loki",
+        "uid": "Loki"
+      },
+      "targets": [
+        {
+          "expr": "count_over_time({job=\"suricata\"} | json | event_type=\"alert\" | alert_severity=\"1\" [$__range])"
+        }
+      ]
+    },
+    {
+      "type": "timeseries",
+      "title": "Alert Timeline",
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 5
+      },
+      "datasource": {
+        "type": "loki",
+        "uid": "Loki"
+      },
+      "targets": [
+        {
+          "expr": "sum by(alert_severity) (count_over_time({job=\"suricata\"} | json | event_type=\"alert\" [$__interval]))"
+        }
+      ]
+    },
+    {
+      "type": "piechart",
+      "title": "Alert Severity Breakdown",
+      "gridPos": {
+        "h": 8,
+        "w": 6,
+        "x": 12,
+        "y": 5
+      },
+      "datasource": {
+        "type": "loki",
+        "uid": "Loki"
+      },
+      "targets": [
+        {
+          "expr": "count_over_time({job=\"suricata\"} | json | event_type=\"alert\" | alert_severity=\"1\" [$__range])",
+          "legendFormat": "critical (1)"
+        },
+        {
+          "expr": "count_over_time({job=\"suricata\"} | json | event_type=\"alert\" | alert_severity=\"2\" [$__range])",
+          "legendFormat": "high (2)"
+        },
+        {
+          "expr": "count_over_time({job=\"suricata\"} | json | event_type=\"alert\" | alert_severity=\"3\" [$__range])",
+          "legendFormat": "medium (3)"
+        }
+      ]
+    },
+    {
+      "type": "table",
+      "title": "Top Attacker IPs",
+      "gridPos": {
+        "h": 8,
+        "w": 6,
+        "x": 18,
+        "y": 5
+      },
+      "datasource": {
+        "type": "loki",
+        "uid": "Loki"
+      },
+      "targets": [
+        {
+          "expr": "sum by(src_ip) (count_over_time({job=\"suricata\"} | json | event_type=\"alert\" [$__range]))"
+        }
+      ]
+    },
+    {
+      "type": "bargauge",
+      "title": "Attack Type Distribution",
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 14
+      },
+      "datasource": {
+        "type": "loki",
+        "uid": "Loki"
+      },
+      "targets": [
+        {
+          "expr": "sum by(alert_category) (count_over_time({job=\"suricata\"} | json | event_type=\"alert\" [$__range]))"
+        }
+      ]
+    },
+    {
+      "type": "logs",
+      "title": "Recent Alerts",
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 14
+      },
+      "datasource": {
+        "type": "loki",
+        "uid": "Loki"
+      },
+      "targets": [
+        {
+          "expr": "{job=\"suricata\"} | json | event_type=\"alert\" | line_format \"{{.alert_severity}} | {{.src_ip}} -> {{.dest_ip}}:{{.dest_port}} | {{.alert_signature}}\""
+        }
+      ]
+    },
+    {
+      "type": "logs",
+      "title": "Mosquitto Broker Log",
+      "gridPos": {
+        "h": 8,
+        "w": 24,
+        "x": 0,
+        "y": 23
+      },
+      "datasource": {
+        "type": "loki",
+        "uid": "Loki"
+      },
+      "targets": [
+        {
+          "expr": "{job=\"mosquitto\"}"
+        }
+      ]
+    }
+  ]
+}

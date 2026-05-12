@@ -49,6 +49,7 @@ services:
       - NETWORKS=1   # Allows new sensors to connect to iot_infralab_net
       - IMAGES=1     # Allows Node-RED to verify your general-iot-sensor image
       - EXEC=1       # Allows Node-RED to launch exec commands inside containers
+      - INFO=1       # Allows Telegraf to query Docker daemon info
       - GET=1
       
     volumes:
@@ -111,6 +112,8 @@ services:
   influxdb:
     image: influxdb:2.7
     container_name: influxdb
+    env_file: 
+      - .env
     networks:
       - iot_infralab_net
     ports:
@@ -120,9 +123,25 @@ services:
       - ./infrastructure/influxdb/config:/etc/influxdb2
     restart: unless-stopped
 
+  telegraf:
+    image: telegraf:latest
+    container_name: telegraf
+    env_file:
+      - .env
+    networks:
+      - iot_infralab_net
+    volumes:
+      - ./infrastructure/telegraf/telegraf.conf:/etc/telegraf/telegraf.conf:ro
+    restart: unless-stopped
+    depends_on:
+      - influxdb
+      - docker-proxy
+
   grafana:
     image: grafana/grafana-oss:latest
     container_name: grafana
+    env_file:
+      - .env
     networks:
       - iot_infralab_net
     ports:
@@ -130,6 +149,7 @@ services:
     volumes:
       - ./infrastructure/grafana/data:/var/lib/grafana
       - ./infrastructure/grafana/provisioning/datasources:/etc/grafana/provisioning/datasources:ro
+      - ./infrastructure/grafana/provisioning/dashboards:/etc/grafana/provisioning/dashboards:ro
     restart: unless-stopped
     #restart: "no"
     depends_on:

@@ -52,7 +52,10 @@ implementation.md
 .claude/settings.local.json
 
 # Ignore planning markdown files
+/text
 text/code.md
 text/feat.md
 text/fix.md
 text/future.md
+
+/test

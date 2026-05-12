@@ -1,0 +1,421 @@
+{
+  "title": "IoT Sensors Overview",
+  "uid": "iot-sensors-overview",
+  "tags": [
+    "infralab",
+    "iot",
+    "sensors",
+    "telemetry",
+    "influxdb"
+  ],
+  "schemaVersion": 39,
+  "version": 1,
+  "time": {
+    "from": "now-15m",
+    "to": "now"
+  },
+  "timepicker": {
+    "refresh_intervals": [
+      "5s",
+      "10s",
+      "30s",
+      "1m",
+      "5m",
+      "15m",
+      "30m",
+      "1h"
+    ]
+  },
+  "timezone": "browser",
+  "editable": true,
+  "graphTooltip": 1,
+  "templating": {
+    "list": [
+      {
+        "name": "sensor_id",
+        "type": "query",
+        "datasource": {
+          "type": "influxdb",
+          "uid": "InfluxDB"
+        },
+        "query": "v1.tagValues(bucket:\"sensor_data\", tag:\"sensor_id\")",
+        "includeAll": true,
+        "multi": false,
+        "sort": 1
+      },
+      {
+        "name": "sensor_type",
+        "type": "query",
+        "datasource": {
+          "type": "influxdb",
+          "uid": "InfluxDB"
+        },
+        "query": "v1.tagValues(bucket:\"sensor_data\", tag:\"sensor_type\")",
+        "includeAll": true,
+        "multi": false,
+        "sort": 1
+      },
+      {
+        "name": "profile",
+        "type": "query",
+        "datasource": {
+          "type": "influxdb",
+          "uid": "InfluxDB"
+        },
+        "query": "v1.tagValues(bucket:\"sensor_data\", tag:\"profile\")",
+        "includeAll": true,
+        "multi": false,
+        "sort": 1
+      }
+    ]
+  },
+  "panels": [
+    {
+      "type": "stat",
+      "title": "Active Sensors",
+      "gridPos": {
+        "h": 4,
+        "w": 4,
+        "x": 0,
+        "y": 1
+      },
+      "datasource": {
+        "type": "influxdb",
+        "uid": "InfluxDB"
+      },
+      "options": {
+        "colorMode": "background",
+        "graphMode": "area"
+      },
+      "targets": [
+        {
+          "query": "from(bucket: \"sensor_data\") |> range(start: v.timeRangeStart, stop: v.timeRangeStop) |> filter(fn: (r) => r._measurement == \"sensor_data\") |> keep(columns: [\"sensor_id\"]) |> unique() |> count()",
+          "rawQuery": true
+        }
+      ]
+    },
+    {
+      "type": "stat",
+      "title": "Data Points / min",
+      "gridPos": {
+        "h": 4,
+        "w": 4,
+        "x": 4,
+        "y": 1
+      },
+      "datasource": {
+        "type": "influxdb",
+        "uid": "InfluxDB"
+      },
+      "options": {
+        "colorMode": "value",
+        "reduceOptions": {
+          "calcs": [
+            "rate"
+          ]
+        }
+      },
+      "targets": [
+        {
+          "query": "from(bucket: \"sensor_data\") |> range(start: v.timeRangeStart, stop: v.timeRangeStop) |> filter(fn: (r) => r._measurement == \"sensor_data\") |> filter(fn: (r) => r.sensor_id == \"${sensor_id}\" or \"${sensor_id}\" == \"$__all\") |> filter(fn: (r) => r.sensor_type == \"${sensor_type}\" or \"${sensor_type}\" == \"$__all\") |> aggregateWindow(every: 1m, fn: count) |> mean()",
+          "rawQuery": true
+        }
+      ]
+    },
+    {
+      "type": "stat",
+      "title": "Sensors With Dropouts",
+      "gridPos": {
+        "h": 4,
+        "w": 4,
+        "x": 8,
+        "y": 1
+      },
+      "datasource": {
+        "type": "influxdb",
+        "uid": "InfluxDB"
+      },
+      "options": {
+        "colorMode": "background",
+        "graphMode": "none"
+      },
+      "targets": [
+        {
+          "query": "from(bucket: \"sensor_data\") |> range(start: v.timeRangeStart, stop: v.timeRangeStop) |> filter(fn: (r) => r._measurement == \"sensor_data\") |> group(columns: [\"sensor_id\"]) |> elapsed() |> filter(fn: (r) => r.elapsed > 30) |> group() |> distinct(column: \"sensor_id\") |> count()",
+          "rawQuery": true
+        }
+      ]
+    },
+    {
+      "type": "stat",
+      "title": "Current Avg Temperature",
+      "gridPos": {
+        "h": 4,
+        "w": 4,
+        "x": 12,
+        "y": 1
+      },
+      "datasource": {
+        "type": "influxdb",
+        "uid": "InfluxDB"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "celsius"
+        }
+      },
+      "targets": [
+        {
+          "query": "from(bucket: \"sensor_data\") |> range(start: v.timeRangeStart, stop: v.timeRangeStop) |> filter(fn: (r) => r._measurement == \"sensor_data\") |> filter(fn: (r) => r.sensor_type == \"temperature\") |> filter(fn: (r) => r.sensor_id == \"${sensor_id}\" or \"${sensor_id}\" == \"$__all\") |> filter(fn: (r) => r.profile == \"${profile}\" or \"${profile}\" == \"$__all\") |> aggregateWindow(every: 30s, fn: mean) |> last()",
+          "rawQuery": true
+        }
+      ]
+    },
+    {
+      "type": "stat",
+      "title": "Spikes Detected",
+      "gridPos": {
+        "h": 4,
+        "w": 4,
+        "x": 16,
+        "y": 1
+      },
+      "datasource": {
+        "type": "influxdb",
+        "uid": "InfluxDB"
+      },
+      "options": {
+        "colorMode": "background",
+        "reduceOptions": {
+          "calcs": [
+            "count"
+          ]
+        }
+      },
+      "targets": [
+        {
+          "query": "from(bucket: \"sensor_data\") |> range(start: v.timeRangeStart, stop: v.timeRangeStop) |> filter(fn: (r) => r._measurement == \"sensor_data\") |> filter(fn: (r) => r.profile == \"erratic\") |> filter(fn: (r) => r.sensor_id == \"${sensor_id}\" or \"${sensor_id}\" == \"$__all\") |> map(fn: (r) => ({ r with _value: 1.0 }))",
+          "rawQuery": true
+        }
+      ]
+    },
+    {
+      "type": "stat",
+      "title": "Failing Sensors Count",
+      "gridPos": {
+        "h": 4,
+        "w": 4,
+        "x": 20,
+        "y": 1
+      },
+      "datasource": {
+        "type": "influxdb",
+        "uid": "InfluxDB"
+      },
+      "options": {
+        "colorMode": "background"
+      },
+      "targets": [
+        {
+          "query": "from(bucket: \"sensor_data\") |> range(start: v.timeRangeStart, stop: v.timeRangeStop) |> filter(fn: (r) => r._measurement == \"sensor_data\") |> filter(fn: (r) => r.profile == \"failing\") |> group(columns: [\"sensor_id\"]) |> distinct(column: \"sensor_id\") |> count()",
+          "rawQuery": true
+        }
+      ]
+    },
+    {
+      "type": "timeseries",
+      "title": "Temperature",
+      "gridPos": {
+        "h": 8,
+        "w": 8,
+        "x": 0,
+        "y": 6
+      },
+      "datasource": {
+        "type": "influxdb",
+        "uid": "InfluxDB"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "celsius"
+        }
+      },
+      "targets": [
+        {
+          "query": "from(bucket: \"sensor_data\") |> range(start: v.timeRangeStart, stop: v.timeRangeStop) |> filter(fn: (r) => r._measurement == \"sensor_data\" and r.sensor_type == \"temperature\") |> aggregateWindow(every: v.windowPeriod, fn: mean)",
+          "rawQuery": true
+        }
+      ]
+    },
+    {
+      "type": "timeseries",
+      "title": "Vibration",
+      "gridPos": {
+        "h": 8,
+        "w": 8,
+        "x": 8,
+        "y": 6
+      },
+      "datasource": {
+        "type": "influxdb",
+        "uid": "InfluxDB"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "decimals": 2
+        }
+      },
+      "targets": [
+        {
+          "query": "from(bucket: \"sensor_data\") |> range(start: v.timeRangeStart, stop: v.timeRangeStop) |> filter(fn: (r) => r._measurement == \"sensor_data\" and r.sensor_type == \"vibration\") |> aggregateWindow(every: v.windowPeriod, fn: mean)",
+          "rawQuery": true
+        }
+      ]
+    },
+    {
+      "type": "timeseries",
+      "title": "Power Draw",
+      "gridPos": {
+        "h": 8,
+        "w": 8,
+        "x": 16,
+        "y": 6
+      },
+      "datasource": {
+        "type": "influxdb",
+        "uid": "InfluxDB"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "watt"
+        }
+      },
+      "targets": [
+        {
+          "query": "from(bucket: \"sensor_data\") |> range(start: v.timeRangeStart, stop: v.timeRangeStop) |> filter(fn: (r) => r._measurement == \"sensor_data\" and r.sensor_type == \"power_draw\") |> aggregateWindow(every: v.windowPeriod, fn: mean)",
+          "rawQuery": true
+        }
+      ]
+    },
+    {
+      "type": "timeseries",
+      "title": "Avg Temperature by Sensor",
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 15
+      },
+      "datasource": {
+        "type": "influxdb",
+        "uid": "InfluxDB"
+      },
+      "targets": [
+        {
+          "query": "from(bucket: \"sensor_data\") |> range(start: v.timeRangeStart, stop: v.timeRangeStop) |> filter(fn: (r) => r._measurement == \"sensor_data\" and r.sensor_type == \"temperature\") |> group(columns: [\"sensor_id\"]) |> aggregateWindow(every: v.windowPeriod, fn: mean)",
+          "rawQuery": true
+        }
+      ]
+    },
+    {
+      "type": "timeseries",
+      "title": "Avg Vibration by Sensor",
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 15
+      },
+      "datasource": {
+        "type": "influxdb",
+        "uid": "InfluxDB"
+      },
+      "targets": [
+        {
+          "query": "from(bucket: \"sensor_data\") |> range(start: v.timeRangeStart, stop: v.timeRangeStop) |> filter(fn: (r) => r._measurement == \"sensor_data\" and r.sensor_type == \"vibration\") |> group(columns: [\"sensor_id\"]) |> aggregateWindow(every: v.windowPeriod, fn: mean)",
+          "rawQuery": true
+        }
+      ]
+    },
+    {
+      "type": "timeseries",
+      "title": "Profile Comparison (Temperature)",
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 24
+      },
+      "datasource": {
+        "type": "influxdb",
+        "uid": "InfluxDB"
+      },
+      "targets": [
+        {
+          "query": "from(bucket: \"sensor_data\") |> range(start: v.timeRangeStart, stop: v.timeRangeStop) |> filter(fn: (r) => r._measurement == \"sensor_data\" and r.sensor_type == \"temperature\") |> group(columns: [\"profile\"]) |> aggregateWindow(every: v.windowPeriod, fn: mean)",
+          "rawQuery": true
+        }
+      ]
+    },
+    {
+      "type": "timeseries",
+      "title": "Spike Detection",
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 24
+      },
+      "datasource": {
+        "type": "influxdb",
+        "uid": "InfluxDB"
+      },
+      "targets": [
+        {
+          "query": "from(bucket: \"sensor_data\") |> range(start: v.timeRangeStart, stop: v.timeRangeStop) |> filter(fn: (r) => r._measurement == \"sensor_data\" and r.sensor_type == \"temperature\" and r.profile == \"erratic\")",
+          "rawQuery": true
+        }
+      ]
+    },
+    {
+      "type": "timeseries",
+      "title": "5-min Rolling Average",
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 32
+      },
+      "datasource": {
+        "type": "influxdb",
+        "uid": "InfluxDB"
+      },
+      "targets": [
+        {
+          "query": "from(bucket: \"sensor_data\") |> range(start: v.timeRangeStart, stop: v.timeRangeStop) |> filter(fn: (r) => r._measurement == \"sensor_data\") |> aggregateWindow(every: 30s, fn: mean) |> timedMovingAverage(every: 5m, period: 5m)",
+          "rawQuery": true
+        }
+      ]
+    },
+    {
+      "type": "table",
+      "title": "Sensors by Zone",
+      "gridPos": {
+        "h": 8,
+        "w": 24,
+        "x": 0,
+        "y": 41
+      },
+      "datasource": {
+        "type": "influxdb",
+        "uid": "InfluxDB"
+      },
+      "targets": [
+        {
+          "query": "from(bucket: \"sensor_data\") |> range(start: v.timeRangeStart, stop: v.timeRangeStop) |> filter(fn: (r) => r._measurement == \"sensor_data\") |> filter(fn: (r) => r.profile == \"${profile}\" or \"${profile}\" == \"$__all\") |> group(columns: [\"sensor_id\", \"sensor_type\", \"profile\"]) |> aggregateWindow(every: 1m, fn: last) |> pivot(rowKey: [\"_time\", \"sensor_id\", \"profile\"], columnKey: [\"sensor_type\"], valueColumn: \"_value\")",
+          "rawQuery": true
+        }
+      ]
+    }
+  ]
+}

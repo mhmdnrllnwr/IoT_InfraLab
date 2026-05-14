@@ -1,7 +1,6 @@
-FROM python:3.11-slim
+FROM python:3.11-alpine
 
-# Install nmap binary required by the python library
-RUN apt-get update && apt-get install -y nmap && rm -rf /var/lib/apt/lists/*
+RUN apk add --no-cache nmap
 
 WORKDIR /app
 

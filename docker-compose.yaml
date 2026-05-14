@@ -3,7 +3,7 @@ services:
   # THE TRUSTED ZONE (Core Infrastructure)
   # ----------------------------------------
   mosquitto:
-    image: eclipse-mosquitto:latest
+    image: eclipse-mosquitto:2.0
     container_name: iot_broker
     networks:
       - iot_infralab_net
@@ -16,11 +16,17 @@ services:
       - ./infrastructure/mosquitto/log:/mosquitto/log
     command: mosquitto -c /mosquitto/config/mosquitto_vulnerable.conf
     restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          memory: 64m
 
   nodered:
     image: nodered/node-red:latest
     container_name: iot_nodered
     user: "root"
+    environment:
+      - NODE_OPTIONS=--max-old-space-size=256
     networks:
       iot_infralab_net:
         ipv4_address: 172.18.0.25
@@ -33,6 +39,10 @@ services:
     depends_on:
       - mosquitto
       - docker-proxy
+    deploy:
+      resources:
+        limits:
+          memory: 256m
 
   # ----------------------------------------
   # THE MANAGEMENT ZONE (Docker API Proxy)
@@ -51,19 +61,23 @@ services:
       - EXEC=1       # Allows Node-RED to launch exec commands inside containers
       - INFO=1       # Allows Telegraf to query Docker daemon info
       - GET=1
-      
+
     volumes:
       # The proxy safely holds the socket and translates HTTP requests to it
       - /var/run/docker.sock:/var/run/docker.sock:ro
-    # Notice there are no external ports mapped here. 
+    # Notice there are no external ports mapped here.
     # It is completely hidden from your Windows host, making it highly secure!
     restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          memory: 32m
 
   # ----------------------------------------
   # THE ANALYTICS ZONE (Time-Series & Dashboard)
   # ----------------------------------------
   otel-collector:
-    image: otel/opentelemetry-collector-contrib:latest
+    image: otel/opentelemetry-collector:latest
     container_name: otel_collector
     networks:
       - iot_infralab_net
@@ -71,11 +85,15 @@ services:
       - "4317:4317" # OTLP gRPC
       - "4318:4318" # OTLP HTTP
     volumes:
-      - ./infrastructure/otel/otel-config.yaml:/etc/otelcol-contrib/config.yaml:ro
+      - ./infrastructure/otel/otel-config.yaml:/etc/otelcol/config.yaml:ro
     restart: unless-stopped
     depends_on:
       - tempo
       - influxdb
+    deploy:
+      resources:
+        limits:
+          memory: 128m
 
   loki:
     image: grafana/loki:latest
@@ -84,7 +102,14 @@ services:
       - iot_infralab_net
     ports:
       - "3100:3100"
+    command: -config.file=/etc/loki/local-config.yaml
+    volumes:
+      - ./infrastructure/loki/local-config.yaml:/etc/loki/local-config.yaml:ro
     restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          memory: 256m
 
   tempo:
     image: grafana/tempo:latest
@@ -95,6 +120,10 @@ services:
     volumes:
       - ./infrastructure/tempo/tempo-config.yaml:/etc/tempo.yaml:ro
     restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          memory: 384m
 
   promtail:
     image: grafana/promtail:latest
@@ -108,11 +137,15 @@ services:
     restart: unless-stopped
     depends_on:
       - loki
+    deploy:
+      resources:
+        limits:
+          memory: 64m
 
   influxdb:
     image: influxdb:2.7
     container_name: influxdb
-    env_file: 
+    env_file:
       - .env
     networks:
       - iot_infralab_net
@@ -122,6 +155,10 @@ services:
       - ./infrastructure/influxdb/data:/var/lib/influxdb2
       - ./infrastructure/influxdb/config:/etc/influxdb2
     restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          memory: 384m
 
   telegraf:
     image: telegraf:latest
@@ -136,12 +173,18 @@ services:
     depends_on:
       - influxdb
       - docker-proxy
+    deploy:
+      resources:
+        limits:
+          memory: 80m
 
   grafana:
     image: grafana/grafana-oss:latest
     container_name: grafana
     env_file:
       - .env
+    environment:
+      - GF_METRICS_ENABLED=false
     networks:
       - iot_infralab_net
     ports:
@@ -151,9 +194,12 @@ services:
       - ./infrastructure/grafana/provisioning/datasources:/etc/grafana/provisioning/datasources:ro
       - ./infrastructure/grafana/provisioning/dashboards:/etc/grafana/provisioning/dashboards:ro
     restart: unless-stopped
-    #restart: "no"
     depends_on:
       - influxdb
+    deploy:
+      resources:
+        limits:
+          memory: 256m
 
   # ----------------------------------------
   # INTRUSION DETECTION SYSTEM (Suricata Sidecar)
@@ -175,11 +221,15 @@ services:
       - ./infrastructure/suricata/local.rules.vuln:/etc/suricata/rules/local.rules.vuln
       - ./infrastructure/suricata/logs:/var/log/suricata
       # NEW: Explicitly mount the run directory for the socket
-      - ./infrastructure/suricata/run:/var/run/suricata 
+      - ./infrastructure/suricata/run:/var/run/suricata
     command: -i eth0
     restart: unless-stopped
     depends_on:
       - mosquitto
+    deploy:
+      resources:
+        limits:
+          memory: 256m
 
   security-auditor:
     build: ./src/simulation/auditor_security
@@ -195,6 +245,10 @@ services:
     depends_on:
       - mosquitto
     restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          memory: 128m
 
 networks:
   iot_infralab_net:

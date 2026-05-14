@@ -43,7 +43,7 @@ def perform_audit():
         nm = nmap.PortScanner()
         
         try:
-            nm.scan(hosts=TARGET_SUBNET, arguments='-sV -T4') 
+            nm.scan(hosts=TARGET_SUBNET, arguments='-sT -T4')
         except nmap.PortScannerError as e:
             raise Exception(f"Nmap Error: Ensure container has NET_RAW capabilities. {e}")
 

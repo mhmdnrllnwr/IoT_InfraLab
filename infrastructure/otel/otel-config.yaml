@@ -13,11 +13,6 @@ exporters:
       insecure: true
   debug:
     verbosity: detailed
-  influxdb:
-    endpoint: http://influxdb:8086
-    org: your-org-name
-    bucket: your-bucket-name
-    token: your-token-placeholder
 
 processors:
   batch:

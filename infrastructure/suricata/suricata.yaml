@@ -25,9 +25,9 @@ outputs:
       append: yes
       types:
         - alert:
-            payload: yes             # Captures the attack data
-            payload-printable: yes   # Makes it readable in logs
-            packet: yes
+            payload: no
+            payload-printable: no
+            packet: no
         - http:
             enabled: yes
         - mqtt:

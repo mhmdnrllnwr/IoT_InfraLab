@@ -1,6 +1,9 @@
-FROM python:3.9-slim
-RUN apt-get update && apt-get install -y curl nmap iproute2 tcpdump dsniff hping3 && rm -rf /var/lib/apt/lists/*
+FROM python:3.9-alpine
+
+RUN apk add --no-cache curl nmap iproute2 tcpdump
+
 WORKDIR /attacker
+
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 COPY mqtt*.py .

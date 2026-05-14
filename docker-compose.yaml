@@ -136,7 +136,8 @@ services:
     image: grafana/promtail:latest
     container_name: promtail
     networks:
-      - iot_infralab_net
+      iot_infralab_net:
+        ipv4_address: 172.18.0.10
     volumes:
       - ./infrastructure/suricata/logs:/var/log/suricata:ro
       - ./infrastructure/promtail/promtail-config.yaml:/etc/promtail/config.yml:ro

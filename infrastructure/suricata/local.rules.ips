@@ -5,6 +5,7 @@
 # Safelist internal management traffic
 pass ip 172.18.0.100 any <> any any (msg:"Safelisting Security Auditor"; sid:9900001; rev:1;)
 pass ip 172.18.0.25 any <> any any (msg:"Safelisting Node-RED"; sid:9900002; rev:1;)
+pass ip 172.18.0.10 any <> any any (msg:"Safelisting Promtail"; sid:9900003; rev:1;)
 
 
 # 1. MQTT SYN Flood (DoS)

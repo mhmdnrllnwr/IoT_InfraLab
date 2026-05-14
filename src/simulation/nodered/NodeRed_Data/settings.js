@@ -332,33 +332,21 @@ module.exports = {
     logging: {
         /** Only console logging is currently supported */
         console: {
-            /** Level of logging to be recorded. Options are:
-             * fatal - only those errors which make the application unusable should be recorded
-             * error - record errors which are deemed fatal for a particular request + fatal errors
-             * warn - record problems which are non fatal + errors + fatal errors
-             * info - record information about the general running of the application + warn + error + fatal errors
-             * debug - record information which is more verbose than info + info + warn + error + fatal errors
-             * trace - record very detailed logging + debug + info + warn + error + fatal errors
-             * off - turn off all logging (doesn't affect metrics or audit)
-             */
-            level: "info",
-            /** Whether or not to include metric events in the log output */
+            level: "warn",
             metrics: false,
-            /** Whether or not to include audit events in the log output */
             audit: false
         }
     },
 
-    /** Context Storage
-     * The following property can be used to enable context storage. The configuration
-     * provided here will enable file-based context that flushes to disk every 30 seconds.
-     * Refer to the documentation for further options: https://nodered.org/docs/api/context/
-     */
-    //contextStorage: {
-    //    default: {
-    //        module:"localfilesystem"
-    //    },
-    //},
+    contextStorage: {
+        default: {
+            module: "memory",
+            config: {
+                cache: true,
+                flushInterval: 30
+            }
+        },
+    },
 
     /** `global.keys()` returns a list of all properties set in global context.
      * This allows them to be displayed in the Context Sidebar within the editor.
@@ -574,16 +562,16 @@ module.exports = {
     //httpRequestTimeout: 120000,
 
     /** Retry time in milliseconds for MQTT connections */
-    mqttReconnectTime: 15000,
+    mqttReconnectTime: 5000,
 
     /** Retry time in milliseconds for Serial port connections */
     serialReconnectTime: 15000,
 
     /** Retry time in milliseconds for TCP socket connections */
-    //socketReconnectTime: 10000,
+    socketReconnectTime: 5000,
 
-    /** Timeout in milliseconds for TCP server socket connections. Defaults to no timeout */
-    //socketTimeout: 120000,
+    /** Timeout in milliseconds for TCP server socket connections */
+    socketTimeout: 30000,
 
     /** Maximum number of messages to wait in queue while attempting to connect to TCP socket
      * defaults to 1000

@@ -1,18 +1,56 @@
 server:
   http_listen_port: 9080
   grpc_listen_port: 0
+  log_level: warn
 
 positions:
   filename: /tmp/positions.yaml
 
 clients:
   - url: http://loki:3100/loki/api/v1/push
+    batchwait: 5s
+    batchsize: 512000
+    timeout: 10s
+    backoff_config:
+      min_period: 500ms
+      max_period: 5m
+      max_retries: 3
 
 scrape_configs:
-- job_name: suricata
-  static_configs:
-  - targets:
-      - localhost
-    labels:
-      job: suricata
-      __path__: /var/log/suricata/eve.json
+  - job_name: suricata
+    static_configs:
+      - targets:
+          - localhost
+        labels:
+          job: suricata
+          __path__: /var/log/suricata/eve.json
+
+    pipeline_stages:
+      - match:
+          selector: '{job="suricata"}'
+          stages:
+            - json:
+                expressions:
+                  event_type: event_type
+            - match:
+                selector: '{event_type!="alert"}'
+                stages:
+                  - sampling:
+                      rate: 0.5
+      - json:
+          expressions:
+            timestamp: timestamp
+            event_type: event_type
+            src_ip: src_ip
+            dest_ip: dest_ip
+            alert: alert
+      - labels:
+          event_type:
+          src_ip:
+      - labeldrop:
+          - filename
+          - stream
+
+limits_config:
+  readline_rate: 1000
+  readline_burst: 2000

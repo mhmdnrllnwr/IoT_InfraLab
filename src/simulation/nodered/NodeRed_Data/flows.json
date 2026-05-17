@@ -530,7 +530,7 @@
         "order": 1,
         "showTitle": true,
         "className": "",
-        "visible": "true",
+        "visible": true,
         "disabled": "false",
         "groupType": "default"
     },
@@ -2456,8 +2456,8 @@
         "resendOnRefresh": true,
         "templateScope": "local",
         "className": "",
-        "x": 0,
-        "y": 0,
+        "x": 330,
+        "y": 120,
         "wires": [
             []
         ]
@@ -2479,8 +2479,31 @@
         "resendOnRefresh": true,
         "templateScope": "local",
         "className": "",
-        "x": 0,
-        "y": 0,
+        "x": 130,
+        "y": 120,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "helps_external_links",
+        "type": "ui-template",
+        "z": "89c26b2630a7d108",
+        "group": "ui_group_helps",
+        "page": "",
+        "ui": "",
+        "name": "External Tools",
+        "order": 2,
+        "width": "0",
+        "height": "0",
+        "format": "<div style=\"background:#1e1e1e;border-radius:8px;padding:24px;color:#e0e0e0;\">\n  <div style=\"text-align:center;\">\n    <div style=\"font-size:18px;font-weight:600;margin-bottom:16px;\">External Tools</div>\n    <a href=\"http://localhost:3000/\" target=\"_blank\" style=\"display:block;padding:12px 28px;margin-bottom:12px;border:none;border-radius:6px;font-size:15px;cursor:pointer;color:#fff;background:#F46800;text-decoration:none;text-align:center;\">Grafana Dashboard</a>\n    <a href=\"http://localhost:8086/\" target=\"_blank\" style=\"display:block;padding:12px 28px;border:none;border-radius:6px;font-size:15px;cursor:pointer;color:#fff;background:#22ADF6;text-decoration:none;text-align:center;\">InfluxDB UI</a>\n  </div>\n</div>",
+        "storeOutMessages": true,
+        "passthru": true,
+        "resendOnRefresh": true,
+        "templateScope": "local",
+        "className": "",
+        "x": 130,
+        "y": 180,
         "wires": [
             []
         ]

@@ -76,10 +76,12 @@ implementation.md
 
 # Ignore planning markdown files
 /text
+text/nodered_flows
 text/code.md
 text/feat.md
 text/fix.md
 text/future.md
 
+/zreport
 # test/ directory contains smoke tests and utility scripts — keep tracked
 # /test  (removed — test scripts should be version-controlled)

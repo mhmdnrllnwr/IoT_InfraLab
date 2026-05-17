@@ -579,37 +579,6 @@
         "className": ""
     },
     {
-        "id": "config_mqtt",
-        "type": "mqtt-broker",
-        "name": "Local MQTT Broker",
-        "broker": "mosquitto",
-        "port": "1883",
-        "clientid": "",
-        "autoConnect": true,
-        "usetls": false,
-        "protocolVersion": "4",
-        "keepalive": "60",
-        "cleansession": true,
-        "autoUnsubscribe": true,
-        "birthTopic": "",
-        "birthQos": "0",
-        "birthRetain": "false",
-        "birthPayload": "",
-        "birthMsg": {},
-        "closeTopic": "",
-        "closeQos": "0",
-        "closeRetain": "false",
-        "closePayload": "",
-        "closeMsg": {},
-        "willTopic": "",
-        "willQos": "0",
-        "willRetain": "false",
-        "willPayload": "",
-        "willMsg": {},
-        "userProps": "",
-        "sessionExpiry": ""
-    },
-    {
         "id": "599a1bcf052a2d6b",
         "type": "ui-text-input",
         "z": "89c26b2630a7d108",
@@ -5058,6 +5027,246 @@
         "broker": "bda5655996317aa0",
         "x": 1230,
         "y": 500,
+        "wires": []
+    },
+    {
+        "id": "3bd3229f4e507272",
+        "type": "mqtt out",
+        "z": "4acab47cf7e84e94",
+        "name": "Publish saved sensor",
+        "topic": "sensor/saved",
+        "qos": "2",
+        "retain": "true",
+        "respTopic": "",
+        "contentType": "",
+        "userProps": "",
+        "correl": "",
+        "expiry": "",
+        "broker": "bda5655996317aa0",
+        "x": 1250,
+        "y": 700,
+        "wires": []
+    },
+    {
+        "id": "9ed813c182719f73",
+        "type": "inject",
+        "z": "4acab47cf7e84e94",
+        "name": "Load on Startup",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": true,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 100,
+        "y": 720,
+        "wires": [
+            [
+                "4d4dd9d9e3b7cb5e"
+            ]
+        ]
+    },
+    {
+        "id": "4d4dd9d9e3b7cb5e",
+        "type": "file in",
+        "z": "4acab47cf7e84e94",
+        "name": "Read saved_sensors.json",
+        "filename": "/data/saved_sensors.json",
+        "filenameType": "str",
+        "format": "utf8",
+        "chunk": false,
+        "sendError": false,
+        "encoding": "none",
+        "allProps": false,
+        "x": 320,
+        "y": 720,
+        "wires": [
+            [
+                "73f909a6a0bb8e8e"
+            ]
+        ]
+    },
+    {
+        "id": "73f909a6a0bb8e8e",
+        "type": "json",
+        "z": "4acab47cf7e84e94",
+        "name": "Parse JSON",
+        "property": "payload",
+        "action": "obj",
+        "pretty": false,
+        "x": 540,
+        "y": 720,
+        "wires": [
+            [
+                "1baf2cff4cbb8df2"
+            ]
+        ]
+    },
+    {
+        "id": "1baf2cff4cbb8df2",
+        "type": "change",
+        "z": "4acab47cf7e84e94",
+        "name": "Save to Flow Memory",
+        "rules": [
+            {
+                "t": "set",
+                "p": "sensorLimits",
+                "pt": "flow",
+                "to": "payload",
+                "tot": "msg"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 750,
+        "y": 720,
+        "wires": [
+            [
+                "251e58310555bda5"
+            ]
+        ]
+    },
+    {
+        "id": "3cdcc65719d00a50",
+        "type": "mqtt in",
+        "z": "4acab47cf7e84e94",
+        "name": "Receive Telemetry",
+        "topic": "sensor/saved",
+        "qos": "2",
+        "datatype": "auto-detect",
+        "broker": "bda5655996317aa0",
+        "nl": false,
+        "rap": true,
+        "rh": 0,
+        "inputs": 0,
+        "x": 100,
+        "y": 780,
+        "wires": [
+            [
+                "5bbb5994de6cb5e4"
+            ]
+        ]
+    },
+    {
+        "id": "5bbb5994de6cb5e4",
+        "type": "json",
+        "z": "4acab47cf7e84e94",
+        "name": "Parse Payload",
+        "property": "payload",
+        "action": "obj",
+        "pretty": false,
+        "x": 320,
+        "y": 780,
+        "wires": [
+            [
+                "1bd830887837d81e"
+            ]
+        ]
+    },
+    {
+        "id": "1bd830887837d81e",
+        "type": "function",
+        "z": "4acab47cf7e84e94",
+        "name": "Merge Data & Config",
+        "func": "let sensors = msg.payload;\nlet points = [];\n\nfor (const s of sensors) {\n    points.push([\n        {\n            sensor_id: s.id,\n            types: s.types,\n            profile: s.profile,\n            interval: s.interval,\n            saved_at: s.saved_at\n        },\n        { sensor_id: s.id }\n    ]);\n}\n\nmsg.payload = points;\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 520,
+        "y": 780,
+        "wires": [
+            [
+                "81b96b870ce8da87",
+                "409cb90a1e72f76f"
+            ]
+        ]
+    },
+    {
+        "id": "81b96b870ce8da87",
+        "type": "influxdb out",
+        "z": "4acab47cf7e84e94",
+        "influxdb": "17435d09976b7d21",
+        "name": "Write to InfluxDB",
+        "measurement": "sensor_saved",
+        "precision": "",
+        "retentionPolicy": "",
+        "database": "database",
+        "precisionV18FluxV20": "ms",
+        "retentionPolicyV18Flux": "",
+        "org": "infralab",
+        "bucket": "sensor_saved",
+        "x": 750,
+        "y": 780,
+        "wires": []
+    },
+    {
+        "id": "409cb90a1e72f76f",
+        "type": "debug",
+        "z": "4acab47cf7e84e94",
+        "name": "debug 3",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 320,
+        "y": 860,
+        "wires": []
+    },
+    {
+        "id": "251e58310555bda5",
+        "type": "function",
+        "z": "4acab47cf7e84e94",
+        "name": "Format Limits for MQTT",
+        "func": "return msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 980,
+        "y": 720,
+        "wires": [
+            [
+                "4599389678bdf302"
+            ]
+        ]
+    },
+    {
+        "id": "4599389678bdf302",
+        "type": "mqtt out",
+        "z": "4acab47cf7e84e94",
+        "name": "Publish saved sensor",
+        "topic": "sensor/saved",
+        "qos": "2",
+        "retain": "true",
+        "respTopic": "",
+        "contentType": "",
+        "userProps": "",
+        "correl": "",
+        "expiry": "",
+        "broker": "bda5655996317aa0",
+        "x": 1230,
+        "y": 720,
         "wires": []
     }
 ]

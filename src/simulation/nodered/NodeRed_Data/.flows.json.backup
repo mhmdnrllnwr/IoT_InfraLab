@@ -4608,8 +4608,8 @@
         "complete": "false",
         "statusVal": "",
         "statusType": "auto",
-        "x": 420,
-        "y": 160,
+        "x": 400,
+        "y": 40,
         "wires": []
     },
     {
@@ -4630,8 +4630,7 @@
         "wires": [
             [
                 "f2325d189ff9fa90",
-                "0a3d5de1d4fa2473",
-                "split_readings_for_metadata"
+                "0a3d5de1d4fa2473"
             ]
         ]
     },
@@ -4926,7 +4925,9 @@
         "x": 770,
         "y": 500,
         "wires": [
-            []
+            [
+                "publish_limits_to_mqtt"
+            ]
         ]
     },
     {
@@ -4971,7 +4972,7 @@
         "type": "function",
         "z": "4acab47cf7e84e94",
         "name": "Merge Data & Config",
-        "func": "// 1. Get the raw sensor data from the incoming message\nlet sensorData = msg.payload;\n\n// 2. Retrieve our configuration JSON from Node-RED's memory\nlet limitsConfig = flow.get(\"sensorLimits\");\n\n// 3. Setup default safe limits just in case the sensor type isn't in the JSON yet\nlet minLimit = 0;\nlet maxLimit = 999;\n\n// 4. Look up the specific limits based on the incoming sensor_type\n// Using the array format [min, max]\nif (limitsConfig && limitsConfig[sensorData.sensor_type]) {\n    minLimit = limitsConfig[sensorData.sensor_type][0];\n    maxLimit = limitsConfig[sensorData.sensor_type][1];\n}\n\n// 5. Format the payload specifically for the standard Node-RED InfluxDB Out node\nmsg.payload = [\n    {\n        // These are the actual numerical fields we will graph in Grafana\n        value: sensorData.value,\n        min_limit: minLimit,\n        max_limit: maxLimit\n    },\n    {\n        // These are the tags we use to filter in Grafana\n        sensor_id: sensorData.sensor_id,\n        sensor_type: sensorData.sensor_type\n    }\n];\n\nreturn msg;",
+        "func": "let limits = msg.payload;\nlet points = [];\n\nfor (const [sensorType, range] of Object.entries(limits)) {\n    points.push([\n        {\n            min_limit: range[0],\n            max_limit: range[1]\n        },\n        {\n            sensor_type: sensorType\n        }\n    ]);\n}\n\nmsg.payload = points;\nreturn msg;",
         "outputs": 1,
         "timeout": 0,
         "noerr": 0,
@@ -5022,41 +5023,281 @@
         "wires": []
     },
     {
-        "id": "split_readings_for_metadata",
+        "id": "publish_limits_to_mqtt",
         "type": "function",
         "z": "4acab47cf7e84e94",
-        "name": "Split Readings for Metadata",
-        "func": "let sensorData = msg.payload;\nlet messages = [];\n\nfor (const [sensorType, value] of Object.entries(sensorData.readings)) {\n    messages.push({\n        payload: {\n            sensor_type: sensorType,\n            value: value,\n            sensor_id: sensorData.sensor_id\n        }\n    });\n}\n\nreturn messages;",
+        "name": "Format Limits for MQTT",
+        "func": "return msg;",
         "outputs": 1,
         "timeout": 0,
         "noerr": 0,
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 370,
-        "y": 180,
+        "x": 1000,
+        "y": 500,
         "wires": [
             [
-                "mqtt_out_metadata"
+                "mqtt_out_publish_limits"
             ]
         ]
     },
     {
-        "id": "mqtt_out_metadata",
+        "id": "mqtt_out_publish_limits",
         "type": "mqtt out",
         "z": "4acab47cf7e84e94",
-        "name": "Publish Metadata",
+        "name": "Publish Limits",
         "topic": "sensor/metadata",
         "qos": "2",
-        "retain": "false",
+        "retain": "true",
         "respTopic": "",
         "contentType": "",
         "userProps": "",
         "correl": "",
         "expiry": "",
         "broker": "bda5655996317aa0",
-        "x": 600,
-        "y": 180,
+        "x": 1230,
+        "y": 500,
+        "wires": []
+    },
+    {
+        "id": "3bd3229f4e507272",
+        "type": "mqtt out",
+        "z": "4acab47cf7e84e94",
+        "name": "Publish saved sensor",
+        "topic": "sensor/saved",
+        "qos": "2",
+        "retain": "true",
+        "respTopic": "",
+        "contentType": "",
+        "userProps": "",
+        "correl": "",
+        "expiry": "",
+        "broker": "bda5655996317aa0",
+        "x": 1250,
+        "y": 700,
+        "wires": []
+    },
+    {
+        "id": "9ed813c182719f73",
+        "type": "inject",
+        "z": "4acab47cf7e84e94",
+        "name": "Load on Startup",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": true,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 100,
+        "y": 720,
+        "wires": [
+            [
+                "4d4dd9d9e3b7cb5e"
+            ]
+        ]
+    },
+    {
+        "id": "4d4dd9d9e3b7cb5e",
+        "type": "file in",
+        "z": "4acab47cf7e84e94",
+        "name": "Read saved_sensors.json",
+        "filename": "/data/saved_sensors.json",
+        "filenameType": "str",
+        "format": "utf8",
+        "chunk": false,
+        "sendError": false,
+        "encoding": "none",
+        "allProps": false,
+        "x": 320,
+        "y": 720,
+        "wires": [
+            [
+                "73f909a6a0bb8e8e"
+            ]
+        ]
+    },
+    {
+        "id": "73f909a6a0bb8e8e",
+        "type": "json",
+        "z": "4acab47cf7e84e94",
+        "name": "Parse JSON",
+        "property": "payload",
+        "action": "obj",
+        "pretty": false,
+        "x": 540,
+        "y": 720,
+        "wires": [
+            [
+                "1baf2cff4cbb8df2"
+            ]
+        ]
+    },
+    {
+        "id": "1baf2cff4cbb8df2",
+        "type": "change",
+        "z": "4acab47cf7e84e94",
+        "name": "Save to Flow Memory",
+        "rules": [
+            {
+                "t": "set",
+                "p": "sensorLimits",
+                "pt": "flow",
+                "to": "payload",
+                "tot": "msg"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 750,
+        "y": 720,
+        "wires": [
+            [
+                "251e58310555bda5"
+            ]
+        ]
+    },
+    {
+        "id": "3cdcc65719d00a50",
+        "type": "mqtt in",
+        "z": "4acab47cf7e84e94",
+        "name": "Receive Telemetry",
+        "topic": "sensor/saved",
+        "qos": "2",
+        "datatype": "auto-detect",
+        "broker": "bda5655996317aa0",
+        "nl": false,
+        "rap": true,
+        "rh": 0,
+        "inputs": 0,
+        "x": 100,
+        "y": 780,
+        "wires": [
+            [
+                "5bbb5994de6cb5e4"
+            ]
+        ]
+    },
+    {
+        "id": "5bbb5994de6cb5e4",
+        "type": "json",
+        "z": "4acab47cf7e84e94",
+        "name": "Parse Payload",
+        "property": "payload",
+        "action": "obj",
+        "pretty": false,
+        "x": 320,
+        "y": 780,
+        "wires": [
+            [
+                "1bd830887837d81e"
+            ]
+        ]
+    },
+    {
+        "id": "1bd830887837d81e",
+        "type": "function",
+        "z": "4acab47cf7e84e94",
+        "name": "Merge Data & Config",
+        "func": "let sensors = msg.payload;\nlet points = [];\n\nfor (const s of sensors) {\n    points.push([\n        {\n            sensor_id: s.id,\n            types: s.types,\n            profile: s.profile,\n            interval: s.interval,\n            saved_at: s.saved_at\n        },\n        { sensor_id: s.id }\n    ]);\n}\n\nmsg.payload = points;\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 520,
+        "y": 780,
+        "wires": [
+            [
+                "81b96b870ce8da87",
+                "409cb90a1e72f76f"
+            ]
+        ]
+    },
+    {
+        "id": "81b96b870ce8da87",
+        "type": "influxdb out",
+        "z": "4acab47cf7e84e94",
+        "influxdb": "17435d09976b7d21",
+        "name": "Write to InfluxDB",
+        "measurement": "sensor_saved",
+        "precision": "",
+        "retentionPolicy": "",
+        "database": "database",
+        "precisionV18FluxV20": "ms",
+        "retentionPolicyV18Flux": "",
+        "org": "infralab",
+        "bucket": "sensor_saved",
+        "x": 750,
+        "y": 780,
+        "wires": []
+    },
+    {
+        "id": "409cb90a1e72f76f",
+        "type": "debug",
+        "z": "4acab47cf7e84e94",
+        "name": "debug 3",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 320,
+        "y": 860,
+        "wires": []
+    },
+    {
+        "id": "251e58310555bda5",
+        "type": "function",
+        "z": "4acab47cf7e84e94",
+        "name": "Format Limits for MQTT",
+        "func": "return msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 980,
+        "y": 720,
+        "wires": [
+            [
+                "4599389678bdf302"
+            ]
+        ]
+    },
+    {
+        "id": "4599389678bdf302",
+        "type": "mqtt out",
+        "z": "4acab47cf7e84e94",
+        "name": "Publish saved sensor",
+        "topic": "sensor/saved",
+        "qos": "2",
+        "retain": "true",
+        "respTopic": "",
+        "contentType": "",
+        "userProps": "",
+        "correl": "",
+        "expiry": "",
+        "broker": "bda5655996317aa0",
+        "x": 1230,
+        "y": 720,
         "wires": []
     }
 ]

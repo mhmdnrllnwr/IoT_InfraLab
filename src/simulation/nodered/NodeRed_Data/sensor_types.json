@@ -1,7 +1,7 @@
 {
   "temperature": [10, 40],
   "humidity": [30, 90],
-  "pressure": [950, 1050],
+  "pressure": [90, 150],
   "vibration": [0.0, 10.0],
   "power_consumption": [50, 500]
 }

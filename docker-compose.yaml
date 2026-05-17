@@ -2,6 +2,16 @@ services:
   # ----------------------------------------
   # THE TRUSTED ZONE (Core Infrastructure)
   # ----------------------------------------
+  # ----------------------------------------
+  # SECURITY MODEL:
+  # Mosquitto uses mosquitto_vulnerable.conf by default (allow_anonymous=true).
+  # This is INTENTIONAL -- enables MQTT sniffing/injection attack scenarios
+  # in Cyber Attack Simulation tab. Do NOT deploy this config in production.
+  #
+  # To harden: change to mosquitto_hardened.conf (password auth required).
+  # Update all MQTT broker nodes in Node-RED flows to use credentials.
+  # Hardened passwd + ACL in infrastructure/mosquitto/config/.
+  # ----------------------------------------
   mosquitto:
     image: eclipse-mosquitto:2.0
     container_name: iot_broker
@@ -28,6 +38,7 @@ services:
     environment:
       - NODE_OPTIONS=--max-old-space-size=256 --max-semi-space-size=2
       - NODE_RED_CREDENTIAL_SECRET=${NODE_RED_CREDENTIAL_SECRET:-change_this_secret}
+      - SENSOR_CONFIG_PATH=/data/sensor_types.json
     networks:
       iot_infralab_net:
         ipv4_address: 172.18.0.25
@@ -101,6 +112,7 @@ services:
   loki:
     image: grafana/loki:latest
     container_name: loki
+    user: root
     networks:
       - iot_infralab_net
     ports:
@@ -108,6 +120,7 @@ services:
     command: -config.file=/etc/loki/local-config.yaml -target=all
     volumes:
       - ./infrastructure/loki/local-config.yaml:/etc/loki/local-config.yaml:ro
+      - loki_data:/tmp/loki
     restart: unless-stopped
     deploy:
       resources:
@@ -139,7 +152,7 @@ services:
       iot_infralab_net:
         ipv4_address: 172.18.0.10
     volumes:
-      - ./infrastructure/suricata/logs:/var/log/suricata:ro
+      - suricata_logs:/var/log/suricata:ro
       - ./infrastructure/promtail/promtail-config.yaml:/etc/promtail/config.yml:ro
     command: -config.file=/etc/promtail/config.yml
     restart: unless-stopped
@@ -153,9 +166,8 @@ services:
   influxdb:
     image: influxdb:2.7
     container_name: influxdb
-    env_file:
-      - .env
     environment:
+      - INFLUXDB_TOKEN=${INFLUXDB_TOKEN}
       - INFLUXD_ENGINE_CACHE_MAX_MEMORY_SIZE=256MB
       - INFLUXD_ENGINE_CACHE_SNAPSHOT_MEMORY_SIZE=64MB
     networks:
@@ -163,7 +175,7 @@ services:
     ports:
       - "8086:8086"
     volumes:
-      - ./infrastructure/influxdb/data:/var/lib/influxdb2
+      - influxdb_data:/var/lib/influxdb2
       - ./infrastructure/influxdb/config:/etc/influxdb2
     restart: unless-stopped
     deploy:
@@ -204,7 +216,7 @@ services:
     ports:
       - "3000:3000"
     volumes:
-      - ./infrastructure/grafana/data:/var/lib/grafana
+      - grafana_data:/var/lib/grafana
       - ./infrastructure/grafana/provisioning/datasources:/etc/grafana/provisioning/datasources:ro
       - ./infrastructure/grafana/provisioning/dashboards:/etc/grafana/provisioning/dashboards:ro
       - ./infrastructure/grafana/grafana.ini:/etc/grafana/grafana.ini:ro
@@ -231,13 +243,11 @@ services:
       - NET_RAW
       - SYS_NICE
     volumes:
-      # Use the exact internal paths Suricata expects
+      - suricata_logs:/var/log/suricata
       - ./infrastructure/suricata/suricata.yaml:/etc/suricata/suricata.yaml
       - ./infrastructure/suricata/local.rules:/etc/suricata/rules/local.rules
       - ./infrastructure/suricata/local.rules.ids:/etc/suricata/rules/local.rules.ids
       - ./infrastructure/suricata/local.rules.vuln:/etc/suricata/rules/local.rules.vuln
-      - ./infrastructure/suricata/logs:/var/log/suricata
-      # NEW: Explicitly mount the run directory for the socket
       - ./infrastructure/suricata/run:/var/run/suricata
     command: -i eth0
     restart: unless-stopped
@@ -261,6 +271,7 @@ services:
       - NET_ADMIN
     depends_on:
       - mosquitto
+      - otel-collector
     restart: unless-stopped
     deploy:
       resources:
@@ -277,4 +288,12 @@ networks:
     driver_opts:
       com.docker.network.bridge.name: br-iotlab
 
-volumes: {}
+volumes:
+  influxdb_data:
+    driver: local
+  grafana_data:
+    driver: local
+  loki_data:
+    driver: local
+  suricata_logs:
+    driver: local

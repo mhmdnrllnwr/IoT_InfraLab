@@ -579,6 +579,37 @@
         "className": ""
     },
     {
+        "id": "config_mqtt",
+        "type": "mqtt-broker",
+        "name": "Local MQTT Broker",
+        "broker": "localhost",
+        "port": "1883",
+        "clientid": "",
+        "autoConnect": true,
+        "usetls": false,
+        "protocolVersion": "4",
+        "keepalive": "60",
+        "cleansession": true,
+        "autoUnsubscribe": true,
+        "birthTopic": "",
+        "birthQos": "0",
+        "birthRetain": "false",
+        "birthPayload": "",
+        "birthMsg": {},
+        "closeTopic": "",
+        "closeQos": "0",
+        "closeRetain": "false",
+        "closePayload": "",
+        "closeMsg": {},
+        "willTopic": "",
+        "willQos": "0",
+        "willRetain": "false",
+        "willPayload": "",
+        "willMsg": {},
+        "userProps": "",
+        "sessionExpiry": ""
+    },
+    {
         "id": "599a1bcf052a2d6b",
         "type": "ui-text-input",
         "z": "89c26b2630a7d108",
@@ -4570,7 +4601,7 @@
         "type": "debug",
         "z": "4acab47cf7e84e94",
         "name": "debug 4",
-        "active": true,
+        "active": false,
         "tosidebar": true,
         "console": false,
         "tostatus": false,
@@ -4806,5 +4837,187 @@
         "wires": [
             []
         ]
+    },
+    {
+        "id": "623df9be6f769ebd",
+        "type": "inject",
+        "z": "4acab47cf7e84e94",
+        "name": "Load on Startup",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": true,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 120,
+        "y": 500,
+        "wires": [
+            [
+                "0a97e7fdc107b05e"
+            ]
+        ]
+    },
+    {
+        "id": "0a97e7fdc107b05e",
+        "type": "file in",
+        "z": "4acab47cf7e84e94",
+        "name": "Read sensor_types.json",
+        "filename": "/data/sensor_types.json",
+        "filenameType": "str",
+        "format": "utf8",
+        "chunk": false,
+        "sendError": false,
+        "encoding": "none",
+        "allProps": false,
+        "x": 340,
+        "y": 500,
+        "wires": [
+            [
+                "16144af369f802d2"
+            ]
+        ]
+    },
+    {
+        "id": "16144af369f802d2",
+        "type": "json",
+        "z": "4acab47cf7e84e94",
+        "name": "Parse JSON",
+        "property": "payload",
+        "action": "obj",
+        "pretty": false,
+        "x": 560,
+        "y": 500,
+        "wires": [
+            [
+                "b0ec0216c8a7b2e3"
+            ]
+        ]
+    },
+    {
+        "id": "b0ec0216c8a7b2e3",
+        "type": "change",
+        "z": "4acab47cf7e84e94",
+        "name": "Save to Flow Memory",
+        "rules": [
+            {
+                "t": "set",
+                "p": "sensorLimits",
+                "pt": "flow",
+                "to": "payload",
+                "tot": "msg"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 770,
+        "y": 500,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "b34ead8dc717c3e8",
+        "type": "mqtt in",
+        "z": "4acab47cf7e84e94",
+        "name": "Receive Telemetry",
+        "topic": "sensor/metadata",
+        "qos": "2",
+        "datatype": "auto-detect",
+        "broker": "config_mqtt",
+        "nl": false,
+        "rap": true,
+        "rh": 0,
+        "inputs": 0,
+        "x": 120,
+        "y": 560,
+        "wires": [
+            [
+                "889db7b236ec73ff",
+                "39b00dc9b7234c3e"
+            ]
+        ]
+    },
+    {
+        "id": "889db7b236ec73ff",
+        "type": "json",
+        "z": "4acab47cf7e84e94",
+        "name": "Parse Payload",
+        "property": "payload",
+        "action": "obj",
+        "pretty": false,
+        "x": 340,
+        "y": 560,
+        "wires": [
+            [
+                "eea9cc9ba29745e8"
+            ]
+        ]
+    },
+    {
+        "id": "eea9cc9ba29745e8",
+        "type": "function",
+        "z": "4acab47cf7e84e94",
+        "name": "Merge Data & Config",
+        "func": "// 1. Get the raw sensor data from the incoming message\nlet sensorData = msg.payload;\n\n// 2. Retrieve our configuration JSON from Node-RED's memory\nlet limitsConfig = flow.get(\"sensorLimits\");\n\n// 3. Setup default safe limits just in case the sensor type isn't in the JSON yet\nlet minLimit = 0;\nlet maxLimit = 999;\n\n// 4. Look up the specific limits based on the incoming sensor_type\n// Using the array format [min, max]\nif (limitsConfig && limitsConfig[sensorData.sensor_type]) {\n    minLimit = limitsConfig[sensorData.sensor_type][0];\n    maxLimit = limitsConfig[sensorData.sensor_type][1];\n}\n\n// 5. Format the payload specifically for the standard Node-RED InfluxDB Out node\nmsg.payload = [\n    {\n        // These are the actual numerical fields we will graph in Grafana\n        value: sensorData.value,\n        min_limit: minLimit,\n        max_limit: maxLimit\n    },\n    {\n        // These are the tags we use to filter in Grafana\n        sensor_id: sensorData.sensor_id,\n        sensor_type: sensorData.sensor_type\n    }\n];\n\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 540,
+        "y": 560,
+        "wires": [
+            [
+                "408a120481047706"
+            ]
+        ]
+    },
+    {
+        "id": "408a120481047706",
+        "type": "influxdb out",
+        "z": "4acab47cf7e84e94",
+        "influxdb": "17435d09976b7d21",
+        "name": "Write to InfluxDB",
+        "measurement": "sensor_metadata",
+        "precision": "",
+        "retentionPolicy": "",
+        "database": "database",
+        "precisionV18FluxV20": "ms",
+        "retentionPolicyV18Flux": "",
+        "org": "infralab",
+        "bucket": "sensor_metadata",
+        "x": 770,
+        "y": 560,
+        "wires": []
+    },
+    {
+        "id": "39b00dc9b7234c3e",
+        "type": "debug",
+        "z": "4acab47cf7e84e94",
+        "name": "debug 2",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 340,
+        "y": 640,
+        "wires": []
     }
 ]

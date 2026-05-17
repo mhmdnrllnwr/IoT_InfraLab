@@ -9,7 +9,7 @@
     "influxdb"
   ],
   "schemaVersion": 39,
-  "version": 2,
+  "version": 1,
   "time": {
     "from": "now-15m",
     "to": "now"
@@ -44,17 +44,6 @@
   },
   "panels": [
     {
-      "type": "row",
-      "title": "Host",
-      "gridPos": {
-        "h": 1,
-        "w": 24,
-        "x": 0,
-        "y": 0
-      },
-      "collapsed": false
-    },
-    {
       "type": "timeseries",
       "title": "Host CPU Utilization",
       "gridPos": {
@@ -74,7 +63,7 @@
       },
       "targets": [
         {
-          "query": "from(bucket: \"platform_metrics\") |> range(start: v.timeRangeStart, stop: v.timeRangeStop) |> filter(fn: (r) => r._measurement == \"cpu\" and r._field == \"usage_idle\") |> filter(fn: (r) => r.host == \"telegraf\") |> aggregateWindow(every: v.windowPeriod, fn: mean, createEmpty: false) |> map(fn: (r) => ({ r with _value: 100.0 - r._value }))",
+          "query": "from(bucket: \"platform_metrics\") |> range(start: v.timeRangeStart, stop: v.timeRangeStop) |> filter(fn: (r) => r._measurement == \"cpu\" and r._field == \"usage_idle\") |> aggregateWindow(every: v.windowPeriod, fn: mean) |> map(fn: (r) => ({ r with _value: 100.0 - r._value }))",
           "rawQuery": true
         }
       ]
@@ -99,7 +88,7 @@
       },
       "targets": [
         {
-          "query": "from(bucket: \"platform_metrics\") |> range(start: v.timeRangeStart, stop: v.timeRangeStop) |> filter(fn: (r) => r._measurement == \"mem\" and r._field == \"used\") |> filter(fn: (r) => r.host == \"telegraf\") |> aggregateWindow(every: v.windowPeriod, fn: mean, createEmpty: false)",
+          "query": "from(bucket: \"platform_metrics\") |> range(start: v.timeRangeStart, stop: v.timeRangeStop) |> filter(fn: (r) => r._measurement == \"mem\" and r._field == \"used\") |> aggregateWindow(every: v.windowPeriod, fn: mean)",
           "rawQuery": true
         }
       ]
@@ -173,17 +162,6 @@
           "rawQuery": true
         }
       ]
-    },
-    {
-      "type": "row",
-      "title": "Containers",
-      "gridPos": {
-        "h": 1,
-        "w": 24,
-        "x": 0,
-        "y": 17
-      },
-      "collapsed": false
     },
     {
       "type": "timeseries",

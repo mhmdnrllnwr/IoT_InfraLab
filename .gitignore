@@ -58,4 +58,5 @@ text/feat.md
 text/fix.md
 text/future.md
 
-/test
+# test/ directory contains smoke tests and utility scripts — keep tracked
+# /test  (removed — test scripts should be version-controlled)

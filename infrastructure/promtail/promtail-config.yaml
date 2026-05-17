@@ -43,10 +43,16 @@ scrape_configs:
             event_type: event_type
             src_ip: src_ip
             dest_ip: dest_ip
-            alert: alert
+            alert_signature: alert.signature
+            alert_category: alert.category
+            alert_severity: alert.severity
       - labels:
           event_type:
           src_ip:
+          dest_ip:
+          alert_signature:
+          alert_category:
+          alert_severity:
       - labeldrop:
           - filename
           - stream

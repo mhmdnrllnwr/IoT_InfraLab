@@ -529,6 +529,7 @@ module.exports = {
      */
     functionGlobalContext: {
         // os:require('os'),
+        iotProjectPath: process.env.IOT_PROJECT_PATH || '.',
     },
 
     /** The maximum number of messages nodes will buffer internally as part of their

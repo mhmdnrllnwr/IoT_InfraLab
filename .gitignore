@@ -16,8 +16,13 @@ __pycache__/
 # --- Node-RED Dynamic Data & Secrets ---
 # We keep flows.json and package.json (code), but ignore secrets and installed modules
 src/simulation/nodered/NodeRed_Data/*_cred.json
-src/simulation/nodered/NodeRed_Data/node_modules/
+src/simulation/nodered/NodeRed_Data/*_cred.json.backup
+src/simulation/nodered/NodeRed_Data/.flows.json.backup
+src/simulation/nodered/NodeRed_Data/.config.*.json
+src/simulation/nodered/NodeRed_Data/.config.*.json.backup
 src/simulation/nodered/NodeRed_Data/.sessions.json
+src/simulation/nodered/NodeRed_Data/node_modules/
+src/simulation/nodered/NodeRed_Data/.npm/
 
 # --- Suricata Runtime & Logs ---
 infrastructure/suricata/run/*
@@ -31,20 +36,38 @@ infrastructure/mosquitto/data/*
 !infrastructure/mosquitto/data/.gitkeep
 infrastructure/mosquitto/log/*
 !infrastructure/mosquitto/log/.gitkeep
+infrastructure/mosquitto/config/passwd
 
 # InfluxDB
 infrastructure/influxdb/data/*
 !infrastructure/influxdb/data/.gitkeep
+infrastructure/influxdb/config/*
+!infrastructure/influxdb/config/.gitkeep
 
 # Grafana
 infrastructure/grafana/data/*
 !infrastructure/grafana/data/.gitkeep
 
+# Loki runtime data
+infrastructure/loki/data/
+
 # --- IDE & Editor Files ---
 .vscode/
 .idea/
 .DS_Store
+Thumbs.db
+desktop.ini
 .mcp.json
+
+# --- Temp, Logs, Backups ---
+*.log
+*.bak
+*.tmp
+*.swp
+
+# --- Development Artifacts (deleted, prevent re-add) ---
+grafanavisual.md
+progress.md
 
 # Claude Code
 CLAUDE.md

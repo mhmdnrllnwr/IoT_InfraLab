@@ -1,5 +1,5 @@
 # ==========================================
-# local.rules.ids - IDS MODE (Alert Only)
+# local.rules.ips - IPS MODE (Drop/Block)
 # ==========================================
 
 # Safelist internal management traffic

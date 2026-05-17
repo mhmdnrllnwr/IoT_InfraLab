@@ -8,7 +8,10 @@ with open(env_path) as f:
             token = line.strip().split('=', 1)[1]
             break
 
-base = 'http://localhost:8086/api/v2/query?org=infralab'
+host = os.environ.get('INFLUXDB_HOST', 'localhost')
+port = os.environ.get('INFLUXDB_PORT', '8086')
+org = os.environ.get('INFLUXDB_ORG', 'infralab')
+base = f'http://{host}:{port}/api/v2/query?org={org}'
 h = {'Authorization': f'Token {token}',
      'Content-Type': 'application/vnd.flux',
      'Accept': 'application/csv'}

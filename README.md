@@ -1,223 +1,282 @@
 # IoT InfraLab
 
-IoT cybersecurity simulation lab for Final Year Project. Docker Compose-orchestrated network with MQTT telemetry, Node-RED automation, Suricata IDS/IPS, OpenTelemetry distributed tracing, and Grafana LGTM observability stack. Supports dynamic sensor simulation, AI-powered vulnerability scanning, and cyber attack killchain scenarios.
+IoT cybersecurity simulation lab. Docker Compose orchestrated network with MQTT messaging, Node-RED automation, Suricata intrusion detection, and OpenTelemetry-based observability (LGTM stack: Loki, Grafana, Tempo, Mimir/InfluxDB).
 
 ## Architecture
 
 ```
-Trusted Zone (Core Infra)    Management Zone      Analytics Zone              Intrusion Detection
-┌──────────────────────┐   ┌────────────────┐   ┌──────────────────────┐    ┌──────────────────────┐
-│ mosquitto (MQTT)     │   │ docker-proxy   │   │ influxdb (time-series)│    │ suricata (IDS/IPS)   │
-│   :1883              │   │ (socket proxy) │   │ grafana :3000         │    │   (mosquitto net ns) │
-│ nodered (Node-RED)   │   │   :2375(int)   │   │ loki :3100            │    │ security-auditor     │
-│   :1880              │   └────────────────┘   │ tempo (traces)        │    │   :172.18.0.100      │
-│   :172.18.0.25       │                       │ otel-collector :4317  │    └──────────────────────┘
-└──────────────────────┘                       │ telegraf (metrics)    │
-                                                │ promtail :172.18.0.10 │
-                                                └──────────────────────┘
+Trusted Zone (Core Infra)       Management Zone      Analytics Zone           Intrusion Detection
++------------------------+    +----------------+    +-------------------+    +-------------------+
+| mosquitto (MQTT)       |    | docker-proxy   |    | influxdb (2.7)    |    | suricata (IDS)    |
+| nodered (Node-RED)     |    | (socket proxy) |    | grafana           |    | security-auditor  |
++------------------------+    +----------------+    | loki / tempo      |    +-------------------+
+                                                    | promtail / otel   |
+Network: iot_infralab_net (172.18.0.0/24)           +-------------------+
 ```
 
-**Network:** `iot_infralab_net` — bridge, subnet `172.18.0.0/24`, interface `br-iotlab`
-
-## Services
-
-| # | Service | Container | Port(s) | Purpose |
-|---|---------|-----------|---------|---------|
-| 1 | mosquitto | iot_broker | 1883, 9001 | MQTT message broker |
-| 2 | nodered | iot_nodered | 1880 | Node-RED flow automation + Dashboard 2.0 UI |
-| 3 | docker-proxy | docker_api_proxy | (internal) | Secure Docker API proxy for container mgmt |
-| 4 | influxdb | influxdb | 8086 | Time-series database for IoT sensor data |
-| 5 | telegraf | telegraf | (internal) | Host and container metrics collection |
-| 6 | grafana | grafana | 3000 | Dashboards: IoT sensors, platform health, SOC |
-| 7 | loki | loki | 3100 | Log aggregation for Suricata alerts |
-| 8 | tempo | tempo | (internal) | Distributed tracing backend (OTLP) |
-| 9 | otel-collector | otel_collector | 4317, 4318 | OpenTelemetry collector pipeline |
-| 10 | promtail | promtail | (internal) | Log shipper: Suricata eve.json → Loki |
-| 11 | suricata | suricata-ids | (net mode) | IDS/IPS with MQTT app-layer parsing |
-| 12 | security-auditor | security_auditor | (internal) | AI-powered vulnerability scanner (Gemini) |
+- **Trusted Zone**: MQTT broker with intentional vulnerable config for attack simulation. Node-RED manages dynamic sensor/attacker containers via Docker API.
+- **Management Zone**: Docker socket proxy securely exposes limited Docker API to Node-RED without full daemon access.
+- **Analytics Zone**: InfluxDB for time-series metrics, Grafana for dashboards, Loki for log aggregation, Tempo for distributed tracing, OpenTelemetry Collector for telemetry ingestion.
+- **Intrusion Detection**: Suricata monitors network traffic in IDS mode. Security Auditor runs attack simulations.
 
 ## Prerequisites
 
-- Docker Desktop 4.30+ with WSL2 backend
-- WSL2 (Ubuntu 22.04 recommended)
-- Minimum 8GB RAM allocated to Docker
-- Git
-- Gemini API key (for security auditor — optional, skip to run without)
+| Requirement | Minimum Version |
+|-------------|----------------|
+| Docker | 24.0+ |
+| Docker Compose | v2 (Docker Desktop 4.30+) |
+| Python | 3.9+ (for local scripts) |
+| RAM | 4 GB free (stack uses ~2.5 GB) |
+| Disk | 2 GB free |
+
+**Docker Desktop (Windows/macOS)**: File sharing must be enabled for the project directory.
 
 ## Quick Start
 
-```powershell
-# 1. Clone
+```bash
+# 1. Clone the repository
 git clone <repo-url> IoT_InfraLab
 cd IoT_InfraLab
 
-# 2. Environment setup
-# Edit .env with your GEMINI_API_KEY (or leave blank — auditor runs in degraded mode)
-# INFLUXDB_TOKEN is auto-generated for first run
+# 2. Run setup script
+bash scripts/setup.sh       # Linux/macOS
+# or
+powershell .\scripts\setup.ps1   # Windows
 
-# 3. Start stack
+# 3. Edit .env with your secrets
+#    Set GEMINI_API_KEY, generate INFLUXDB_TOKEN, change default passwords
+
+# 4. Build custom images and start
+docker compose build security-auditor
+docker compose up -d
+```
+
+## Detailed Setup
+
+### Step 1: Environment Configuration
+
+Copy `.env.example` to `.env` and fill in:
+
+```ini
+# Required: Google Gemini API key (for AI features)
+GEMINI_API_KEY=your_key_here
+
+# InfluxDB admin token — generate with: openssl rand -hex 32
+INFLUXDB_TOKEN=your_generated_token
+
+# InfluxDB first-run initialization
+DOCKER_INFLUXDB_INIT_MODE=setup
+DOCKER_INFLUXDB_INIT_USERNAME=admin
+DOCKER_INFLUXDB_INIT_PASSWORD=change_this_password
+DOCKER_INFLUXDB_INIT_ORG=infralab
+DOCKER_INFLUXDB_INIT_BUCKET=sensor_data
+DOCKER_INFLUXDB_INIT_ADMIN_TOKEN=your_generated_token
+
+# Grafana admin credentials
+GF_SECURITY_ADMIN_USER=admin
+GF_SECURITY_ADMIN_PASSWORD=change_this_password
+
+# Node-RED credential encryption secret
+NODE_RED_CREDENTIAL_SECRET=change_this_secret
+
+# Host path to project root (for sensor container bind mounts)
+# On Linux/macOS: /home/user/IoT_InfraLab
+# On Windows: C:/Users/user/IoT_InfraLab
+IOT_PROJECT_PATH=.
+
+# Docker network subnet (change if 172.18.0.0/24 conflicts)
+IOT_SUBNET=172.18.0.0/24
+```
+
+### Step 2: Build and Start
+
+```bash
+# Build custom container images
+docker compose build security-auditor
+
+# Validate configuration
+docker compose config
+
+# Start all services (detached)
 docker compose up -d
 
-# 4. Verify all services running
+# Check service health
 docker compose ps
 
-# 5. Access UIs
-# Node-RED Dashboard: http://localhost:1880/dashboard
-# Grafana:            http://localhost:3000  (admin123 / admin123)
-# Node-RED Editor:    http://localhost:1880
+# View logs
+docker compose logs -f
 ```
 
-## Usage Scenarios
+### Step 3: Verify
 
-### 1. Sensor Management
+| Service | URL | Credentials |
+|---------|-----|-------------|
+| Node-RED | http://localhost:1880 | None (default) |
+| Grafana | http://localhost:3000 | admin / your_password |
+| InfluxDB | http://localhost:8086 | admin / your_password |
 
-Node-RED **Node Management** tab provides full lifecycle control for simulated IoT sensors:
-
-1. **Define sensor types** — temperature, humidity, pressure, vibration, power consumption
-2. **Configure sensor** — assign ID, type(s), behavior profile (normal/failing/erratic), publish interval
-3. **Deploy** — Node-RED creates a Docker container running `simulator.py`
-4. **Monitor** — live MQTT feed shows telemetry in real time
-5. **Control** — start, stop, pause, restart, or kill individual sensors
-
-Sensor publishes JSON telemetry to `sensors/factory/{sensor_id}` at configured interval.
-
-**Behavior profiles:**
-- **Normal:** Random values within configured range
-- **Failing:** Gradual drift upward (5% every 30 seconds)
-- **Erratic:** 10% chance of extreme spikes (2x–4x baseline)
-
-### 2. Attack Simulation
-
-**Cyber Attack Simulation** tab automates a 5-stage killchain:
-
-| Stage | Action | Tool |
-|-------|--------|------|
-| 0. Create Attacker | Deploy attacker container | Docker API |
-| 1. Breach Network | Connect attacker to iot_infralab_net | Docker network |
-| 2. Reconnaissance | Nmap scan of 172.18.0.0/24 | Nmap |
-| 3. Sniff MQTT | Subscribe to all topics (#) | mqtt_sniff.py |
-| 4. Impact | SYN flood against MQTT broker (1883) | Hping3 |
-| 5. Remove Traces | Delete attacker container | Docker API |
-
-**Standalone attack tools** (exec inside attacker container):
-- `python mqtt_inject.py` — inject fake MQTT telemetry
-- `python mqtt_sniff.py` — subscribe and dump all MQTT traffic
-- `python mqtt_dos.py` — multi-threaded application-layer DoS
-
-### 3. SOC Monitoring
-
-**Security Ops** tab provides:
-
-- **Network topology** — live container map via Docker API polling
-- **Suricata alerts** — real-time IDS/IPS alert stream from eve.json
-- **NAC** — isolate suspicious containers from iot_infralab_net
-- **AI security audit** — trigger nmap scan + Gemini AI analysis of exposed ports
-- **IPS mode toggle** — switch Suricata between alert (IDS) and drop (IPS) rules
-
-**Grafana dashboards:**
-| Dashboard | Source | Key Panels |
-|-----------|--------|------------|
-| IoT Sensors Overview | InfluxDB | Temperature, vibration, power trend; anomaly detection |
-| Platform Health | InfluxDB | Host CPU/mem/network, per-container metrics, service status |
-| Security Operations (SOC) | Loki | Alert timeline, severity breakdown, top attacker IPs, logs |
-
-### 4. Distributed Tracing
-
-Full trace chain across services:
-
-```
-Sensor node → MQTT publish (OTEL span) → Mosquitto → Security Auditor trigger (OTEL span)
-  → Nmap scan (sub-span) → Gemini AI analysis (sub-span) → Report publish (sub-span)
+Run the smoke test:
+```bash
+pip install -r requirements.txt
+python test/smoke_test.py
 ```
 
-View traces in Grafana: **Explore → Tempo** — query `{service.name="security-auditor"}` or `{service.name="iot-sensor-node-*"}`
+## Services
 
-## Security Model
-
-This lab intentionally uses insecure configurations for educational attack/defense scenarios.
-
-| Risk | Location | Rationale |
-|------|----------|-----------|
-| Anonymous MQTT | mosquitto:1883 | Enables MQTT sniffing, injection, and DoS attack scenarios |
-| Docker API POST/DELETE/EXEC | docker-proxy | Enables Node-RED container lifecycle management + kill switch |
-| Grafana weak credentials | .env (admin123/admin123) | Demo simplicity; change for any production-adjacent use |
-| Plaintext protocols | All services | TLS would prevent Suricata from inspecting MQTT payloads |
-
-**Hardening available:** Switch Mosquitto to `mosquitto_hardened.conf` (password + ACL enforced). Files exist at `infrastructure/mosquitto/config/`. Requires updating Node-RED MQTT broker credentials and rebuilding flow credentials.
+| Service | Container | Port(s) | Image | Purpose |
+|---------|-----------|---------|-------|---------|
+| Mosquitto | iot_broker | 1883, 9001 | eclipse-mosquitto:2.0 | MQTT broker (vulnerable config) |
+| Node-RED | iot_nodered | 1880 | nodered/node-red:4.0 | Flow automation, sensor management |
+| Docker Proxy | docker_api_proxy | internal | tecnativa/docker-socket-proxy:0.2 | Secure Docker API access |
+| InfluxDB | influxdb | 8086 | influxdb:2.7 | Time-series sensor data |
+| Grafana | grafana | 3000 | grafana/grafana-oss:11.1 | Dashboards and alerting |
+| Loki | loki | 3100 | grafana/loki:3.1 | Log aggregation |
+| Tempo | tempo | internal | grafana/tempo:2.6 | Distributed tracing (OTLP) |
+| Promtail | promtail | internal | grafana/promtail:3.1 | Suricata log shipper to Loki |
+| OTEL Collector | otel_collector | 4317-4318 | otel/opentelemetry-collector-contrib:0.111 | Telemetry ingestion |
+| Suricata | suricata-ids | internal | jasonish/suricata:7.0 | IDS/IPS (network_mode: mosquitto) |
+| Security Auditor | security_auditor | internal | (built locally) | Attack simulation |
+| Telegraf | telegraf | internal | telegraf:1.32 | Docker host metrics collection |
 
 ## Project Structure
 
 ```
 IoT_InfraLab/
-├── config/                          # Sensor blueprints and type definitions
-│   ├── sensor_settings.json         # Blueprint definitions (5 sensor types)
-│   └── sensor_types.json            # Base ranges for random value generation
-├── infrastructure/                  # Per-service configs
-│   ├── suricata/                    # IDS/IPS rules and config
-│   │   ├── local.rules.ids         # Alert mode rules
-│   │   ├── local.rules.ips         # Drop mode rules
-│   │   └── local.rules.vuln        # Pass-only rules
-│   ├── grafana/provisioning/        # Auto-provisioned datasources + dashboards
-│   ├── influxdb/config/             # InfluxDB connection configs
-│   ├── mosquitto/config/            # MQTT broker configs (vulnerable + hardened)
-│   ├── loki/                        # Log aggregation config
-│   ├── tempo/                       # Tracing config
-│   ├── otel/                        # OpenTelemetry collector pipeline
-│   ├── promtail/                    # Log shipper config
-│   └── telegraf/                    # Metrics collection config
-├── src/simulation/                  # Simulation containers
-│   ├── docker_sensor/              # IoT sensor simulator (Python + OTEL)
-│   ├── auditor_security/           # AI security auditor (Gemini + nmap + OTEL)
-│   ├── docker_attacker/            # Attack tools (sniff, inject, DoS)
-│   └── nodered/NodeRed_Data/       # Node-RED flows, settings, configs
-├── test/
-│   └── smoke_test.py               # Integration smoke test
-├── text/                            # Planning docs and flow exports
-├── gen_dashboards.py                # Grafana dashboard generator
-└── docker-compose.yaml              # 12-service stack definition
+├── config/                  # Sensor blueprints (sensor_settings.json)
+├── infrastructure/          # Per-service configs, rules, data mounts
+│   ├── suricata/            # Suricata rules (local.rules, *.ids, *.ips, *.vuln)
+│   ├── grafana/             # Dashboard provisioning and datasources
+│   ├── influxdb/            # InfluxDB config
+│   ├── mosquitto/           # MQTT broker configs and credentials
+│   ├── otel/                # OpenTelemetry collector pipeline
+│   ├── promtail/            # Promtail log shipping config
+│   ├── tempo/               # Tempo tracing config
+│   ├── telegraf/            # Telegraf metrics config
+│   └── loki/                # Loki config
+├── src/simulation/          # Simulation containers
+│   ├── nodered/             # Node-RED data (flows, settings, nodes)
+│   ├── auditor_security/    # Security audit container
+│   ├── docker_sensor/       # Sensor simulation container
+│   └── docker_attacker/     # Attack container
+├── scripts/                 # Setup and utility scripts
+├── test/                    # Smoke tests and utilities
+├── docker-compose.yaml      # Main service orchestration
+├── .env.example             # Environment variable template
+└── requirements.txt         # Python dependencies
 ```
+
+## Common Commands
+
+```bash
+# Start / Stop
+docker compose up -d                    # Start all services
+docker compose down                     # Stop and remove containers
+docker compose down -v                  # Also remove volumes (WARNING: data loss)
+
+# Rebuild specific service
+docker compose up -d --build security-auditor
+docker compose up -d --force-recreate nodered
+
+# View logs
+docker compose logs -f suricata         # Follow Suricata logs
+docker compose logs --tail=100 loki     # Last 100 Loki lines
+
+# Suricata alerts
+docker compose exec suricata cat /var/log/suricata/eve.json | grep '"event_type":"alert"'
+
+# Access containers
+docker compose exec nodered bash
+docker compose exec influxdb influx setup
+
+# InfluxDB queries (from host)
+curl -H "Authorization: Token $INFLUXDB_TOKEN" \
+  "http://localhost:8086/api/v2/query?org=infralab" \
+  --data-urlencode "q=from(bucket:\"sensor_data\") |> range(start: -10m)"
+
+# Generate Grafana dashboards
+python gen_dashboards.py
+
+# Explore metrics
+python explore_metrics.py
+
+# List Docker networks
+docker network ls | grep iot
+```
+
+## Security Model
+
+Mosquitto uses `mosquitto_vulnerable.conf` by default (`allow_anonymous=true`). This is **intentional** — enables MQTT sniffing/injection attack scenarios in the Cyber Attack Simulation tab.
+
+**Do NOT deploy this config in production.**
+
+To harden:
+1. Switch to `mosquitto_hardened.conf` in docker-compose (mosquitto `command:`)
+2. Update all MQTT broker nodes in Node-RED flows to use credentials
+3. Credentials managed in `infrastructure/mosquitto/config/passwd` and `acl`
+
+## Suricata Rules
+
+Four rule modes available (switch via `command:` in docker-compose):
+
+| File | Mode | Behavior |
+|------|------|----------|
+| `local.rules` | IDS (Alert) | Default — generates alerts only |
+| `local.rules.ids` | IDS (Alert) | Alert-only rules |
+| `local.rules.ips` | IPS (Drop) | Drops malicious packets |
+| `local.rules.vuln` | Vulnerable | Rules disabled, no detection |
+
+Switch by changing the mounted rules file:
+```yaml
+# In docker-compose.yaml suricata service:
+volumes:
+  - ./infrastructure/suricata/local.rules.ips:/etc/suricata/rules/local.rules  # Use IPS mode
+```
+
+## Portability
+
+This project is designed to run on any machine with Docker:
+
+- **No hardcoded absolute paths** — all volumes use relative paths or configurable env vars
+- **Configurable network subnet** — set `IOT_SUBNET` in `.env` if 172.18.0.0/24 conflicts
+- **Configurable project path** — set `IOT_PROJECT_PATH` in `.env` for host bind mounts
+- **Cross-platform setup** — `scripts/setup.sh` (Linux/macOS) and `scripts/setup.ps1` (Windows)
+- **Pinned image versions** — no `:latest` tags, reproducible deployments
+
+For Docker Desktop users: set `IOT_PROJECT_PATH` to the full path using forward slashes (e.g., `C:/Users/user/IoT_InfraLab`).
 
 ## Troubleshooting
 
-| Problem | Likely Cause | Fix |
-|---------|-------------|-----|
-| Container exits immediately | Memory limit too low | `docker compose logs <service>`; increase limits in compose |
-| Suricata no alerts | Wrong network mode | Suricata shares mosquitto's network — verify `network_mode: service:mosquitto` |
-| Gemini AI returns errors | Missing API key or quota | Check `GEMINI_API_KEY` in `.env`; verify billing in Google AI Studio |
-| Sensor containers can't start | Docker socket proxy not ready | `docker compose restart docker-proxy` |
-| Blank Grafana dashboards | No data in InfluxDB/Loki | Deploy sensors via Node-RED; run attack simulation to generate Suricata alerts |
-| OTEL traces not visible | Collector not receiving | `docker compose logs otel-collector`; check `http://otel-collector:4317` reachability |
-| Named volume data loss | Using `docker compose down -v` | Use `docker compose down` without `-v` to preserve volumes |
+**InfluxDB fails to start or crashes:**
+- Ensure all `DOCKER_INFLUXDB_INIT_*` vars are set in `.env`
+- If re-deploying with existing volume: remove `influxdb_data` volume (`docker compose down -v influxdb`)
+- Check token is valid 32-byte hex
 
-## Verification
+**Node-RED can't create sensor containers:**
+- Verify `IOT_PROJECT_PATH` in `.env` points to the project root
+- Check docker-proxy is running: `docker compose ps docker-proxy`
+- Ensure Docker socket proxy has POST and CONTAINERS permissions enabled
 
-```powershell
-# Smoke test (all services must be running)
-python test/smoke_test.py
+**Grafana dashboards show no data:**
+- Verify InfluxDB datasource configured correctly (org: infralab, bucket: sensor_data)
+- Check Telegraf is running and connected to InfluxDB
+- Run `python gen_dashboards.py` to regenerate dashboard JSONs
 
-# Expected output:
-# [1/5] MQTT Broker ......... OK
-# [2/5] InfluxDB ............ OK
-# [3/5] Grafana ............. OK
-# [4/5] Node-RED ............ OK
-# [5/5] Data Pipeline ....... OK
-```
+**Suricata not detecting attacks:**
+- Check Suricata logs: `docker compose logs suricata`
+- Verify network interface: Suricata runs in `network_mode: service:mosquitto`
+- Ensure rules file is mounted correctly
+- Run security auditor: `docker compose up -d security-auditor`
 
-## FYP Context
+## Configuration Reference
 
-This project demonstrates:
-- **IoT telemetry pipeline** — sensor → MQTT → InfluxDB → Grafana
-- **OpenTelemetry distributed tracing** — sensor → OTEL collector → Tempo → Grafana
-- **AI-powered security analysis** — nmap + Gemini API vulnerability assessment
-- **Real-time intrusion detection** — Suricata IDS/IPS with MQTT app-layer parsing
-- **Dynamic container orchestration** — Node-RED + Docker socket proxy
-- **Log aggregation and alert correlation** — Suricata → Promtail → Loki → Grafana SOC dashboard
-- **Cyber attack killchain** — automated multi-stage attack scenarios with full observability
-
-### Key Technical Decisions
-
-- **Mosquitto anonymous by default:** Enables realistic attack scenarios where adversary can sniff/inject without credentials
-- **Docker socket proxy (not direct mount):** Security boundary between Node-RED and Docker daemon; allows fine-grained API permission control
-- **OTEL collector as intermediary:** Decouples trace producers (sensors, auditor) from trace storage (Tempo); enables pipeline transformation without client changes
-- **Named Docker volumes:** Data persists across restarts; survives `docker compose down` (without `-v`)
-- **YAML-based provisioning:** Grafana dashboards and datasources are declarative — reproducible across environments
+| Config File | Purpose |
+|-------------|---------|
+| `docker-compose.yaml` | Service orchestration, networks, volumes |
+| `.env` | Secrets and runtime configuration |
+| `config/sensor_settings.json` | Sensor type definitions and profiles |
+| `infrastructure/suricata/suricata.yaml` | Suricata IDS/IPS engine config |
+| `infrastructure/otel/otel-config.yaml` | OpenTelemetry pipeline |
+| `infrastructure/promtail/promtail-config.yaml` | Log shipping to Loki |
+| `infrastructure/tempo/tempo-config.yaml` | Trace storage config |
+| `infrastructure/telegraf/telegraf.conf` | Docker host metrics collection |
+| `infrastructure/grafana/provisioning/` | Grafana datasources and dashboards |

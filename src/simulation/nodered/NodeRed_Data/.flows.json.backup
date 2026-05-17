@@ -273,7 +273,7 @@
         "id": "bda5655996317aa0",
         "type": "mqtt-broker",
         "name": "Mosquitto Broker",
-        "broker": "iot_broker",
+        "broker": "mosquitto",
         "port": 1883,
         "clientid": "",
         "autoConnect": true,
@@ -582,7 +582,7 @@
         "id": "config_mqtt",
         "type": "mqtt-broker",
         "name": "Local MQTT Broker",
-        "broker": "localhost",
+        "broker": "mosquitto",
         "port": "1883",
         "clientid": "",
         "autoConnect": true,
@@ -608,21 +608,6 @@
         "willMsg": {},
         "userProps": "",
         "sessionExpiry": ""
-    },
-    {
-        "id": "e28696b129586440",
-        "type": "influxdb",
-        "hostname": "127.0.0.1",
-        "port": "8086",
-        "protocol": "http",
-        "database": "database",
-        "name": "Local Influxdb",
-        "usetls": false,
-        "tls": "",
-        "influxdbVersion": "2.0",
-        "url": "http://localhost:8086",
-        "timeout": "10",
-        "rejectUnauthorized": true
     },
     {
         "id": "599a1bcf052a2d6b",
@@ -4616,7 +4601,7 @@
         "type": "debug",
         "z": "4acab47cf7e84e94",
         "name": "debug 4",
-        "active": false,
+        "active": true,
         "tosidebar": true,
         "console": false,
         "tostatus": false,
@@ -4645,7 +4630,8 @@
         "wires": [
             [
                 "f2325d189ff9fa90",
-                "0a3d5de1d4fa2473"
+                "0a3d5de1d4fa2473",
+                "split_readings_for_metadata"
             ]
         ]
     },
@@ -4887,7 +4873,7 @@
         "type": "file in",
         "z": "4acab47cf7e84e94",
         "name": "Read sensor_types.json",
-        "filename": "D:\\IoT_InfraLab\\src\\simulation\\nodered\\NodeRed_Data\\sensor_types.json",
+        "filename": "/data/sensor_types.json",
         "filenameType": "str",
         "format": "utf8",
         "chunk": false,
@@ -4951,7 +4937,7 @@
         "topic": "sensor/metadata",
         "qos": "2",
         "datatype": "auto-detect",
-        "broker": "config_mqtt",
+        "broker": "bda5655996317aa0",
         "nl": false,
         "rap": true,
         "rh": 0,
@@ -4996,7 +4982,8 @@
         "y": 560,
         "wires": [
             [
-                "408a120481047706"
+                "408a120481047706",
+                "39b00dc9b7234c3e"
             ]
         ]
     },
@@ -5004,7 +4991,7 @@
         "id": "408a120481047706",
         "type": "influxdb out",
         "z": "4acab47cf7e84e94",
-        "influxdb": "e28696b129586440",
+        "influxdb": "17435d09976b7d21",
         "name": "Write to InfluxDB",
         "measurement": "sensor_metadata",
         "precision": "",
@@ -5016,6 +5003,60 @@
         "bucket": "sensor_metadata",
         "x": 770,
         "y": 560,
+        "wires": []
+    },
+    {
+        "id": "39b00dc9b7234c3e",
+        "type": "debug",
+        "z": "4acab47cf7e84e94",
+        "name": "debug 2",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 340,
+        "y": 640,
+        "wires": []
+    },
+    {
+        "id": "split_readings_for_metadata",
+        "type": "function",
+        "z": "4acab47cf7e84e94",
+        "name": "Split Readings for Metadata",
+        "func": "let sensorData = msg.payload;\nlet messages = [];\n\nfor (const [sensorType, value] of Object.entries(sensorData.readings)) {\n    messages.push({\n        payload: {\n            sensor_type: sensorType,\n            value: value,\n            sensor_id: sensorData.sensor_id\n        }\n    });\n}\n\nreturn messages;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 370,
+        "y": 180,
+        "wires": [
+            [
+                "mqtt_out_metadata"
+            ]
+        ]
+    },
+    {
+        "id": "mqtt_out_metadata",
+        "type": "mqtt out",
+        "z": "4acab47cf7e84e94",
+        "name": "Publish Metadata",
+        "topic": "sensor/metadata",
+        "qos": "2",
+        "retain": "false",
+        "respTopic": "",
+        "contentType": "",
+        "userProps": "",
+        "correl": "",
+        "expiry": "",
+        "broker": "bda5655996317aa0",
+        "x": 600,
+        "y": 180,
         "wires": []
     }
 ]

@@ -8,6 +8,17 @@
 
 ***CI25260025*****: *IoT-InfraLab (Makmal-IoTInfra)*** 
 
+<<<<<<< HEAD
+=======
+**MUHAMMAD NURILLANWAR BIN MOHAMMADIN**  
+**160349**
+
+**Supervisor: Associate Professor Dr. Aman Jantan**
+
+**Examiner: Dr. Mohd Adib Haji Omar**
+
+**Academic Session**
+>>>>>>> 69eac856292e5a28e26ec6fb8814e58f42ae5934
 
 **2025/2026**
 
@@ -17,6 +28,11 @@
 
 Signature	:   ……………………………
 
+<<<<<<< HEAD
+=======
+Name		:   Muhammad Nurillanwar Bin Mohammadin
+
+>>>>>>> 69eac856292e5a28e26ec6fb8814e58f42ae5934
 Date		:   15 Dec 2025
 
 **ABSTRAK**

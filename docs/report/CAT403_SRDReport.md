@@ -8,10 +8,6 @@
 
 ***CI25260025*****: *IoT-InfraLab (Makmal-IoTInfra)*** 
 
-<<<<<<< HEAD
-=======
-**MUHAMMAD NURILLANWAR BIN MOHAMMADIN**  
-**160349**
 
 **Supervisor: Associate Professor Dr. Aman Jantan**
 
@@ -26,11 +22,7 @@
 
 “I declare that the following is my own work and does not contain any ***unacknowledged*** work from any other sources. This report was undertaken to fulfill the requirements of the Undergraduate Major Project for the Bachelor of Science in Computer Science (Honors) program at Universiti Sains Malaysia”.
 
-Signature	:   ……………………………
 
-<<<<<<< HEAD
-=======
-Name		:   Muhammad Nurillanwar Bin Mohammadin
 
 >>>>>>> 69eac856292e5a28e26ec6fb8814e58f42ae5934
 Date		:   15 Dec 2025

@@ -1,0 +1,3 @@
+state,sensor_count,platform_memory_mb,platform_cpu_percent,per_sensor_memory_mb,per_sensor_cpu_percent
+idle,0,1211.6,18.555,,
+loaded,5,1298.2,24.065,24.2,0.354

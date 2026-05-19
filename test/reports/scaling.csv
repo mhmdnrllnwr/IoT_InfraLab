@@ -1,0 +1,3 @@
+sensor_count,total_memory_mb,mean_cpu_percent,memory_per_sensor_mb
+1,25.9,0.1,25.9
+5,125.5,0.73,25.1

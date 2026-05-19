@@ -41,6 +41,11 @@ ingester:
   chunk_retain_period: 30s
   max_chunk_age: 1h
   chunk_target_size: 524288
+  lifecycler:
+    join_after: 0s
+    min_ready_duration: 0s
+    num_tokens: 16
+    heartbeat_period: 5s
 
 schema_config:
   configs:

@@ -59,6 +59,10 @@ Thumbs.db
 desktop.ini
 .mcp.json
 
+# --- Node.js / npm (project-level mermaid-cli) ---
+node_modules/
+package-lock.json
+
 # --- Temp, Logs, Backups ---
 *.log
 *.bak
@@ -75,6 +79,14 @@ implementation.md
 .claude/settings.local.json
 
 # Ignore planning markdown files
+package.json
+
+# Ignore docs assets and diagrams
+/docs/assets/
+
+# Ignore benchmark report JSON files
+test/reports/benchmark_*.json
+
 /text
 text/nodered_flows
 text/code.md

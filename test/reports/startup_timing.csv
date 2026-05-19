@@ -1,0 +1,13 @@
+service,ready_seconds,port,notes
+mosquitto,0.0,1883,
+influxdb,0.4,8086,
+grafana,0.0,3000,
+nodered,0.0,1880,
+loki,0.0,3100,
+tempo,0.0,4317,
+otel-collector,0.0,4318,
+docker-proxy,0.4,,no exposed port
+telegraf,0.4,,no exposed port
+promtail,0.4,,no exposed port
+suricata,0.9,,no exposed port
+security-auditor,0.4,,no exposed port

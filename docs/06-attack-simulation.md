@@ -39,7 +39,7 @@ Launches configurable concurrent MQTT connections (default 50 threads). Each thr
 | 1 | Breach Network | Docker API POST `/networks/{id}/connect` | Node-RED HTTP Request |
 | 2 | Reconnaissance | docker exec nmap scan `172.18.0.0/24` | `nmap -sT -T4` |
 | 3 | Sniff MQTT | docker exec subscribe to `#` | `mqtt_sniff.py` |
-| 4 | Impact | SYN flood or app-layer DoS | `hping3` or `mqtt_dos.py` |
+| 4 | Impact | SYN flood or app-layer DoS | `nping` or `mqtt_dos.py` |
 | 5 | Remove Traces | Docker API DELETE container | Node-RED HTTP Request |
 
 ## What Each Stage Demonstrates
@@ -48,7 +48,7 @@ Launches configurable concurrent MQTT connections (default 50 threads). Each thr
 2. **Network lateral movement** — breaching internal network boundaries
 3. **Reconnaissance** — service discovery and port scanning
 4. **Eavesdropping** — MQTT traffic interception (plaintext, anonymous)
-5. **Denial of Service** — both network-layer (SYN flood) and application-layer (MQTT connection exhaustion)
+5. **Denial of Service** — both network-layer (SYN flood via nping) and application-layer (MQTT connection exhaustion)
 
 ## Related
 

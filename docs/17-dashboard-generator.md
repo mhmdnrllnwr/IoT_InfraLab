@@ -6,13 +6,13 @@ Python script that programmatically generates all three Grafana dashboard JSON f
 
 ## Script
 
-**Location:** `D:\IoT_InfraLab\gen_dashboards.py`
+**Location:** `D:\IoT_InfraLab\test\gen_dashboards.py`
 **Output:** `infrastructure/grafana/provisioning/dashboards/*.json`
 
 ### Usage
 
 ```powershell
-python gen_dashboards.py
+python test/gen_dashboards.py
 ```
 
 Generates:
@@ -59,8 +59,8 @@ These are auto-provisioned by Grafana at startup via `dashboards.yaml`.
 ## Customization
 
 To add a new panel:
-1. Edit `gen_dashboards.py` — add panel dict to dashboard panels array
-2. Re-run `python gen_dashboards.py`
+1. Edit `test/gen_dashboards.py` — add panel dict to dashboard panels array
+2. Re-run `python test/gen_dashboards.py`
 3. Restart Grafana or refresh dashboard provisioner
 
 ## Related

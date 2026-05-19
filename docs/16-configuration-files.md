@@ -27,37 +27,15 @@ Defines base value ranges for each measurable type:
 
 ```json
 {
-  "sensor_types": [
-    {
-      "type": "temperature",
-      "unit": "celsius",
-      "range": [10, 40]
-    },
-    {
-      "type": "humidity",
-      "unit": "percent",
-      "range": [30, 90]
-    },
-    {
-      "type": "pressure",
-      "unit": "hPa",
-      "range": [950, 1050]
-    },
-    {
-      "type": "vibration",
-      "unit": "mm/s",
-      "range": [0.0, 10.0]
-    },
-    {
-      "type": "power_consumption",
-      "unit": "watts",
-      "range": [50, 500]
-    }
-  ]
+  "temperature": [10, 40],
+  "humidity": [30, 90],
+  "pressure": [950, 1050],
+  "vibration": [0.0, 10.0],
+  "power_consumption": [50, 500]
 }
 ```
 
-Each entry: `type` (identifier), `unit` (display), `range` [min, max] for random generation.
+Each key is the type identifier, value is [min, max] range for random generation.
 
 ---
 

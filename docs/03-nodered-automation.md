@@ -56,7 +56,7 @@ Full lifecycle control for simulated IoT sensors:
 | 1 | Breach Network | Docker network connect |
 | 2 | Reconnaissance | docker exec nmap |
 | 3 | Sniff MQTT | docker exec mqtt_sniff.py |
-| 4 | Impact | docker exec hping3 / mqtt_dos.py |
+| 4 | Impact | docker exec nping / mqtt_dos.py |
 | 5 | Remove Traces | Docker API kill + rm container |
 
 ### 4. Backend

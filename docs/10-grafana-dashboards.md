@@ -125,7 +125,7 @@ providers:
 All three dashboards are generated from `gen_dashboards.py` — a Python script using dict templates:
 
 ```powershell
-python gen_dashboards.py
+python test/gen_dashboards.py
 ```
 
 Benefits of programmatic generation:

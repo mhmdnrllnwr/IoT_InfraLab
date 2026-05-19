@@ -57,7 +57,7 @@ Expected: all 12 services showing `Up` status.
 python -m py_compile src/simulation/docker_sensor/simulator.py
 python -m py_compile src/simulation/auditor_security/auditor.py
 python -m py_compile test/smoke_test.py
-python -m py_compile gen_dashboards.py
+python -m py_compile test/gen_dashboards.py
 ```
 
 ### YAML files

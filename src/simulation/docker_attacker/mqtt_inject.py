@@ -9,13 +9,14 @@ def on_connect(client, userdata, flags, rc):
     else:
         print(f"Failed to connect, return code {rc}")
 
+# Module-level parser for testing
+parser = argparse.ArgumentParser(description="MQTT Fake Telemetry Injection")
+parser.add_argument("--broker", required=True, help="MQTT Broker IP/Hostname")
+parser.add_argument("--port", type=int, default=1883, help="MQTT Broker Port")
+parser.add_argument("--topic", default="sensors/data", help="Target topic")
+parser.add_argument("--value", type=int, default=9000, help="Fake temperature value to inject")
+
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description="MQTT Fake Telemetry Injection")
-    parser.add_argument("--broker", required=True, help="MQTT Broker IP/Hostname")
-    parser.add_argument("--port", type=int, default=1883, help="MQTT Broker Port")
-    parser.add_argument("--topic", default="sensors/data", help="Target topic")
-    parser.add_argument("--value", type=int, default=9000, help="Fake temperature value to inject")
-    
     args = parser.parse_args()
     
     client = mqtt.Client("rogue_injector")

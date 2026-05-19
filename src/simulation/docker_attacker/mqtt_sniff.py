@@ -27,12 +27,13 @@ def on_message(client, userdata, msg):
     print(f"[SNIFFED] Topic: {msg.topic} | Payload: {payload}")
     sys.stdout.flush() # Ensure it shows up in Docker logs immediately
 
+# Module-level parser for testing
+parser = argparse.ArgumentParser(description="MQTT Traffic Sniffer")
+parser.add_argument("--broker", required=True, help="MQTT Broker IP/Hostname")
+parser.add_argument("--port", type=int, default=1883, help="MQTT Broker Port")
+parser.add_argument("--timeout", type=int, default=10, help="Seconds to sniff")
+
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description="MQTT Traffic Sniffer")
-    parser.add_argument("--broker", required=True, help="MQTT Broker IP/Hostname")
-    parser.add_argument("--port", type=int, default=1883, help="MQTT Broker Port")
-    parser.add_argument("--timeout", type=int, default=10, help="Seconds to sniff")
-    
     args = parser.parse_args()
     
     client = mqtt.Client("rogue_sniffer")

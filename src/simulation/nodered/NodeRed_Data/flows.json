@@ -4672,7 +4672,7 @@
         "group": "f57ba6f4611ca27c",
         "name": "Power OFF Grafana",
         "label": "⏹️ Power OFF Grafana",
-        "order": 3,
+        "order": 2,
         "width": 6,
         "height": "1",
         "emulateClick": false,
@@ -4781,54 +4781,6 @@
         "x": 600,
         "y": 260,
         "wires": []
-    },
-    {
-        "id": "e3ed85fc26827843",
-        "type": "ui-template",
-        "z": "4acab47cf7e84e94",
-        "group": "f57ba6f4611ca27c",
-        "page": "",
-        "ui": "",
-        "name": "Open Grafana UI",
-        "order": 2,
-        "width": 12,
-        "height": 1,
-        "format": "<template>\n    <v-btn \n        color=\"#f59e0b\" \n        variant=\"elevated\" \n        block\n        class=\"text-none font-weight-bold\"\n        style=\"color: white !important;\"\n        href=\"http://localhost:3000/\" \n        target=\"_blank\"\n        prepend-icon=\"mdi-chart-line\">\n        📊 Open Grafana Dashboard\n    </v-btn>\n</template>",
-        "storeOutMessages": true,
-        "passthru": true,
-        "resendOnRefresh": true,
-        "templateScope": "local",
-        "className": "",
-        "x": 130,
-        "y": 420,
-        "wires": [
-            [
-                "a534dbea4ddca405"
-            ]
-        ]
-    },
-    {
-        "id": "a534dbea4ddca405",
-        "type": "delay",
-        "z": "4acab47cf7e84e94",
-        "name": "",
-        "pauseType": "delay",
-        "timeout": "5",
-        "timeoutUnits": "seconds",
-        "rate": "1",
-        "nbRateUnits": "1",
-        "rateUnits": "second",
-        "randomFirst": "1",
-        "randomLast": "5",
-        "randomUnits": "seconds",
-        "drop": false,
-        "allowrate": false,
-        "outputs": 1,
-        "x": 320,
-        "y": 420,
-        "wires": [
-            []
-        ]
     },
     {
         "id": "623df9be6f769ebd",

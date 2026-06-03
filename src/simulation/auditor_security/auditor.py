@@ -196,18 +196,29 @@ def on_message(client, userdata, msg):
         print("[INFO] Launching background audit thread execution...")
         threading.Thread(target=perform_audit, daemon=True).start()
 
+<<<<<<< HEAD
 # --- MQTT CONNECTION VALIDATION ---
 client_mqtt = mqtt.Client(CallbackAPIVersion.VERSION2)
 client_mqtt.on_connect = on_connect
 client_mqtt.on_message = on_message
+=======
+# --- MQTT CONNECTION VALIDATION (set up in __main__ below, global for callbacks) ---
+client_mqtt = None
+>>>>>>> 5c2e3209325271a94b2baa66820495b50f41d0e3
 
-try:
-    print(f"\n[INFO] Starting Security Auditor...")
-    print(f"[INFO] Connecting to Broker: {BROKER}...")
-    client_mqtt.connect(BROKER, 1883)
-    client_mqtt.loop_start()
-except Exception as e:
-    print(f"❌ [CRITICAL] MQTT ERROR: Could not connect to {BROKER}. {e}")
+if __name__ == "__main__":
+    _client_mqtt = mqtt.Client(CallbackAPIVersion.VERSION1)
+    _client_mqtt.on_connect = on_connect
+    _client_mqtt.on_message = on_message
 
-while True:
-    time.sleep(1)
+    try:
+        print(f"\n[INFO] Starting Security Auditor...")
+        print(f"[INFO] Connecting to Broker: {BROKER}...")
+        _client_mqtt.connect(BROKER, 1883)
+        _client_mqtt.loop_start()
+        client_mqtt = _client_mqtt
+    except Exception as e:
+        print(f"❌ [CRITICAL] MQTT ERROR: Could not connect to {BROKER}. {e}")
+
+    while True:
+        time.sleep(1)

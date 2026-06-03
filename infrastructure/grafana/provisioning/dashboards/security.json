@@ -1,293 +1,727 @@
 {
-  "title": "Security Operations (SOC)",
-  "uid": "security-operations",
-  "tags": [
-    "infralab",
-    "security",
-    "alerts",
-    "ids-ips",
-    "loki"
-  ],
-  "schemaVersion": 39,
-  "version": 1,
-  "time": {
-    "from": "now-15m",
-    "to": "now"
-  },
-  "timepicker": {
-    "refresh_intervals": [
-      "5s",
-      "10s",
-      "30s",
-      "1m",
-      "5m",
-      "15m",
-      "30m",
-      "1h"
-    ]
-  },
-  "timezone": "browser",
-  "editable": true,
-  "graphTooltip": 1,
-  "templating": {
+  "annotations": {
     "list": [
       {
-        "name": "attack_type",
-        "type": "query",
+        "builtIn": 1,
         "datasource": {
-          "type": "loki",
-          "uid": "Loki"
+          "type": "grafana",
+          "uid": "-- Grafana --"
         },
-        "query": "label_values({job=\"suricata\"} | json | event_type=\"alert\", alert_signature)"
-      },
-      {
-        "name": "src_ip",
-        "type": "query",
-        "datasource": {
-          "type": "loki",
-          "uid": "Loki"
-        },
-        "query": "label_values({job=\"suricata\"} | json | event_type=\"alert\", src_ip)"
+        "enable": true,
+        "hide": true,
+        "iconColor": "rgba(0, 211, 255, 1)",
+        "name": "Annotations & Alerts",
+        "type": "dashboard"
       }
     ]
   },
+  "description": "Comprehensive Security Operations Center dashboard tracking threat intelligence, Suricata alert signatures, and MQTT/IoT infrastructure performance traces.",
+  "editable": true,
+  "fiscalYearStartMonth": 0,
+  "graphTooltip": 0,
+  "links": [],
   "panels": [
     {
-      "type": "stat",
+      "collapsed": false,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 0
+      },
+      "id": 1,
+      "panels": [],
+      "title": "📊 Security Overview KPIs",
+      "type": "row"
+    },
+    {
+      "datasource": {
+        "type": "loki",
+        "uid": "Loki"
+      },
+      "description": "Absolute count of all security events in the current time window.",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": 0
+              },
+              {
+                "color": "red",
+                "value": 1
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 5,
+        "w": 6,
+        "x": 0,
+        "y": 1
+      },
+      "id": 2,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "percentChangeColorMode": "standard",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showPercentChange": false,
+        "textMode": "auto",
+        "wideLayout": true
+      },
+      "pluginVersion": "12.4.1",
+      "targets": [
+        {
+          "datasource": {
+            "type": "loki",
+            "uid": "Loki"
+          },
+          "expr": "sum(count_over_time({job=\"suricata\", event_type=\"alert\"} | json [$__range]))",
+          "queryType": "instant",
+          "refId": "A"
+        }
+      ],
       "title": "Total Alerts",
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "loki",
+        "uid": "Loki"
+      },
+      "description": "Rate of incoming attack signatures per second.",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": 0
+              },
+              {
+                "color": "orange",
+                "value": 1
+              },
+              {
+                "color": "red",
+                "value": 5
+              }
+            ]
+          },
+          "unit": "reqps"
+        },
+        "overrides": []
+      },
       "gridPos": {
-        "h": 3,
-        "w": 4,
-        "x": 0,
+        "h": 5,
+        "w": 6,
+        "x": 6,
         "y": 1
       },
+      "id": 3,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "percentChangeColorMode": "standard",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showPercentChange": false,
+        "textMode": "auto",
+        "wideLayout": true
+      },
+      "pluginVersion": "12.4.1",
+      "targets": [
+        {
+          "datasource": {
+            "type": "loki",
+            "uid": "Loki"
+          },
+          "expr": "sum(rate({job=\"suricata\", event_type=\"alert\"}[$__interval]))",
+          "queryType": "range",
+          "refId": "A"
+        }
+      ],
+      "title": "Alert Velocity",
+      "type": "stat"
+    },
+    {
       "datasource": {
         "type": "loki",
         "uid": "Loki"
       },
-      "targets": [
-        {
-          "expr": "count_over_time({job=\"suricata\"} | json | event_type=\"alert\" [$__range])"
-        }
-      ]
-    },
-    {
-      "type": "stat",
-      "title": "Alert Rate",
+      "description": "Information gathering and port scan volume.",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": 0
+              },
+              {
+                "color": "orange",
+                "value": 1
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
       "gridPos": {
-        "h": 3,
-        "w": 4,
-        "x": 4,
-        "y": 1
-      },
-      "datasource": {
-        "type": "loki",
-        "uid": "Loki"
-      },
-      "targets": [
-        {
-          "expr": "rate({job=\"suricata\"} | json | event_type=\"alert\" [$__rate_interval])"
-        }
-      ]
-    },
-    {
-      "type": "stat",
-      "title": "IPS Mode",
-      "gridPos": {
-        "h": 3,
-        "w": 4,
-        "x": 8,
-        "y": 1
-      },
-      "datasource": {
-        "type": "loki",
-        "uid": "Loki"
-      },
-      "targets": [
-        {
-          "expr": "count_over_time({job=\"suricata\"} | json | event_type=\"alert\" | alert_severity=\"3\" [$__range])"
-        }
-      ]
-    },
-    {
-      "type": "stat",
-      "title": "Active MQTT Connections",
-      "gridPos": {
-        "h": 3,
-        "w": 4,
-        "x": 12,
-        "y": 1
-      },
-      "datasource": {
-        "type": "loki",
-        "uid": "Loki"
-      },
-      "targets": [
-        {
-          "expr": "count_over_time({job=\"mosquitto\"} |= \"New connection\" [$__range])"
-        }
-      ]
-    },
-    {
-      "type": "stat",
-      "title": "Unique Attackers",
-      "gridPos": {
-        "h": 3,
-        "w": 4,
-        "x": 16,
-        "y": 1
-      },
-      "datasource": {
-        "type": "loki",
-        "uid": "Loki"
-      },
-      "targets": [
-        {
-          "expr": "count(count by(src_ip) (count_over_time({job=\"suricata\"} | json | event_type=\"alert\" [$__range])))"
-        }
-      ]
-    },
-    {
-      "type": "stat",
-      "title": "Severity 1",
-      "gridPos": {
-        "h": 3,
-        "w": 4,
-        "x": 20,
-        "y": 1
-      },
-      "datasource": {
-        "type": "loki",
-        "uid": "Loki"
-      },
-      "targets": [
-        {
-          "expr": "count_over_time({job=\"suricata\"} | json | event_type=\"alert\" | alert_severity=\"1\" [$__range])"
-        }
-      ]
-    },
-    {
-      "type": "timeseries",
-      "title": "Alert Timeline",
-      "gridPos": {
-        "h": 8,
-        "w": 12,
-        "x": 0,
-        "y": 5
-      },
-      "datasource": {
-        "type": "loki",
-        "uid": "Loki"
-      },
-      "targets": [
-        {
-          "expr": "sum by(alert_severity) (count_over_time({job=\"suricata\"} | json | event_type=\"alert\" [$__interval]))"
-        }
-      ]
-    },
-    {
-      "type": "piechart",
-      "title": "Alert Severity Breakdown",
-      "gridPos": {
-        "h": 8,
+        "h": 5,
         "w": 6,
         "x": 12,
-        "y": 5
+        "y": 1
       },
+      "id": 4,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "percentChangeColorMode": "standard",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showPercentChange": false,
+        "textMode": "auto",
+        "wideLayout": true
+      },
+      "pluginVersion": "12.4.1",
+      "targets": [
+        {
+          "datasource": {
+            "type": "loki",
+            "uid": "Loki"
+          },
+          "expr": "sum(count_over_time({job=\"suricata\", event_type=\"alert\"} |= \"Scan\" [$__range]))",
+          "queryType": "instant",
+          "refId": "A"
+        }
+      ],
+      "title": "Recon Volume",
+      "type": "stat"
+    },
+    {
       "datasource": {
         "type": "loki",
         "uid": "Loki"
       },
-      "targets": [
-        {
-          "expr": "count_over_time({job=\"suricata\"} | json | event_type=\"alert\" | alert_severity=\"1\" [$__range])",
-          "legendFormat": "critical (1)"
+      "description": "Distinct external IP addresses triggering alerts.",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": 0
+              },
+              {
+                "color": "red",
+                "value": 1
+              }
+            ]
+          }
         },
-        {
-          "expr": "count_over_time({job=\"suricata\"} | json | event_type=\"alert\" | alert_severity=\"2\" [$__range])",
-          "legendFormat": "high (2)"
-        },
-        {
-          "expr": "count_over_time({job=\"suricata\"} | json | event_type=\"alert\" | alert_severity=\"3\" [$__range])",
-          "legendFormat": "medium (3)"
-        }
-      ]
-    },
-    {
-      "type": "table",
-      "title": "Top Attacker IPs",
+        "overrides": []
+      },
       "gridPos": {
-        "h": 8,
+        "h": 5,
         "w": 6,
         "x": 18,
-        "y": 5
+        "y": 1
       },
+      "id": 5,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "percentChangeColorMode": "standard",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showPercentChange": false,
+        "textMode": "auto",
+        "wideLayout": true
+      },
+      "pluginVersion": "12.4.1",
+      "targets": [
+        {
+          "datasource": {
+            "type": "loki",
+            "uid": "Loki"
+          },
+          "expr": "count(sum by(src_ip) (count_over_time({job=\"suricata\", event_type=\"alert\"} | json [$__range])))",
+          "queryType": "instant",
+          "refId": "A"
+        }
+      ],
+      "title": "Unique Attackers",
+      "type": "stat"
+    },
+    {
+      "collapsed": false,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 6
+      },
+      "id": 6,
+      "panels": [],
+      "title": "🎯 Threat Analytics & Intelligence",
+      "type": "row"
+    },
+    {
       "datasource": {
         "type": "loki",
         "uid": "Loki"
       },
-      "targets": [
-        {
-          "expr": "sum by(src_ip) (count_over_time({job=\"suricata\"} | json | event_type=\"alert\" [$__range]))"
-        }
-      ]
-    },
-    {
-      "type": "bargauge",
-      "title": "Attack Type Distribution",
+      "description": "Stacked volume of security alerts over time, categorized by specific attack signature.",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "fillOpacity": 80,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineWidth": 1,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": 0
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
       "gridPos": {
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 14
+        "y": 7
       },
+      "id": 7,
+      "options": {
+        "barRadius": 0,
+        "barWidth": 0.97,
+        "fullHighlight": false,
+        "groupWidth": 0.7,
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "orientation": "auto",
+        "showValue": "always",
+        "stacking": "normal",
+        "tooltip": {
+          "hideZeros": true,
+          "mode": "multi",
+          "sort": "desc"
+        },
+        "xTickLabelRotation": 0,
+        "xTickLabelSpacing": 0
+      },
+      "pluginVersion": "12.4.1",
+      "targets": [
+        {
+          "direction": "backward",
+          "editorMode": "code",
+          "expr": "sum by(alert_signature) (count_over_time({job=\"suricata\", event_type=\"alert\"} | json [$__interval]))",
+          "legendFormat": "{{alert_signature}}",
+          "queryType": "range",
+          "refId": "A"
+        }
+      ],
+      "title": "Alert Timeline by Signature",
+      "transformations": [
+        {
+          "id": "renameByRegex",
+          "options": {
+            "regex": ".*alert_signature=\"([^\"]+)\".*",
+            "renamePattern": "$1"
+          }
+        }
+      ],
+      "type": "barchart"
+    },
+    {
       "datasource": {
         "type": "loki",
         "uid": "Loki"
       },
-      "targets": [
-        {
-          "expr": "sum by(alert_category) (count_over_time({job=\"suricata\"} | json | event_type=\"alert\" [$__range]))"
-        }
-      ]
-    },
-    {
-      "type": "logs",
-      "title": "Recent Alerts",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            }
+          },
+          "mappings": []
+        },
+        "overrides": []
+      },
       "gridPos": {
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 14
+        "y": 7
       },
+      "id": 8,
+      "options": {
+        "legend": {
+          "displayMode": "list",
+          "placement": "right",
+          "showLegend": true,
+          "values": [
+            "value",
+            "percent"
+          ]
+        },
+        "pieType": "donut",
+        "reduceOptions": {
+          "calcs": [],
+          "fields": "",
+          "values": true
+        },
+        "sort": "desc",
+        "tooltip": {
+          "hideZeros": false,
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "pluginVersion": "12.4.1",
+      "targets": [
+        {
+          "datasource": {
+            "type": "loki",
+            "uid": "Loki"
+          },
+          "expr": "sum by(dest_ip) (count_over_time({job=\"suricata\", event_type=\"alert\"} | json [$__range]))",
+          "queryType": "instant",
+          "refId": "A"
+        }
+      ],
+      "title": "Top Targeted Destination IPs (Victims)",
+      "type": "piechart"
+    },
+    {
       "datasource": {
         "type": "loki",
         "uid": "Loki"
       },
-      "targets": [
-        {
-          "expr": "{job=\"suricata\"} | json | event_type=\"alert\" | line_format \"{{.alert_severity}} | {{.src_ip}} -> {{.dest_ip}}:{{.dest_port}} | {{.alert_signature}}\""
-        }
-      ]
-    },
-    {
-      "type": "logs",
-      "title": "Mosquitto Broker Log",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": 0
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
       "gridPos": {
         "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 15
+      },
+      "id": 101,
+      "options": {
+        "displayMode": "gradient",
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": false
+        },
+        "maxVizHeight": 300,
+        "minVizHeight": 16,
+        "minVizWidth": 8,
+        "namePlacement": "auto",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showUnfilled": true,
+        "sizing": "auto",
+        "valueMode": "color"
+      },
+      "pluginVersion": "12.4.1",
+      "targets": [
+        {
+          "direction": "backward",
+          "editorMode": "code",
+          "expr": "sum by(alert_signature) (count_over_time({job=\"suricata\", event_type=\"alert\"} | json [$__range]))",
+          "legendFormat": "{{alert_signature}}",
+          "queryType": "range",
+          "refId": "A"
+        }
+      ],
+      "title": "Attack Type Distribution",
+      "transformations": [
+        {
+          "id": "renameByRegex",
+          "options": {
+            "regex": ".*alert_signature=\"([^\"]+)\".*",
+            "renamePattern": "$1"
+          }
+        }
+      ],
+      "type": "bargauge"
+    },
+    {
+      "datasource": {
+        "type": "loki",
+        "uid": "Loki"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "custom": {
+            "align": "left",
+            "cellOptions": {
+              "type": "auto"
+            },
+            "footer": {
+              "reducers": []
+            },
+            "inspect": false
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": 0
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 15
+      },
+      "id": 10,
+      "options": {
+        "cellHeight": "sm",
+        "showHeader": true
+      },
+      "pluginVersion": "12.4.1",
+      "targets": [
+        {
+          "datasource": {
+            "type": "loki",
+            "uid": "Loki"
+          },
+          "expr": "sum by(src_ip) (count_over_time({job=\"suricata\", event_type=\"alert\"} | json [$__range]))",
+          "queryType": "instant",
+          "refId": "A"
+        }
+      ],
+      "title": "Top Attacker IPs",
+      "transformations": [
+        {
+          "id": "sortBy",
+          "options": {
+            "sort": [
+              {
+                "desc": true,
+                "field": "Value"
+              }
+            ]
+          }
+        },
+        {
+          "id": "organize",
+          "options": {
+            "excludeByName": {
+              "Time": true
+            },
+            "renameByName": {
+              "Value": "Alert Count",
+              "src_ip": "Attacker IP"
+            }
+          }
+        }
+      ],
+      "type": "table"
+    },
+    {
+      "collapsed": false,
+      "gridPos": {
+        "h": 1,
         "w": 24,
         "x": 0,
         "y": 23
       },
+      "id": 11,
+      "panels": [],
+      "title": "📜 Live Cryptographic & Payload Logs",
+      "type": "row"
+    },
+    {
       "datasource": {
         "type": "loki",
         "uid": "Loki"
       },
+      "fieldConfig": {
+        "defaults": {},
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 24,
+        "x": 0,
+        "y": 24
+      },
+      "id": 11,
+      "options": {
+        "dedupStrategy": "none",
+        "enableInfiniteScrolling": true,
+        "enableLogDetails": true,
+        "showControls": true,
+        "showTime": true,
+        "sortOrder": "Descending",
+        "unwrappedColumns": false,
+        "wrapLogMessage": true
+      },
+      "pluginVersion": "12.4.1",
       "targets": [
         {
-          "expr": "{job=\"mosquitto\"}"
+          "direction": "backward",
+          "editorMode": "code",
+          "expr": "{job=\"suricata\", event_type=\"alert\"} | json | label_format level=alert_severity | line_format \"[{{.alert_severity}}]  {{.src_ip}} ──> {{.dest_ip}}:{{.dest_port}}   |   {{.alert_signature}}\"",
+          "queryType": "range",
+          "refId": "A"
         }
-      ]
+      ],
+      "title": "Recent Security Alerts (Suricata Live Stream)",
+      "type": "logs"
     }
-  ]
+  ],
+  "preload": false,
+  "refresh": "5s",
+  "schemaVersion": 42,
+  "tags": [
+    "soc",
+    "security",
+    "suricata",
+    "tempo",
+    "iot"
+  ],
+  "templating": {
+    "list": []
+  },
+  "time": {
+    "from": "now-15m",
+    "to": "now"
+  },
+  "timepicker": {},
+  "timezone": "browser",
+  "title": "Security Operations (SOC)",
+  "uid": "adb54z9",
+  "version": 4,
+  "weekStart": ""
 }

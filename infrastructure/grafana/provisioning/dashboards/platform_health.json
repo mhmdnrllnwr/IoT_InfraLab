@@ -838,7 +838,7 @@
   "timepicker": {},
   "timezone": "browser",
   "title": "IoT Platform Health",
-  "uid": "iot-platform-health-sec-01",
+  "uid": "iot-platform-health-dashboard",
   "version": 3,
   "weekStart": ""
 }

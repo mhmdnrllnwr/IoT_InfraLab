@@ -721,7 +721,7 @@
   "timepicker": {},
   "timezone": "browser",
   "title": "Security Operations (SOC)",
-  "uid": "adb54z9",
+  "uid": "sec-ops-dashboard",
   "version": 4,
   "weekStart": ""
 }

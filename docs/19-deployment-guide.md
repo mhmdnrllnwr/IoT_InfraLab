@@ -19,59 +19,70 @@ Step-by-step instructions for deploying the full IoT InfraLab stack from scratch
 
 ### 1. Clone Repository
 
-```powershell
+```bash
 git clone <repo-url> IoT_InfraLab
 cd IoT_InfraLab
 ```
 
 ### 2. Configure Environment
 
-Create/edit `.env`:
+Copy `.env.example` to `.env` and fill in:
 
-```
-# Required: InfluxDB admin token (auto-generated for first run)
-INFLUXDB_TOKEN=your_super_secret_token
-
-# Required: Node-RED credential encryption
-NODE_RED_CREDENTIAL_SECRET=change_this_secret
-
-# Optional: Gemini API key (skip for degraded mode)
-GEMINI_API_KEY=
-
-# Grafana admin password
-GF_SECURITY_ADMIN_PASSWORD=admin123
+```bash
+cp .env.example .env
 ```
 
-Leave `GEMINI_API_KEY` blank to run without AI analysis — auditor performs nmap scans but skips Gemini.
+Required variables:
+- `GEMINI_API_KEY` — Google Gemini API key (from Google AI Studio). Leave blank to skip AI analysis (degraded mode).
+- `INFLUXDB_TOKEN` — Generate with `openssl rand -hex 32`
+- `NODE_RED_CREDENTIAL_SECRET` — Generate with `openssl rand -hex 16`
+- `GF_SECURITY_ADMIN_PASSWORD` — Grafana admin password
 
-### 3. Start the Stack
+**Linux/cloud:** Set `IOT_PROJECT_PATH` to absolute path (e.g. `/home/user/IoT_InfraLab`). Docker Desktop can leave as `.` (auto-resolves).
 
-```powershell
+### 3. Build Custom Images
+
+```bash
+docker compose build security-auditor nodered
+```
+
+Security auditor and Node-RED have custom Dockerfiles. Other services use pre-built images.
+
+### 4. Start the Stack
+
+```bash
+# Validate configuration
+docker compose config
+
+# Start all services
 docker compose up -d
-```
 
-### 4. Verify All Services
-
-```powershell
+# Check all 12 services Up
 docker compose ps
 ```
 
-Expected output: all 12 services with `Up` status.
+### 5. Create InfluxDB Buckets
 
-### 5. Run Smoke Test
+First run creates `sensor_data` bucket automatically. Create all 4 buckets:
 
-```powershell
+```bash
+# Linux:
+bash scripts/setup-influxdb.sh
+
+# Windows:
+powershell -File scripts/setup-influxdb.ps1
+```
+
+This creates `sensor_data`, `sensor_saved`, `sensor_metadata`, `platform_metrics` idempotently.
+
+### 6. Run Smoke Test
+
+```bash
+pip install -r requirements.txt
 python test/smoke_test.py
 ```
 
 All 5 checks should pass.
-
-### 6. Set Up InfluxDB (first run only)
-
-```powershell
-# If buckets/org not auto-created
-powershell -File scripts/setup-influxdb.ps1
-```
 
 ### 7. Access UIs
 
@@ -126,6 +137,11 @@ Sensors are created dynamically from Node-RED — no compose scaling needed.
 | Named volume data loss | `docker compose down -v` | Use `docker compose down` without `-v` to preserve volumes |
 | Promtail no logs | Suricata not writing eve.json | Check `infrastructure/suricata/logs/eve.json` exists and has content |
 | Port conflict | Another service using same port | Change host port in compose or stop conflicting service |
+| InfluxDB bucket missing | Existing bolt.db blocks re-init | `bash scripts/setup-influxdb.sh` or clear volume: `docker compose down -v influxdb` then restart |
+
+## Cloud Deployment
+
+See `cloud/README.md` for GCP deployment instructions. Use Ubuntu 22.04 — do NOT use Container-Optimized OS (lacks package manager).
 
 ## Initial Data Generation
 

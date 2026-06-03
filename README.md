@@ -130,7 +130,7 @@ python test/smoke_test.py
 | Service | Container | Port(s) | Image | Purpose |
 |---------|-----------|---------|-------|---------|
 | Mosquitto | iot_broker | 1883, 9001 | eclipse-mosquitto:2.0 | MQTT broker (vulnerable config) |
-| Node-RED | iot_nodered | 1880 | nodered/node-red:4.0 | Flow automation, sensor management |
+| Node-RED | iot_nodered | 1880 | (custom build, pinned `4.0.8` base) | Flow automation, sensor management |
 | Docker Proxy | docker_api_proxy | internal | tecnativa/docker-socket-proxy:0.2 | Secure Docker API access |
 | InfluxDB | influxdb | 8086 | influxdb:2.7 | Time-series sensor data |
 | Grafana | grafana | 3000 | grafana/grafana-oss:11.1 | Dashboards and alerting |
@@ -158,14 +158,16 @@ IoT_InfraLab/
 │   ├── telegraf/            # Telegraf metrics config
 │   └── loki/                # Loki config
 ├── src/simulation/          # Simulation containers
-│   ├── nodered/             # Node-RED data (flows, settings, nodes)
+│   ├── nodered/             # Node-RED Dockerfile, flows, settings, nodes
 │   ├── auditor_security/    # Security audit container
 │   ├── docker_sensor/       # Sensor simulation container
 │   └── docker_attacker/     # Attack container
 ├── scripts/                 # Setup and utility scripts
 ├── test/                    # Smoke tests and utilities
+├── cloud/                   # Cloud deployment (GCP)
 ├── docker-compose.yaml      # Main service orchestration
 ├── .env.example             # Environment variable template
+├── QUICKSTART.md            # 5-step quick start guide
 └── requirements.txt         # Python dependencies
 ```
 
@@ -281,6 +283,9 @@ For Docker Desktop users: set `IOT_PROJECT_PATH` to the full path using forward 
 | `docker-compose.yaml` | Service orchestration, networks, volumes |
 | `.env` | Secrets and runtime configuration |
 | `config/sensor_settings.json` | Sensor type definitions and profiles |
+| `src/simulation/nodered/Dockerfile` | Node-RED custom image (pinned `4.0.8`) |
+| `scripts/setup-influxdb.sh` | Linux InfluxDB bucket creation (idempotent) |
+| `scripts/setup-influxdb.ps1` | Windows InfluxDB bucket creation (idempotent) |
 | `infrastructure/suricata/suricata.yaml` | Suricata IDS/IPS engine config |
 | `infrastructure/otel/otel-config.yaml` | OpenTelemetry pipeline |
 | `infrastructure/promtail/promtail-config.yaml` | Log shipping to Loki |

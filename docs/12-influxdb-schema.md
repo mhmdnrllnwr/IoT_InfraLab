@@ -28,6 +28,8 @@ Named volume `influxdb_data` mounted at `/var/lib/influxdb2`. Survives `docker c
 
 ## Buckets
 
+Four buckets are used by the stack. Created automatically on fresh volume via `DOCKER_INFLUXDB_INIT_*` env vars (`sensor_data`) and setup scripts (all 4). Run `bash scripts/setup-influxdb.sh` or `powershell scripts\setup-influxdb.ps1` to create missing buckets idempotently.
+
 ### Bucket A: sensor_data
 
 **Purpose:** IoT sensor telemetry from simulated factory sensors.
@@ -72,6 +74,34 @@ Sensor publishes JSON → MQTT → Node-RED subscribe
 ### Bucket C: _monitoring (system)
 
 InfluxDB's internal monitoring bucket, created automatically.
+
+### Bucket D: sensor_saved
+
+**Purpose:** Stores pre-configured sensor profile templates for reuse across deployments.
+
+**Source:** Node-RED flow writing to InfluxDB Out node on save.
+
+**Measurement:** `sensor_saved`
+
+| Element | Type | Values | Source |
+|---------|------|--------|--------|
+| `sensor_types` | Field | string | JSON array of types |
+| `profile` | Field | string | `normal` / `failing` / `erratic` |
+| `sensor_id` | Tag | string | e.g. `CNCMILL-001` |
+| `name` | Tag | string | Human-readable profile name |
+
+### Bucket E: sensor_metadata
+
+**Purpose:** Runtime metadata and state annotations for active sensors.
+
+**Source:** Node-RED flow writing metadata updates on sensor lifecycle events.
+
+**Measurement:** `sensor_metadata`
+
+| Element | Type | Values | Source |
+|---------|------|--------|--------|
+| `state` | Field | string | `active` / `stopped` / `error` |
+| `sensor_id` | Tag | string | e.g. `CNCMILL-001` |
 
 ## Schema Design Decisions
 

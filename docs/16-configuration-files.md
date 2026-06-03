@@ -104,7 +104,23 @@ Active sensor registry — updated in real time as sensors are created/deployed/
 
 ---
 
+## Additional Configuration Files
+
+| File | Purpose |
+|------|---------|
+| `docker-compose.yaml` | Service orchestration, networks, volumes |
+| `.env` | Secrets and runtime configuration (gitignored) |
+| `QUICKSTART.md` | Condensed 5-step setup guide |
+| `cloud/gcp-setup.sh` | GCP VM provisioning script |
+| `cloud/README.md` | Cloud deployment instructions |
+| `scripts/setup-influxdb.sh` | Linux InfluxDB bucket creation (idempotent) |
+| `scripts/setup-influxdb.ps1` | Windows InfluxDB bucket creation (idempotent) |
+| `src/simulation/nodered/Dockerfile` | Node-RED custom image (pinned base) |
+
+---
+
 ## Related
 
 - Sensor simulation reading these configs: [05-sensor-simulation.md](05-sensor-simulation.md)
 - Node-RED sensor lifecycle: [03-nodered-automation.md](03-nodered-automation.md)
+- Deployment guide: [19-deployment-guide.md](19-deployment-guide.md)

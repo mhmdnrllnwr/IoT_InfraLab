@@ -6,8 +6,8 @@ Visual flow automation platform providing the primary user interface for sensor 
 
 ## Configuration
 
-**Image:** `nodered/node-red:latest`
-**Container:** `iot_nodered`
+**Image:** Custom build from `src/simulation/nodered/Dockerfile` (pinned `nodered/node-red:4.0.8` base)
+**Container:** `iot_nodered` (built as `iot_infralab-nodered`)
 **User:** `root`
 **IP:** `172.18.0.25` (static)
 **Port:** 1880
@@ -28,6 +28,14 @@ Limits heap to 256 MB and young generation to 2 MB — critical for memory-const
 - Active sensors: `sensors.json`
 - Saved profiles: `saved_sensors.json` (10 factory configurations)
 - Settings: `settings.json`
+
+### Custom Dockerfile
+
+Build-time `npm install` eliminates runtime failure risk from network issues. Pinned to image version `nodered/node-red:4.0.8` for reproducible builds.
+
+```bash
+docker compose build nodered
+```
 
 ## Flow Architecture (4 Tabs)
 

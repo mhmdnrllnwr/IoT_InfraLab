@@ -31,6 +31,10 @@ Network: iot_infralab_net (172.18.0.0/24)           +-------------------+
 
 **Docker Desktop (Windows/macOS)**: File sharing must be enabled for the project directory.
 
+**Linux users**: Docker Engine 24.0+ (standalone, no Docker Desktop required).
+
+**GCP deployment**: Use Ubuntu 22.04 VM. Do NOT use Container-Optimized OS (COS) — lacks apt/package manager. See `cloud/` directory.
+
 ## Quick Start
 
 ```bash
@@ -47,7 +51,7 @@ powershell .\scripts\setup.ps1   # Windows
 #    Set GEMINI_API_KEY, generate INFLUXDB_TOKEN, change default passwords
 
 # 4. Build custom images and start
-docker compose build security-auditor
+docker compose build security-auditor nodered
 docker compose up -d
 ```
 
@@ -76,7 +80,7 @@ DOCKER_INFLUXDB_INIT_ADMIN_TOKEN=your_generated_token
 GF_SECURITY_ADMIN_USER=admin
 GF_SECURITY_ADMIN_PASSWORD=change_this_password
 
-# Node-RED credential encryption secret
+# Node-RED credential encryption secret — generate with: openssl rand -hex 16
 NODE_RED_CREDENTIAL_SECRET=change_this_secret
 
 # Host path to project root (for sensor container bind mounts)
@@ -248,7 +252,10 @@ For Docker Desktop users: set `IOT_PROJECT_PATH` to the full path using forward 
 
 **InfluxDB fails to start or crashes:**
 - Ensure all `DOCKER_INFLUXDB_INIT_*` vars are set in `.env`
-- If re-deploying with existing volume: remove `influxdb_data` volume (`docker compose down -v influxdb`)
+- If buckets missing after restart (leftover bolt.db blocking re-init):
+  - Run setup script: `bash scripts/setup-influxdb.sh` (Linux)
+  - Or: `powershell .\scripts\setup-influxdb.ps1` (Windows)
+  - Or clear volume: `docker compose down -v influxdb` then restart
 - Check token is valid 32-byte hex
 
 **Node-RED can't create sensor containers:**

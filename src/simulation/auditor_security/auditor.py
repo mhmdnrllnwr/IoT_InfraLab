@@ -157,15 +157,15 @@ def perform_audit():
             print("[INFO] Audit thread finished, entering cooldown.\n")
 
 # --- MQTT HANDLER ---
-def on_connect(client, userdata, flags, rc):
-    if rc == 0:
+def on_connect(client, userdata, flags, reason_code, properties):
+    if reason_code == 0:
         print(f"[SUCCESS] Connected to MQTT Broker: {BROKER} on port 1883")
         client.subscribe([("lab/security/trigger", 0), ("lab/security/model", 0)])
         print(f"[INFO] Subscribed to topic: lab/security/trigger")
         print(f"[INFO] Subscribed to topic: lab/security/model")
         print(f"[INFO] Ready and waiting for commands...")
     else:
-        print(f"❌ [CRITICAL] MQTT Connection failed with code {rc}")
+        print(f"❌ [CRITICAL] MQTT Connection failed with code {reason_code}")
 
 def on_message(client, userdata, msg):
     global last_scan_time, is_scanning, MODEL_ID
@@ -197,7 +197,7 @@ def on_message(client, userdata, msg):
         threading.Thread(target=perform_audit, daemon=True).start()
 
 # --- MQTT CONNECTION VALIDATION ---
-client_mqtt = mqtt.Client(CallbackAPIVersion.VERSION1)
+client_mqtt = mqtt.Client(CallbackAPIVersion.VERSION2)
 client_mqtt.on_connect = on_connect
 client_mqtt.on_message = on_message
 

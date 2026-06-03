@@ -32,7 +32,9 @@ services:
           memory: 64m
 
   nodered:
-    image: nodered/node-red:latest
+    build:
+      context: ./src/simulation/nodered
+      dockerfile: Dockerfile
     container_name: iot_nodered
     user: "root"
     environment:
@@ -166,6 +168,8 @@ services:
   influxdb:
     image: influxdb:2.7
     container_name: influxdb
+    env_file:
+      - .env
     environment:
       - INFLUXDB_TOKEN=${INFLUXDB_TOKEN}
       - INFLUXD_ENGINE_CACHE_MAX_MEMORY_SIZE=256MB
@@ -178,6 +182,19 @@ services:
       - influxdb_data:/var/lib/influxdb2
       - ./infrastructure/influxdb/config:/etc/influxdb2
     restart: unless-stopped
+    # NOTE: DOCKER_INFLUXDB_INIT_* vars from .env auto-create org + sensor_data
+    # bucket on first run. Remaining buckets (sensor_saved, sensor_metadata,
+    # platform_metrics) created by setup scripts. If buckets missing after
+    # restart, existing bolt.db blocked re-init.
+    # Fix: docker compose down -v influxdb then up again. Or run:
+    #   bash scripts/setup-influxdb.sh        (Linux)
+    #   powershell scripts\setup-influxdb.ps1  (Windows)
+    healthcheck:
+      test: ["CMD", "influx", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 30s
     deploy:
       resources:
         limits:

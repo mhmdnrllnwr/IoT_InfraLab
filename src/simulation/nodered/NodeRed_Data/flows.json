@@ -16,6 +16,21 @@
         "env": []
     },
     {
+        "id": "al_tab",
+        "type": "tab",
+        "label": "Attack Lab",
+        "disabled": false,
+        "env": []
+    },
+    {
+        "id": "4fb8248f637db493",
+        "type": "tab",
+        "label": "Test-Page",
+        "disabled": false,
+        "info": "",
+        "env": []
+    },
+    {
         "id": "b78d14cc362e1196",
         "type": "tab",
         "label": "Cyber Attack Simulation",
@@ -29,13 +44,6 @@
         "label": "Backend",
         "disabled": false,
         "info": "",
-        "env": []
-    },
-    {
-        "id": "al_tab",
-        "type": "tab",
-        "label": "Attack Lab",
-        "disabled": false,
         "env": []
     },
     {
@@ -220,9 +228,9 @@
                 "cols": "12"
             }
         ],
-        "order": 3,
+        "order": 5,
         "className": "",
-        "visible": "true",
+        "visible": false,
         "disabled": false
     },
     {
@@ -417,7 +425,7 @@
                 "cols": "12"
             }
         ],
-        "order": 5,
+        "order": 6,
         "className": "",
         "visible": false,
         "disabled": "false"
@@ -616,7 +624,7 @@
                 "cols": "12"
             }
         ],
-        "order": 6,
+        "order": 3,
         "className": "",
         "visible": true,
         "disabled": false
@@ -3972,6 +3980,904 @@
         ]
     },
     {
+        "id": "al_start_att_btn",
+        "type": "ui-button",
+        "z": "al_tab",
+        "group": "al_left_group",
+        "name": "Start Attacker",
+        "label": "1. Start Attacker Node",
+        "order": 1,
+        "width": 0,
+        "height": 0,
+        "emulateClick": false,
+        "tooltip": "Deploy attacker",
+        "color": "white",
+        "bgcolor": "#475569",
+        "className": "",
+        "icon": "server",
+        "iconPosition": "left",
+        "payload": "",
+        "payloadType": "str",
+        "topic": "topic",
+        "topicType": "msg",
+        "x": 80,
+        "y": 80,
+        "wires": [
+            [
+                "al_prep_create_vm"
+            ]
+        ]
+    },
+    {
+        "id": "al_breach_btn",
+        "type": "ui-button",
+        "z": "al_tab",
+        "group": "al_left_group",
+        "name": "Breach Network",
+        "label": "2. Breach Into Network",
+        "order": 2,
+        "width": 0,
+        "height": 0,
+        "emulateClick": false,
+        "tooltip": "Connect attacker",
+        "color": "white",
+        "bgcolor": "#57534e",
+        "className": "",
+        "icon": "login",
+        "iconPosition": "left",
+        "payload": "",
+        "payloadType": "str",
+        "topic": "topic",
+        "topicType": "msg",
+        "x": 80,
+        "y": 140,
+        "wires": [
+            [
+                "al_breach_prep_connect"
+            ]
+        ]
+    },
+    {
+        "id": "al_execute_btn",
+        "type": "ui-button",
+        "z": "al_tab",
+        "group": "al_left_group",
+        "name": "Execute",
+        "label": "Execute Scenario",
+        "order": 5,
+        "width": 0,
+        "height": 0,
+        "emulateClick": false,
+        "tooltip": "Run",
+        "color": "white",
+        "bgcolor": "#059669",
+        "className": "",
+        "icon": "play_arrow",
+        "iconPosition": "left",
+        "payload": "",
+        "payloadType": "str",
+        "topic": "topic",
+        "topicType": "msg",
+        "x": 80,
+        "y": 280,
+        "wires": [
+            [
+                "al_execute_init"
+            ]
+        ]
+    },
+    {
+        "id": "al_stop_btn",
+        "type": "ui-button",
+        "z": "al_tab",
+        "group": "al_left_group",
+        "name": "Stop",
+        "label": "Stop Execution",
+        "order": 6,
+        "width": 0,
+        "height": 0,
+        "emulateClick": false,
+        "tooltip": "Stop",
+        "color": "white",
+        "bgcolor": "#f59e0b",
+        "className": "",
+        "icon": "stop",
+        "iconPosition": "left",
+        "payload": "{\"action\":\"stop\"}",
+        "payloadType": "json",
+        "topic": "topic",
+        "topicType": "msg",
+        "x": 80,
+        "y": 340,
+        "wires": [
+            [
+                "al_handle_action"
+            ]
+        ]
+    },
+    {
+        "id": "al_clear_btn",
+        "type": "ui-button",
+        "z": "al_tab",
+        "group": "al_left_group",
+        "name": "Clear",
+        "label": "Clear All Steps",
+        "order": 7,
+        "width": 0,
+        "height": 0,
+        "emulateClick": false,
+        "tooltip": "Clear",
+        "color": "white",
+        "bgcolor": "#dc2626",
+        "className": "",
+        "icon": "delete_sweep",
+        "iconPosition": "left",
+        "payload": "{\"action\":\"clear\"}",
+        "payloadType": "json",
+        "topic": "topic",
+        "topicType": "msg",
+        "x": 80,
+        "y": 400,
+        "wires": [
+            [
+                "al_handle_action"
+            ]
+        ]
+    },
+    {
+        "id": "al_remove_vm_btn",
+        "type": "ui-button",
+        "z": "al_tab",
+        "group": "al_left_group",
+        "name": "Remove Attacker",
+        "label": "Remove Attacker Node",
+        "order": 3,
+        "width": 0,
+        "height": 0,
+        "emulateClick": false,
+        "tooltip": "Delete container",
+        "color": "white",
+        "bgcolor": "#7f1d1d",
+        "className": "",
+        "icon": "delete_forever",
+        "iconPosition": "left",
+        "payload": "",
+        "payloadType": "str",
+        "topic": "topic",
+        "topicType": "msg",
+        "x": 80,
+        "y": 460,
+        "wires": [
+            [
+                "al_prep_delete_vm"
+            ]
+        ]
+    },
+    {
+        "id": "al_prep_create_vm",
+        "type": "function",
+        "z": "al_tab",
+        "name": "Prep Create",
+        "func": "msg.url='http://docker-proxy:2375/containers/create?name=iot_attacker_node';msg.method='POST';msg.payload={Image:'iot-attacker',Tty:true,OpenStdin:true,HostConfig:{NetworkMode:'bridge',AutoRemove:true}};return[msg,null]",
+        "outputs": 2,
+        "x": 320,
+        "y": 80,
+        "wires": [
+            [
+                "al_http_create_vm"
+            ],
+            [
+                "al_terminal_template"
+            ]
+        ]
+    },
+    {
+        "id": "al_http_create_vm",
+        "type": "http request",
+        "z": "al_tab",
+        "name": "Create API",
+        "method": "use",
+        "ret": "obj",
+        "paytoqs": "ignore",
+        "url": "",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "authType": "",
+        "senderr": false,
+        "x": 560,
+        "y": 80,
+        "wires": [
+            [
+                "al_prep_start_vm"
+            ]
+        ]
+    },
+    {
+        "id": "al_prep_start_vm",
+        "type": "function",
+        "z": "al_tab",
+        "name": "Prep Start",
+        "func": "if(!msg.payload||!msg.payload.Id)return[null,{payload:'Failed'}];msg.url='http://docker-proxy:2375/containers/iot_attacker_node/start';msg.method='POST';msg.payload={};return[msg,null]",
+        "outputs": 2,
+        "x": 790,
+        "y": 80,
+        "wires": [
+            [
+                "al_http_start_vm"
+            ],
+            [
+                "al_terminal_template"
+            ]
+        ]
+    },
+    {
+        "id": "al_http_start_vm",
+        "type": "http request",
+        "z": "al_tab",
+        "name": "Start API",
+        "method": "use",
+        "ret": "txt",
+        "paytoqs": "ignore",
+        "url": "",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "authType": "",
+        "senderr": false,
+        "x": 1040,
+        "y": 80,
+        "wires": [
+            [
+                "al_fmt_vm_ready"
+            ]
+        ]
+    },
+    {
+        "id": "al_fmt_vm_ready",
+        "type": "function",
+        "z": "al_tab",
+        "name": "VM Ready",
+        "func": "msg.payload='[+]Attacker deployed.';return msg",
+        "outputs": 1,
+        "x": 1290,
+        "y": 80,
+        "wires": [
+            [
+                "al_terminal_template"
+            ]
+        ]
+    },
+    {
+        "id": "al_breach_prep_connect",
+        "type": "function",
+        "z": "al_tab",
+        "name": "Prep Breach",
+        "func": "msg.url='http://docker-proxy:2375/networks/iot_infralab_net/connect';msg.method='POST';msg.payload={Container:'iot_attacker_node'};return msg",
+        "outputs": 1,
+        "x": 320,
+        "y": 140,
+        "wires": [
+            [
+                "al_http_breach_connect"
+            ]
+        ]
+    },
+    {
+        "id": "al_http_breach_connect",
+        "type": "http request",
+        "z": "al_tab",
+        "name": "Connect API",
+        "method": "use",
+        "ret": "txt",
+        "paytoqs": "ignore",
+        "url": "",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "authType": "",
+        "senderr": false,
+        "x": 560,
+        "y": 140,
+        "wires": [
+            [
+                "al_fmt_breach_done"
+            ]
+        ]
+    },
+    {
+        "id": "al_fmt_breach_done",
+        "type": "function",
+        "z": "al_tab",
+        "name": "Breach Done",
+        "func": "if(msg.statusCode===200)msg.payload='[+]Breached.';else msg.payload='Failed';return msg",
+        "outputs": 1,
+        "x": 790,
+        "y": 140,
+        "wires": [
+            [
+                "al_terminal_template"
+            ]
+        ]
+    },
+    {
+        "id": "al_prep_delete_vm",
+        "type": "function",
+        "z": "al_tab",
+        "name": "Prep Delete",
+        "func": "msg.url='http://docker-proxy:2375/containers/iot_attacker_node?force=true';msg.method='DELETE';return[msg,null]",
+        "outputs": 2,
+        "x": 320,
+        "y": 520,
+        "wires": [
+            [
+                "al_http_delete_vm"
+            ],
+            [
+                "al_terminal_template"
+            ]
+        ]
+    },
+    {
+        "id": "al_http_delete_vm",
+        "type": "http request",
+        "z": "al_tab",
+        "name": "Delete API",
+        "method": "use",
+        "ret": "txt",
+        "paytoqs": "ignore",
+        "url": "",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "authType": "",
+        "senderr": false,
+        "x": 560,
+        "y": 520,
+        "wires": [
+            [
+                "al_fmt_delete_vm"
+            ]
+        ]
+    },
+    {
+        "id": "al_fmt_delete_vm",
+        "type": "function",
+        "z": "al_tab",
+        "name": "Fmt Delete",
+        "func": "if(msg.statusCode>=200&&msg.statusCode<300)msg.payload='[+]Removed.';else msg.payload='Error.';return msg",
+        "outputs": 1,
+        "x": 790,
+        "y": 520,
+        "wires": [
+            [
+                "al_terminal_template"
+            ]
+        ]
+    },
+    {
+        "id": "al_http_in",
+        "type": "http in",
+        "z": "al_tab",
+        "name": "POST/step",
+        "url": "/attack-lab/step",
+        "method": "post",
+        "upload": false,
+        "swaggerDoc": "",
+        "x": 120,
+        "y": 520,
+        "wires": [
+            [
+                "al_http_handler"
+            ]
+        ]
+    },
+    {
+        "id": "al_http_handler",
+        "type": "function",
+        "z": "al_tab",
+        "name": "HTTP Handler",
+        "func": "var b=msg.payload;if(!b||!b.action)return msg;if(b.action===\"add_step\"){var s=flow.get(\"al_scenario\")||[];s.push({id:\"s\"+Date.now(),type:b.type,label:b.label||b.type,params:b.params||{},delay:1});flow.set(\"al_scenario\",s);msg.payload={success:true,scenario:s}}if(b.action===\"delete_step\"){var s=flow.get(\"al_scenario\")||[];if(b.index>=0&&b.index<s.length)s.splice(b.index,1);flow.set(\"al_scenario\",s);msg.payload={success:true,scenario:s}}if(b.action===\"clear\"){flow.set(\"al_scenario\",[]);msg.payload={success:true,scenario:[]}}return msg",
+        "outputs": 1,
+        "x": 350,
+        "y": 520,
+        "wires": [
+            [
+                "al_http_res"
+            ]
+        ]
+    },
+    {
+        "id": "al_http_res",
+        "type": "http response",
+        "z": "al_tab",
+        "name": "HTTP200",
+        "statusCode": "",
+        "headers": {},
+        "x": 580,
+        "y": 520,
+        "wires": []
+    },
+    {
+        "id": "al_handle_action",
+        "type": "function",
+        "z": "al_tab",
+        "name": "Handle Action",
+        "func": "var p=msg.payload;if(!p||!p.action)return null;if(p.action===\"clear\"){flow.set(\"al_scenario\",[]);flow.set(\"al_exec_stop\",false);flow.set(\"al_exec_running\",false);return{payload:{scenario:[]}}}if(p.action===\"stop\"){flow.set(\"al_exec_stop\",true);flow.set(\"al_exec_running\",false);return[null,{payload:\"[!]Halted.\\n\"}]}return null",
+        "outputs": 2,
+        "x": 360,
+        "y": 360,
+        "wires": [
+            [
+                "al_config_template"
+            ],
+            [
+                "al_terminal_template"
+            ]
+        ]
+    },
+    {
+        "id": "al_config_template",
+        "type": "ui-template",
+        "z": "al_tab",
+        "group": "al_left_group",
+        "name": "Attack Configurator",
+        "order": 4,
+        "width": 0,
+        "height": 0,
+        "format": "<template>\n    <div class=\"al-container\">\n        <div class=\"al-section\">\n            <label class=\"al-label\">1. Choose Attack Type</label>\n            <select v-model=\"selectedType\" @change=\"onTypeChange\" class=\"al-select\">\n                <option value=\"\">-- Select Attack --</option>\n                <option value=\"port_scan\">Port Scan (Nmap)</option>\n                <option value=\"mqtt_sniff\">MQTT Sniff</option>\n                <option value=\"mqtt_inject\">MQTT Inject</option>\n                <option value=\"mqtt_dos\">MQTT DoS</option>\n                <option value=\"tcp_flood\">TCP Flood (Nping)</option>\n                <option value=\"custom_cmd\">Custom Command</option>\n            </select>\n        </div>\n        <div v-if=\"selectedType\" class=\"al-section al-form\">\n            <div v-if=\"selectedType === 'port_scan'\">\n                <label class=\"al-label\">Target <span class=\"al-hint\">(target IP or subnet)</span></label>\n                <input v-model=\"params.target\" placeholder=\"<target-subnet>\" class=\"al-input\">\n                <label class=\"al-label\">Ports <span class=\"al-hint\">(e.g. 1883,8086)</span></label>\n                <input v-model=\"params.ports\" placeholder=\"1883,1880,8086\" class=\"al-input\">\n                <label class=\"al-label\">Speed</label>\n                <select v-model=\"params.speed\" class=\"al-select\">\n                    <option value=\"T4\">Normal (T4)</option>\n                    <option value=\"T5\">Insane (T5)</option>\n                </select>\n            </div>\n            <div v-if=\"selectedType === 'mqtt_sniff'\">\n                <label class=\"al-label\">Broker <span class=\"al-hint\">(broker hostname)</span></label>\n                <input v-model=\"params.broker\" placeholder=\"mosquitto\" class=\"al-input\">\n                <label class=\"al-label\">Timeout <span class=\"al-hint\">(duration in seconds)</span></label>\n                <input v-model=\"params.timeout\" type=\"number\" placeholder=\"10\" class=\"al-input\">\n            </div>\n            <div v-if=\"selectedType === 'mqtt_inject'\">\n                <label class=\"al-label\">Topic</label>\n                <input v-model=\"params.topic\" placeholder=\"sensors/data\" class=\"al-input\">\n                <label class=\"al-label\">Value <span class=\"al-hint\">(fake sensor value)</span></label>\n                <input v-model=\"params.value\" type=\"number\" placeholder=\"9000\" class=\"al-input\">\n                <label class=\"al-label\">Count</label>\n                <input v-model=\"params.count\" type=\"number\" placeholder=\"1\" class=\"al-input\">\n            </div>\n            <div v-if=\"selectedType === 'mqtt_dos'\">\n                <label class=\"al-label\">Broker <span class=\"al-hint\">(broker hostname or IP)</span></label>\n                <input v-model=\"params.broker\" placeholder=\"<iot-broker-ip>\" class=\"al-input\">\n                <label class=\"al-label\">Threads</label>\n                <input v-model=\"params.threads\" type=\"number\" placeholder=\"50\" class=\"al-input\">\n                <label class=\"al-label\">Duration <span class=\"al-hint\">(seconds)</span></label>\n                <input v-model=\"params.duration\" type=\"number\" placeholder=\"10\" class=\"al-input\">\n            </div>\n            <div v-if=\"selectedType === 'tcp_flood'\">\n                <label class=\"al-label\">Target</label>\n                <input v-model=\"params.target\" placeholder=\"mosquitto\" class=\"al-input\">\n                <label class=\"al-label\">Port</label>\n                <input v-model=\"params.port\" type=\"number\" placeholder=\"1883\" class=\"al-input\">\n                <label class=\"al-label\">Count <span class=\"al-hint\">(total packets)</span></label>\n                <input v-model=\"params.count\" type=\"number\" placeholder=\"1000\" class=\"al-input\">\n                <label class=\"al-label\">Rate <span class=\"al-hint\">(rate packets/sec)</span></label>\n                <input v-model=\"params.rate\" type=\"number\" placeholder=\"1000\" class=\"al-input\">\n            </div>\n            <div v-if=\"selectedType === 'custom_cmd'\">\n                <label class=\"al-label\">Command <span class=\"al-hint\">(any shell command)</span></label>\n                <input v-model=\"params.command\" placeholder=\"echo hello\" class=\"al-input al-input-wide\">\n            </div>\n            <div class=\"al-form-actions\">\n                <button class=\"al-btn al-btn-add\" @click=\"addStep\" :disabled=\"!canAdd\">+ Add Step</button>\n            </div>\n        </div>\n        <div v-if=\"scenario.length > 0\" class=\"al-section\">\n            <h3 class=\"al-section-title\">2. Attack Sequence ({{ scenario.length }})</h3>\n            <div v-for=\"(step, idx) in scenario\" :key=\"step.id\" class=\"al-step\">\n                <span class=\"al-step-num\">{{ idx + 1 }}.</span>\n                <span class=\"al-step-type\" :class=\"'al-type-' + step.type\">{{ step.label }}</span>\n                <span class=\"al-step-params\">{{ formatParams(step.params) }}</span>\n                <button class=\"al-btn-del\" @click=\"deleteStep(idx)\" title=\"Remove\">X</button>\n            </div>\n        </div>\n        <div v-if=\"!selectedType && scenario.length === 0\" class=\"al-empty\">\n            <p>Select attack type above, configure params, then click + Add.</p>\n        </div>\n    </div>\n</template>\n<script>\nexport default {\n    data() {\n        return {\n            selectedType: '',\n            params: {},\n            scenario: [],\n            typeLabels: {\n                port_scan: 'Port Scan',\n                mqtt_sniff: 'MQTT Sniff',\n                mqtt_inject: 'MQTT Inject',\n                mqtt_dos: 'MQTT DoS',\n                tcp_flood: 'TCP Flood',\n                custom_cmd: 'Custom Cmd'\n            }\n        };\n    },\n    computed: {\n        canAdd() {\n            if (!this.selectedType) return false;\n            if (this.selectedType === 'custom_cmd' && !this.params.command) return false;\n            return true;\n        }\n    },\n    watch: {\n        msg: {\n            handler(val) {\n                if (!val || !val.payload) return;\n                if (val.payload.scenario) this.scenario = val.payload.scenario;\n                if (val.payload.selectedType) this.selectedType = val.payload.selectedType;\n            },\n            immediate: true,\n            deep: true\n        }\n    },\n    methods: {\n        onTypeChange() { this.params = {}; },\n        addStep() {\n            if (!this.canAdd) return;\n            fetch('/attack-lab/step', {method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({action: 'add_step', type: this.selectedType, label: this.typeLabels[this.selectedType] || this.selectedType, params: {...this.params}})}).then(r => r.json()).then(data => { if (data.scenario) this.scenario = data.scenario; }).catch(e => console.error('Attack Lab:', e));\n        },\n        deleteStep(idx) {\n            fetch('/attack-lab/step', {method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({action: 'delete_step', index: idx})}).then(r => r.json()).then(data => { if (data.scenario) this.scenario = data.scenario; }).catch(e => console.error(e));\n        },\n        formatParams(params) {\n            if (!params) return '';\n            return Object.entries(params).filter(([k, v]) => v && v !== '').map(([k, v]) => k + '=' + v).join(', ');\n        }\n    }\n};\n</script>\n<style>\n.al-container { padding: 8px; background: #0f172a; border-radius: 6px; }\n.al-section { margin-bottom: 16px; }\n.al-section-title { margin: 0 0 8px 0; font-size: 14px; color: #ffffff; font-weight: bold; }\n.al-label { display: block; margin-bottom: 4px; font-size: 12px; color: #f1f5f9; text-transform: uppercase; letter-spacing: 0.5px; font-weight: 600; }\n.al-hint { color: #cbd5e1; text-transform: none; letter-spacing: 0; font-weight: normal; }\n.al-input, .al-select { width: 100%; padding: 8px 10px; margin-bottom: 10px; background: #1e293b; border: 1px solid #334155; border-radius: 4px; color: #f8fafc; font-family: monospace; font-size: 13px; box-sizing: border-box; }\n.al-select { cursor: pointer; }\n.al-input:focus, .al-select:focus { outline: none; border-color: #38bdf8; }\n.al-form { background: #0f172a; padding: 12px; border-radius: 6px; border: 1px solid #1e293b; }\n.al-form-actions { margin-top: 12px; }\n.al-btn { padding: 8px 20px; border: none; border-radius: 4px; cursor: pointer; font-size: 13px; font-weight: bold; font-family: monospace; }\n.al-btn:disabled { opacity: 0.4; cursor: not-allowed; }\n.al-btn-add { background: #059669; color: white; }\n.al-btn-add:hover:not(:disabled) { background: #10b981; }\n.al-empty { text-align: center; padding: 40px 20px; color: #f1f5f9; font-family: monospace; }\n.al-step { display: flex; align-items: center; padding: 8px 10px; margin-bottom: 6px; background: #1e293b; border-radius: 4px; border-left: 3px solid #38bdf8; gap: 8px; }\n.al-step-num { color: #94a3b8; min-width: 24px; font-family: monospace; }\n.al-step-type { color: #38bdf8; font-weight: bold; font-size: 12px; min-width: 90px; font-family: monospace; }\n.al-step-params { color: #cbd5e1; font-size: 11px; flex: 1; font-family: monospace; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }\n.al-btn-del { background: transparent; border: 1px solid #ef4444; color: #ef4444; cursor: pointer; padding: 2px 6px; border-radius: 3px; font-size: 12px; }\n.al-btn-del:hover { background: rgba(239,68,68,0.2); }\n</style>",
+        "storeOutMessages": true,
+        "passthru": false,
+        "resendOnRefresh": true,
+        "templateScope": "local",
+        "className": "",
+        "x": 690,
+        "y": 420,
+        "wires": [
+            [
+                "al_http_handler"
+            ]
+        ]
+    },
+    {
+        "id": "al_quick_recon_btn",
+        "type": "ui-button",
+        "z": "al_tab",
+        "group": "al_quick_group",
+        "name": "Recon Nmap",
+        "label": "Recon (Nmap)",
+        "order": 1,
+        "width": 0,
+        "height": 0,
+        "emulateClick": false,
+        "tooltip": "Add Recon",
+        "color": "white",
+        "bgcolor": "#0284c7",
+        "className": "",
+        "icon": "wifi_tethering",
+        "iconPosition": "left",
+        "payload": "",
+        "payloadType": "str",
+        "topic": "topic",
+        "topicType": "msg",
+        "x": 80,
+        "y": 580,
+        "wires": [
+            [
+                "al_quick_add_recon"
+            ]
+        ]
+    },
+    {
+        "id": "al_quick_sniff_btn",
+        "type": "ui-button",
+        "z": "al_tab",
+        "group": "al_quick_group",
+        "name": "MQTT Sniff",
+        "label": "Sniff MQTT",
+        "order": 2,
+        "width": 0,
+        "height": 0,
+        "emulateClick": false,
+        "tooltip": "Add Sniff",
+        "color": "white",
+        "bgcolor": "#10b981",
+        "className": "",
+        "icon": "visibility",
+        "iconPosition": "left",
+        "payload": "",
+        "payloadType": "str",
+        "topic": "topic",
+        "topicType": "msg",
+        "x": 80,
+        "y": 640,
+        "wires": [
+            [
+                "al_quick_add_sniff"
+            ]
+        ]
+    },
+    {
+        "id": "al_quick_dos_btn",
+        "type": "ui-button",
+        "z": "al_tab",
+        "group": "al_quick_group",
+        "name": "MQTT DoS",
+        "label": "DoS MQTT",
+        "order": 3,
+        "width": 0,
+        "height": 0,
+        "emulateClick": false,
+        "tooltip": "Add DoS",
+        "color": "white",
+        "bgcolor": "#dc2626",
+        "className": "",
+        "icon": "bolt",
+        "iconPosition": "left",
+        "payload": "",
+        "payloadType": "str",
+        "topic": "topic",
+        "topicType": "msg",
+        "x": 80,
+        "y": 700,
+        "wires": [
+            [
+                "al_quick_add_dos"
+            ]
+        ]
+    },
+    {
+        "id": "al_quick_flood_btn",
+        "type": "ui-button",
+        "z": "al_tab",
+        "group": "al_quick_group",
+        "name": "TCP Flood",
+        "label": "TCP Flood",
+        "order": 4,
+        "width": 0,
+        "height": 0,
+        "emulateClick": false,
+        "tooltip": "Add Flood",
+        "color": "white",
+        "bgcolor": "#7c3aed",
+        "className": "",
+        "icon": "waves",
+        "iconPosition": "left",
+        "payload": "",
+        "payloadType": "str",
+        "topic": "topic",
+        "topicType": "msg",
+        "x": 80,
+        "y": 760,
+        "wires": [
+            [
+                "al_quick_add_flood"
+            ]
+        ]
+    },
+    {
+        "id": "al_quick_inject_btn",
+        "type": "ui-button",
+        "z": "al_tab",
+        "group": "al_quick_group",
+        "name": "MQTT Inject",
+        "label": "Inject MQTT",
+        "order": 5,
+        "width": 0,
+        "height": 0,
+        "emulateClick": false,
+        "tooltip": "Add Inject",
+        "color": "white",
+        "bgcolor": "#0891b2",
+        "className": "",
+        "icon": "send",
+        "iconPosition": "left",
+        "payload": "",
+        "payloadType": "str",
+        "topic": "topic",
+        "topicType": "msg",
+        "x": 80,
+        "y": 820,
+        "wires": [
+            [
+                "al_quick_add_inject"
+            ]
+        ]
+    },
+    {
+        "id": "al_quick_add_recon",
+        "type": "function",
+        "z": "al_tab",
+        "name": "Add Recon",
+        "func": "var s=flow.get('al_scenario')||[];s.push({id:'s'+Date.now(),type:'port_scan',label:'Subnet Scan',params:{target:'172.18.0.0/24',ports:'1883,1880,8086',speed:'T4'},delay:1});flow.set('al_scenario',s);return[{payload:{scenario:s}},{payload:'[+]Recon.\\n'}]",
+        "outputs": 2,
+        "x": 320,
+        "y": 580,
+        "wires": [
+            [
+                "al_config_template"
+            ],
+            [
+                "al_terminal_template"
+            ]
+        ]
+    },
+    {
+        "id": "al_quick_add_sniff",
+        "type": "function",
+        "z": "al_tab",
+        "name": "Add Sniff",
+        "func": "var s=flow.get('al_scenario')||[];s.push({id:'s'+Date.now(),type:'mqtt_sniff',label:'MQTT Sniff',params:{broker:'mosquitto',timeout:10},delay:1});flow.set('al_scenario',s);return[{payload:{scenario:s}},{payload:'[+]Sniff.\\n'}]",
+        "outputs": 2,
+        "x": 320,
+        "y": 640,
+        "wires": [
+            [
+                "al_config_template"
+            ],
+            [
+                "al_terminal_template"
+            ]
+        ]
+    },
+    {
+        "id": "al_quick_add_dos",
+        "type": "function",
+        "z": "al_tab",
+        "name": "Add DoS",
+        "func": "var s=flow.get('al_scenario')||[];s.push({id:'s'+Date.now(),type:'mqtt_dos',label:'DoS Attack',params:{broker:'mosquitto',threads:30,duration:8},delay:1});flow.set('al_scenario',s);return[{payload:{scenario:s}},{payload:'[+]DoS.\\n'}]",
+        "outputs": 2,
+        "x": 320,
+        "y": 700,
+        "wires": [
+            [
+                "al_config_template"
+            ],
+            [
+                "al_terminal_template"
+            ]
+        ]
+    },
+    {
+        "id": "al_quick_add_flood",
+        "type": "function",
+        "z": "al_tab",
+        "name": "Add Flood",
+        "func": "var s=flow.get('al_scenario')||[];s.push({id:'s'+Date.now(),type:'tcp_flood',label:'TCP Flood',params:{target:'mosquitto',port:1883,count:500,rate:500},delay:1});flow.set('al_scenario',s);return[{payload:{scenario:s}},{payload:'[+]Flood.\\n'}]",
+        "outputs": 2,
+        "x": 320,
+        "y": 760,
+        "wires": [
+            [
+                "al_config_template"
+            ],
+            [
+                "al_terminal_template"
+            ]
+        ]
+    },
+    {
+        "id": "al_quick_add_inject",
+        "type": "function",
+        "z": "al_tab",
+        "name": "Add Inject",
+        "func": "var s=flow.get('al_scenario')||[];s.push({id:'s'+Date.now(),type:'mqtt_inject',label:'MQTT Inject',params:{topic:'sensors/data',value:9999},delay:1});flow.set('al_scenario',s);return[{payload:{scenario:s}},{payload:'[+]Inject.\\n'}]",
+        "outputs": 2,
+        "x": 320,
+        "y": 820,
+        "wires": [
+            [
+                "al_config_template"
+            ],
+            [
+                "al_terminal_template"
+            ]
+        ]
+    },
+    {
+        "id": "al_execute_init",
+        "type": "function",
+        "z": "al_tab",
+        "name": "Exec Init",
+        "func": "function bc(s){switch(s.type){case'port_scan':return['sh','-c','nmap -sS -n -T'+(s.params.speed||'T5').replace(/^T/i,'')+' -p '+(s.params.ports||'1883,1880,8086')+' --min-rate 100 '+(s.params.target||'172.18.0.0/24')];case'mqtt_sniff':return['python','mqtt_sniff.py','--broker',s.params.broker||'mosquitto','--timeout',String(s.params.timeout||10)];case'mqtt_inject':return['python','mqtt_inject.py','--broker','mosquitto','--topic',s.params.topic||'sensors/data','--value',String(s.params.value||9000)];case'mqtt_dos':return['python','mqtt_dos.py','--broker',s.params.broker||'mosquitto','--threads',String(s.params.threads||50),'--duration',String(s.params.duration||10)];case'tcp_flood':return['nping','--tcp','--flags','SYN','-p',String(s.params.port||1883),'-c',String(s.params.count||1000),'--rate',String(s.params.rate||1000),s.params.target||'mosquitto'];case'custom_cmd':return['sh','-c',s.params.command||'echo none'];default:return['echo','unknown']}}if(flow.get('al_exec_running'))return[null,{payload:'[!]Busy\\n'}];flow.set('al_exec_stop',false);flow.set('al_exec_running',true);var x=flow.get('al_scenario')||[];if(!x.length){flow.set('al_exec_running',false);return[null,{payload:'[!]Add steps.\\n'}]}return[{cmd:bc(x[0]),_stepIdx:0,_total:x.length,_scenario:x},null]",
+        "outputs": 2,
+        "x": 340,
+        "y": 280,
+        "wires": [
+            [
+                "al_prep_exec"
+            ],
+            [
+                "al_terminal_template"
+            ]
+        ]
+    },
+    {
+        "id": "al_prep_exec",
+        "type": "function",
+        "z": "al_tab",
+        "name": "Prep Exec",
+        "func": "var c=msg.cmd;if(!c||!c.length)return[null,{payload:'No cmd'}];msg.executed_cmd=c.join(' ');msg.url='http://docker-proxy:2375/containers/iot_attacker_node/exec';msg.method='POST';msg.payload={AttachStdout:true,AttachStderr:true,Tty:true,Cmd:c};return[msg,null]",
+        "outputs": 2,
+        "x": 580,
+        "y": 280,
+        "wires": [
+            [
+                "al_exec_create"
+            ],
+            [
+                "al_terminal_template"
+            ]
+        ]
+    },
+    {
+        "id": "al_exec_create",
+        "type": "http request",
+        "z": "al_tab",
+        "name": "Exec Create",
+        "method": "use",
+        "ret": "obj",
+        "paytoqs": "ignore",
+        "url": "",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "authType": "",
+        "senderr": true,
+        "x": 820,
+        "y": 280,
+        "wires": [
+            [
+                "al_start_exec"
+            ]
+        ]
+    },
+    {
+        "id": "al_start_exec",
+        "type": "function",
+        "z": "al_tab",
+        "name": "Start Exec",
+        "func": "if(msg.statusCode&&msg.statusCode>=400){flow.set('al_exec_running',false);return[null,{payload:'HTTP err'}]}if(!msg.payload||!msg.payload.Id){flow.set('al_exec_running',false);return[null,{payload:'Exec fail'}]}msg.url='http://docker-proxy:2375/exec/'+msg.payload.Id+'/start';msg.method='POST';msg.payload={Detach:false,Tty:true};return[msg,null]",
+        "outputs": 2,
+        "x": 1060,
+        "y": 280,
+        "wires": [
+            [
+                "al_exec_start"
+            ],
+            [
+                "al_terminal_template"
+            ]
+        ]
+    },
+    {
+        "id": "al_exec_start",
+        "type": "http request",
+        "z": "al_tab",
+        "name": "Exec Start",
+        "method": "use",
+        "ret": "txt",
+        "paytoqs": "ignore",
+        "url": "",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "authType": "",
+        "senderr": true,
+        "x": 1320,
+        "y": 280,
+        "wires": [
+            [
+                "al_format_output"
+            ]
+        ]
+    },
+    {
+        "id": "al_format_output",
+        "type": "function",
+        "z": "al_tab",
+        "name": "Format Out",
+        "func": "var r=msg.executed_cmd||'?';if(msg.statusCode&&msg.statusCode>=400){flow.set('al_exec_running',false);msg.payload='<span>HTTP '+msg.statusCode+'</span>';return msg}if(typeof msg.payload==='object'&&msg.statusCode===undefined){flow.set('al_exec_running',false);msg.payload='<span>Conn fail</span>';return msg}var o='<span class=\"prompt\">root:~#</span><span class=\"cmd-text\">'+r+'</span><br>';var t=String(msg.payload||'');if(!t.trim())t='[+]OK';var l=t.toLowerCase();var b=l.includes('host seems down')||(l.includes('filtered')&&r.includes('nmap'))||(l.includes('reset by peer')&&!l.includes('errno 111'))||l.includes('errno 104')||l.includes('error 104');t=t.replace(/</g,'&lt;');o+='<div class=\"'+(b?'output-blocked':'output-success')+'\">'+t+'</div>';if(b)o+='<div class=\"alert-box\">BLOCKED</div>';msg.payload=o;return msg",
+        "outputs": 1,
+        "x": 1560,
+        "y": 280,
+        "wires": [
+            [
+                "al_terminal_template",
+                "al_execute_next"
+            ]
+        ]
+    },
+    {
+        "id": "al_execute_next",
+        "type": "function",
+        "z": "al_tab",
+        "name": "Exec Next",
+        "func": "if(msg._stepIdx===undefined)return null;if(msg.statusCode&&msg.statusCode>=400){flow.set('al_exec_running',false);return null}if(flow.get('al_exec_stop')){flow.set('al_exec_running',false);return[null,{payload:'Aborted'}]}var i=msg._stepIdx+1;var t=msg._total||1;var s=msg._scenario||flow.get('al_scenario')||[];if(i<t){var st=s[i];var cmd;switch(st.type){case'port_scan':cmd=['sh','-c','nmap -sS -n -T'+(st.params.speed||'T5').replace(/^T/i,'')+' -p '+(st.params.ports||'1883,1880,8086')+' --min-rate 100 '+(st.params.target||'172.18.0.0/24')];break;case'mqtt_sniff':cmd=['python','mqtt_sniff.py','--broker',st.params.broker||'mosquitto','--timeout',String(st.params.timeout||10)];break;case'mqtt_inject':cmd=['python','mqtt_inject.py','--broker','mosquitto','--topic',st.params.topic||'sensors/data','--value',String(st.params.value||9000)];break;case'mqtt_dos':cmd=['python','mqtt_dos.py','--broker',st.params.broker||'mosquitto','--threads',String(st.params.threads||50),'--duration',String(st.params.duration||10)];break;case'tcp_flood':cmd=['nping','--tcp','--flags','SYN','-p',String(st.params.port||1883),'-c',String(st.params.count||1000),'--rate',String(st.params.rate||1000),st.params.target||'mosquitto'];break;case'custom_cmd':cmd=['sh','-c',st.params.command||'echo none'];break;default:cmd=['echo','unknown']}return[{cmd:cmd,_stepIdx:i,_total:t,_scenario:s},null]}else{flow.set('al_exec_running',false);return[null,{payload:'<span>Complete!</span>'}]}",
+        "outputs": 2,
+        "x": 1800,
+        "y": 280,
+        "wires": [
+            [
+                "al_prep_exec"
+            ],
+            [
+                "al_terminal_template"
+            ]
+        ]
+    },
+    {
+        "id": "al_terminal_template",
+        "type": "ui-template",
+        "z": "al_tab",
+        "group": "al_right_group",
+        "name": "Attack Terminal",
+        "order": 1,
+        "width": 0,
+        "height": 0,
+        "format": "<template><div class=\"hacker-terminal\"><div v-html=\"displayHtml\"></div></div></template><script>export default{data(){return{buffer:\"\"}},computed:{displayHtml(){return this.buffer||\"<span class=\\'prompt\\'>attack-lab:~#</span>\"}},watch:{msg:{handler(v){if(v&&v.payload&&typeof v.payload===\"string\")this.buffer+=v.payload;if(v&&v.payload&&v.payload._clear)this.buffer=\"\"},immediate:true}}}</script><style>.hacker-terminal{background:#0f172a;padding:15px;height:700px;min-height:700px;overflow-y:auto;font-family:monospace;color:#10b981}.prompt{color:#38bdf8;font-weight:bold}.output-success{color:#10b981;white-space:pre-wrap}.output-blocked{color:#94a3b8}.alert-box{color:#ef4444;padding:10px;border:1px solid #ef4444;background:rgba(239,68,68,.1);border-radius:4px}</style>",
+        "storeOutMessages": false,
+        "passthru": false,
+        "resendOnRefresh": false,
+        "templateScope": "local",
+        "className": "",
+        "x": 1540,
+        "y": 80,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "al_clear_terminal_btn",
+        "type": "ui-button",
+        "z": "al_tab",
+        "group": "al_left_group",
+        "name": "Clear Term",
+        "label": "Clear Terminal",
+        "order": 8,
+        "width": 0,
+        "height": 0,
+        "emulateClick": false,
+        "tooltip": "Clear",
+        "color": "white",
+        "bgcolor": "#64748b",
+        "className": "",
+        "icon": "delete",
+        "iconPosition": "left",
+        "payload": "{\"_clear\":true}",
+        "payloadType": "json",
+        "topic": "topic",
+        "topicType": "msg",
+        "x": 80,
+        "y": 460,
+        "wires": [
+            [
+                "al_terminal_template"
+            ]
+        ]
+    },
+    {
+        "id": "al_guide_template",
+        "type": "ui-template",
+        "z": "al_tab",
+        "group": "al_guide_group",
+        "name": "Guide",
+        "order": 1,
+        "width": 0,
+        "height": 0,
+        "format": "<div style='padding:10px;font-family:monospace;color:#e2e8f0;line-height:1.6;'><h3 style='color:#38bdf8;margin:0 0 12px 0;'>Scenario Builder Guide</h3><div style='background:#1e293b;border-radius:6px;padding:12px;margin-bottom:12px;'><b style='color:#facc15;'>Step 1:</b> Click 'Start Attacker Node' to deploy container.<br><b style='color:#facc15;'>Step 2:</b> Click 'Breach Into Network' to connect to target network.<br><b style='color:#facc15;'>Step 3:</b> Choose attack type below, configure params, click + Add Step.<br><b style='color:#facc15;'>Step 4:</b> Add multiple steps to build your attack chain.<br><b style='color:#facc15;'>Step 5:</b> Click 'Execute Scenario' to run all steps in sequence.</div><h4 style='color:#38bdf8;margin:12px 0 8px 0;'>Attack Types</h4><div style='display:grid;grid-template-columns:1fr 1fr;gap:8px;'><div style='background:#1e293b;border-radius:6px;padding:10px;'><b style='color:#10b981;'>Port Scan</b><br><span style='color:#94a3b8;font-size:12px;'>nmap SYN scan on target subnet.</span></div><div style='background:#1e293b;border-radius:6px;padding:10px;'><b style='color:#10b981;'>MQTT Sniff</b><br><span style='color:#94a3b8;font-size:12px;'>Intercept all MQTT traffic via # wildcard.</span></div><div style='background:#1e293b;border-radius:6px;padding:10px;'><b style='color:#10b981;'>MQTT Inject</b><br><span style='color:#94a3b8;font-size:12px;'>Publish fake telemetry to any topic.</span></div><div style='background:#1e293b;border-radius:6px;padding:10px;'><b style='color:#10b981;'>MQTT DoS</b><br><span style='color:#94a3b8;font-size:12px;'>Exhaust broker connections.</span></div><div style='background:#1e293b;border-radius:6px;padding:10px;'><b style='color:#10b981;'>TCP Flood</b><br><span style='color:#94a3b8;font-size:12px;'>SYN flood via nping.</span></div><div style='background:#1e293b;border-radius:6px;padding:10px;'><b style='color:#10b981;'>Custom Command</b><br><span style='color:#94a3b8;font-size:12px;'>Run any shell command.</span></div></div><h4 style='color:#38bdf8;margin:12px 0 8px 0;'>Find Service IPs</h4><div style='background:#1e293b;border-radius:6px;padding:12px;font-size:12px;'><b style='color:#facc15;'>getent hosts mosquitto</b> &rarr; 172.18.0.5<br><b style='color:#facc15;'>getent hosts nodered</b> &rarr; 172.18.0.25<br><b style='color:#facc15;'>getent hosts influxdb</b> &rarr; 172.18.0.4<br><b style='color:#facc15;'>getent hosts grafana</b> &rarr; varies<br><br>Or use nmap inside attacker:<br><b style='color:#facc15;'>nmap -sL 172.18.0.0/24</b> &rarr; list hosts<br><b style='color:#facc15;'>nmap -sn 172.18.0.0/24</b> &rarr; ping sweep<br><b style='color:#facc15;'>nmap -sS -p 8086,1880,1883 172.18.0.0/24</b> &rarr; find services</div><h4 style='color:#38bdf8;margin:12px 0 8px 0;'>Available Tools in Custom Command</h4><div style='background:#1e293b;border-radius:6px;padding:12px;'><table style='width:100%;border-collapse:collapse;font-size:12px;'><tr style='border-bottom:1px solid #334155;'><th style='text-align:left;padding:4px 8px;color:#38bdf8;width:120px;'>Command</th><th style='text-align:left;padding:4px 8px;color:#38bdf8;'>Usage Example</th></tr><tr style='border-bottom:1px solid #1e293b;'><td style='padding:4px 8px;color:#facc15;'>nmap</td><td style='padding:4px 8px;color:#f8fafc;'>nmap -sV -p 1883 &lt;broker-ip&gt;</td></tr><tr style='border-bottom:1px solid #1e293b;'><td style='padding:4px 8px;color:#facc15;'>curl</td><td style='padding:4px 8px;color:#f8fafc;'>curl http://&lt;broker-ip&gt;:8086</td></tr><tr style='border-bottom:1px solid #1e293b;'><td style='padding:4px 8px;color:#facc15;'>nping</td><td style='padding:4px 8px;color:#f8fafc;'>nping --tcp -p 1883 -c 100</td></tr><tr style='border-bottom:1px solid #1e293b;'><td style='padding:4px 8px;color:#facc15;'>tcpdump</td><td style='padding:4px 8px;color:#f8fafc;'>tcpdump -i eth0 port 1883</td></tr><tr style='border-bottom:1px solid #1e293b;'><td style='padding:4px 8px;color:#facc15;'>ip</td><td style='padding:4px 8px;color:#f8fafc;'>ip addr / ip route</td></tr><tr style='border-bottom:1px solid #1e293b;'><td style='padding:4px 8px;color:#facc15;'>python</td><td style='padding:4px 8px;color:#f8fafc;'>python -c 'print(\"hello\")'</td></tr><tr style='border-bottom:1px solid #1e293b;'><td style='padding:4px 8px;color:#facc15;'>mqtt_sniff.py</td><td style='padding:4px 8px;color:#f8fafc;'>python mqtt_sniff.py --broker mosquitto</td></tr><tr style='border-bottom:1px solid #1e293b;'><td style='padding:4px 8px;color:#facc15;'>mqtt_inject.py</td><td style='padding:4px 8px;color:#f8fafc;'>python mqtt_inject.py --topic sensors/data</td></tr><tr><td style='padding:4px 8px;color:#facc15;'>mqtt_dos.py</td><td style='padding:4px 8px;color:#f8fafc;'>python mqtt_dos.py --broker mosquitto</td></tr></table></div><div style='background:#0f172a;border-radius:6px;padding:10px;margin-top:12px;border:1px solid #334155;'><b style='color:#facc15;'>Tips:</b><br><span style='color:#94a3b8;font-size:12px;'>Steps run sequentially (top to bottom). Use Stop Execution to cancel mid-sequence. Suricata IPS may block attacks &mdash; watch for red BLOCKED alerts in terminal.</span></div></div>",
+        "storeOutMessages": true,
+        "passthru": false,
+        "resendOnRefresh": true,
+        "templateScope": "local",
+        "className": "",
+        "x": 90,
+        "y": 860,
+        "wires": [
+            []
+        ]
+    },
+    {
         "id": "tour_cyber",
         "type": "ui-template",
         "z": "b78d14cc362e1196",
@@ -5331,903 +6237,5 @@
         "x": 1230,
         "y": 720,
         "wires": []
-    },
-    {
-        "id": "al_start_att_btn",
-        "type": "ui-button",
-        "z": "al_tab",
-        "group": "al_left_group",
-        "name": "Start Attacker",
-        "label": "1. Start Attacker Node",
-        "order": 1,
-        "width": 0,
-        "height": 0,
-        "emulateClick": false,
-        "tooltip": "Deploy attacker",
-        "color": "white",
-        "bgcolor": "#475569",
-        "className": "",
-        "icon": "server",
-        "iconPosition": "left",
-        "payload": "",
-        "payloadType": "str",
-        "topic": "topic",
-        "topicType": "msg",
-        "x": 80,
-        "y": 80,
-        "wires": [
-            [
-                "al_prep_create_vm"
-            ]
-        ]
-    },
-    {
-        "id": "al_breach_btn",
-        "type": "ui-button",
-        "z": "al_tab",
-        "group": "al_left_group",
-        "name": "Breach Network",
-        "label": "2. Breach Into Network",
-        "order": 2,
-        "width": 0,
-        "height": 0,
-        "emulateClick": false,
-        "tooltip": "Connect attacker",
-        "color": "white",
-        "bgcolor": "#57534e",
-        "className": "",
-        "icon": "login",
-        "iconPosition": "left",
-        "payload": "",
-        "payloadType": "str",
-        "topic": "topic",
-        "topicType": "msg",
-        "x": 80,
-        "y": 140,
-        "wires": [
-            [
-                "al_breach_prep_connect"
-            ]
-        ]
-    },
-    {
-        "id": "al_execute_btn",
-        "type": "ui-button",
-        "z": "al_tab",
-        "group": "al_left_group",
-        "name": "Execute",
-        "label": "Execute Scenario",
-        "order": 5,
-        "width": 0,
-        "height": 0,
-        "emulateClick": false,
-        "tooltip": "Run",
-        "color": "white",
-        "bgcolor": "#059669",
-        "className": "",
-        "icon": "play_arrow",
-        "iconPosition": "left",
-        "payload": "",
-        "payloadType": "str",
-        "topic": "topic",
-        "topicType": "msg",
-        "x": 80,
-        "y": 280,
-        "wires": [
-            [
-                "al_execute_init"
-            ]
-        ]
-    },
-    {
-        "id": "al_stop_btn",
-        "type": "ui-button",
-        "z": "al_tab",
-        "group": "al_left_group",
-        "name": "Stop",
-        "label": "Stop Execution",
-        "order": 6,
-        "width": 0,
-        "height": 0,
-        "emulateClick": false,
-        "tooltip": "Stop",
-        "color": "white",
-        "bgcolor": "#f59e0b",
-        "className": "",
-        "icon": "stop",
-        "iconPosition": "left",
-        "payload": "{\"action\":\"stop\"}",
-        "payloadType": "json",
-        "topic": "topic",
-        "topicType": "msg",
-        "x": 80,
-        "y": 340,
-        "wires": [
-            [
-                "al_handle_action"
-            ]
-        ]
-    },
-    {
-        "id": "al_clear_btn",
-        "type": "ui-button",
-        "z": "al_tab",
-        "group": "al_left_group",
-        "name": "Clear",
-        "label": "Clear All Steps",
-        "order": 7,
-        "width": 0,
-        "height": 0,
-        "emulateClick": false,
-        "tooltip": "Clear",
-        "color": "white",
-        "bgcolor": "#dc2626",
-        "className": "",
-        "icon": "delete_sweep",
-        "iconPosition": "left",
-        "payload": "{\"action\":\"clear\"}",
-        "payloadType": "json",
-        "topic": "topic",
-        "topicType": "msg",
-        "x": 80,
-        "y": 400,
-        "wires": [
-            [
-                "al_handle_action"
-            ]
-        ]
-    },
-    {
-        "id": "al_remove_vm_btn",
-        "type": "ui-button",
-        "z": "al_tab",
-        "group": "al_left_group",
-        "name": "Remove Attacker",
-        "label": "Remove Attacker Node",
-        "order": 3,
-        "width": 0,
-        "height": 0,
-        "emulateClick": false,
-        "tooltip": "Delete container",
-        "color": "white",
-        "bgcolor": "#7f1d1d",
-        "className": "",
-        "icon": "delete_forever",
-        "iconPosition": "left",
-        "payload": "",
-        "payloadType": "str",
-        "topic": "topic",
-        "topicType": "msg",
-        "x": 80,
-        "y": 460,
-        "wires": [
-            [
-                "al_prep_delete_vm"
-            ]
-        ]
-    },
-    {
-        "id": "al_prep_create_vm",
-        "type": "function",
-        "z": "al_tab",
-        "name": "Prep Create",
-        "func": "msg.url='http://docker-proxy:2375/containers/create?name=iot_attacker_node';msg.method='POST';msg.payload={Image:'iot-attacker',Tty:true,OpenStdin:true,HostConfig:{NetworkMode:'bridge',AutoRemove:true}};return[msg,null]",
-        "outputs": 2,
-        "x": 320,
-        "y": 80,
-        "wires": [
-            [
-                "al_http_create_vm"
-            ],
-            [
-                "al_terminal_template"
-            ]
-        ]
-    },
-    {
-        "id": "al_http_create_vm",
-        "type": "http request",
-        "z": "al_tab",
-        "name": "Create API",
-        "method": "use",
-        "ret": "obj",
-        "paytoqs": "ignore",
-        "url": "",
-        "tls": "",
-        "persist": false,
-        "proxy": "",
-        "authType": "",
-        "senderr": false,
-        "x": 560,
-        "y": 80,
-        "wires": [
-            [
-                "al_prep_start_vm"
-            ]
-        ]
-    },
-    {
-        "id": "al_prep_start_vm",
-        "type": "function",
-        "z": "al_tab",
-        "name": "Prep Start",
-        "func": "if(!msg.payload||!msg.payload.Id)return[null,{payload:'Failed'}];msg.url='http://docker-proxy:2375/containers/iot_attacker_node/start';msg.method='POST';msg.payload={};return[msg,null]",
-        "outputs": 2,
-        "x": 790,
-        "y": 80,
-        "wires": [
-            [
-                "al_http_start_vm"
-            ],
-            [
-                "al_terminal_template"
-            ]
-        ]
-    },
-    {
-        "id": "al_http_start_vm",
-        "type": "http request",
-        "z": "al_tab",
-        "name": "Start API",
-        "method": "use",
-        "ret": "txt",
-        "paytoqs": "ignore",
-        "url": "",
-        "tls": "",
-        "persist": false,
-        "proxy": "",
-        "authType": "",
-        "senderr": false,
-        "x": 1040,
-        "y": 80,
-        "wires": [
-            [
-                "al_fmt_vm_ready"
-            ]
-        ]
-    },
-    {
-        "id": "al_fmt_vm_ready",
-        "type": "function",
-        "z": "al_tab",
-        "name": "VM Ready",
-        "func": "msg.payload='[+]Attacker deployed.';return msg",
-        "outputs": 1,
-        "x": 1290,
-        "y": 80,
-        "wires": [
-            [
-                "al_terminal_template"
-            ]
-        ]
-    },
-    {
-        "id": "al_breach_prep_connect",
-        "type": "function",
-        "z": "al_tab",
-        "name": "Prep Breach",
-        "func": "msg.url='http://docker-proxy:2375/networks/iot_infralab_net/connect';msg.method='POST';msg.payload={Container:'iot_attacker_node'};return msg",
-        "outputs": 1,
-        "x": 320,
-        "y": 140,
-        "wires": [
-            [
-                "al_http_breach_connect"
-            ]
-        ]
-    },
-    {
-        "id": "al_http_breach_connect",
-        "type": "http request",
-        "z": "al_tab",
-        "name": "Connect API",
-        "method": "use",
-        "ret": "txt",
-        "paytoqs": "ignore",
-        "url": "",
-        "tls": "",
-        "persist": false,
-        "proxy": "",
-        "authType": "",
-        "senderr": false,
-        "x": 560,
-        "y": 140,
-        "wires": [
-            [
-                "al_fmt_breach_done"
-            ]
-        ]
-    },
-    {
-        "id": "al_fmt_breach_done",
-        "type": "function",
-        "z": "al_tab",
-        "name": "Breach Done",
-        "func": "if(msg.statusCode===200)msg.payload='[+]Breached.';else msg.payload='Failed';return msg",
-        "outputs": 1,
-        "x": 790,
-        "y": 140,
-        "wires": [
-            [
-                "al_terminal_template"
-            ]
-        ]
-    },
-    {
-        "id": "al_prep_delete_vm",
-        "type": "function",
-        "z": "al_tab",
-        "name": "Prep Delete",
-        "func": "msg.url='http://docker-proxy:2375/containers/iot_attacker_node?force=true';msg.method='DELETE';return[msg,null]",
-        "outputs": 2,
-        "x": 320,
-        "y": 520,
-        "wires": [
-            [
-                "al_http_delete_vm"
-            ],
-            [
-                "al_terminal_template"
-            ]
-        ]
-    },
-    {
-        "id": "al_http_delete_vm",
-        "type": "http request",
-        "z": "al_tab",
-        "name": "Delete API",
-        "method": "use",
-        "ret": "txt",
-        "paytoqs": "ignore",
-        "url": "",
-        "tls": "",
-        "persist": false,
-        "proxy": "",
-        "authType": "",
-        "senderr": false,
-        "x": 560,
-        "y": 520,
-        "wires": [
-            [
-                "al_fmt_delete_vm"
-            ]
-        ]
-    },
-    {
-        "id": "al_fmt_delete_vm",
-        "type": "function",
-        "z": "al_tab",
-        "name": "Fmt Delete",
-        "func": "if(msg.statusCode>=200&&msg.statusCode<300)msg.payload='[+]Removed.';else msg.payload='Error.';return msg",
-        "outputs": 1,
-        "x": 790,
-        "y": 520,
-        "wires": [
-            [
-                "al_terminal_template"
-            ]
-        ]
-    },
-    {
-        "id": "al_http_in",
-        "type": "http in",
-        "z": "al_tab",
-        "name": "POST/step",
-        "url": "/attack-lab/step",
-        "method": "post",
-        "upload": false,
-        "swaggerDoc": "",
-        "x": 120,
-        "y": 520,
-        "wires": [
-            [
-                "al_http_handler"
-            ]
-        ]
-    },
-    {
-        "id": "al_http_handler",
-        "type": "function",
-        "z": "al_tab",
-        "name": "HTTP Handler",
-        "func": "var b=msg.payload;if(!b||!b.action)return msg;if(b.action===\"add_step\"){var s=flow.get(\"al_scenario\")||[];s.push({id:\"s\"+Date.now(),type:b.type,label:b.label||b.type,params:b.params||{},delay:1});flow.set(\"al_scenario\",s);msg.payload={success:true,scenario:s}}if(b.action===\"delete_step\"){var s=flow.get(\"al_scenario\")||[];if(b.index>=0&&b.index<s.length)s.splice(b.index,1);flow.set(\"al_scenario\",s);msg.payload={success:true,scenario:s}}if(b.action===\"clear\"){flow.set(\"al_scenario\",[]);msg.payload={success:true,scenario:[]}}return msg",
-        "outputs": 1,
-        "x": 350,
-        "y": 520,
-        "wires": [
-            [
-                "al_http_res"
-            ]
-        ]
-    },
-    {
-        "id": "al_http_res",
-        "type": "http response",
-        "z": "al_tab",
-        "name": "HTTP200",
-        "statusCode": "",
-        "headers": {},
-        "x": 580,
-        "y": 520,
-        "wires": []
-    },
-    {
-        "id": "al_handle_action",
-        "type": "function",
-        "z": "al_tab",
-        "name": "Handle Action",
-        "func": "var p=msg.payload;if(!p||!p.action)return null;if(p.action===\"clear\"){flow.set(\"al_scenario\",[]);flow.set(\"al_exec_stop\",false);flow.set(\"al_exec_running\",false);return{payload:{scenario:[]}}}if(p.action===\"stop\"){flow.set(\"al_exec_stop\",true);flow.set(\"al_exec_running\",false);return[null,{payload:\"[!]Halted.\\n\"}]}return null",
-        "outputs": 2,
-        "x": 360,
-        "y": 360,
-        "wires": [
-            [
-                "al_config_template"
-            ],
-            [
-                "al_terminal_template"
-            ]
-        ]
-    },
-    {
-        "id": "al_config_template",
-        "type": "ui-template",
-        "z": "al_tab",
-        "group": "al_left_group",
-        "name": "Attack Configurator",
-        "order": 4,
-        "width": 0,
-        "height": 0,
-        "format": "<template>\n    <div class=\"al-container\">\n        <div class=\"al-section\">\n            <label class=\"al-label\">1. Choose Attack Type</label>\n            <select v-model=\"selectedType\" @change=\"onTypeChange\" class=\"al-select\">\n                <option value=\"\">-- Select Attack --</option>\n                <option value=\"port_scan\">Port Scan (Nmap)</option>\n                <option value=\"mqtt_sniff\">MQTT Sniff</option>\n                <option value=\"mqtt_inject\">MQTT Inject</option>\n                <option value=\"mqtt_dos\">MQTT DoS</option>\n                <option value=\"tcp_flood\">TCP Flood (Nping)</option>\n                <option value=\"custom_cmd\">Custom Command</option>\n            </select>\n        </div>\n        <div v-if=\"selectedType\" class=\"al-section al-form\">\n            <div v-if=\"selectedType === 'port_scan'\">\n                <label class=\"al-label\">Target <span class=\"al-hint\">(target IP or subnet)</span></label>\n                <input v-model=\"params.target\" placeholder=\"<target-subnet>\" class=\"al-input\">\n                <label class=\"al-label\">Ports <span class=\"al-hint\">(e.g. 1883,8086)</span></label>\n                <input v-model=\"params.ports\" placeholder=\"1883,1880,8086\" class=\"al-input\">\n                <label class=\"al-label\">Speed</label>\n                <select v-model=\"params.speed\" class=\"al-select\">\n                    <option value=\"T4\">Normal (T4)</option>\n                    <option value=\"T5\">Insane (T5)</option>\n                </select>\n            </div>\n            <div v-if=\"selectedType === 'mqtt_sniff'\">\n                <label class=\"al-label\">Broker <span class=\"al-hint\">(broker hostname)</span></label>\n                <input v-model=\"params.broker\" placeholder=\"mosquitto\" class=\"al-input\">\n                <label class=\"al-label\">Timeout <span class=\"al-hint\">(duration in seconds)</span></label>\n                <input v-model=\"params.timeout\" type=\"number\" placeholder=\"10\" class=\"al-input\">\n            </div>\n            <div v-if=\"selectedType === 'mqtt_inject'\">\n                <label class=\"al-label\">Topic</label>\n                <input v-model=\"params.topic\" placeholder=\"sensors/data\" class=\"al-input\">\n                <label class=\"al-label\">Value <span class=\"al-hint\">(fake sensor value)</span></label>\n                <input v-model=\"params.value\" type=\"number\" placeholder=\"9000\" class=\"al-input\">\n                <label class=\"al-label\">Count</label>\n                <input v-model=\"params.count\" type=\"number\" placeholder=\"1\" class=\"al-input\">\n            </div>\n            <div v-if=\"selectedType === 'mqtt_dos'\">\n                <label class=\"al-label\">Broker <span class=\"al-hint\">(broker hostname or IP)</span></label>\n                <input v-model=\"params.broker\" placeholder=\"<iot-broker-ip>\" class=\"al-input\">\n                <label class=\"al-label\">Threads</label>\n                <input v-model=\"params.threads\" type=\"number\" placeholder=\"50\" class=\"al-input\">\n                <label class=\"al-label\">Duration <span class=\"al-hint\">(seconds)</span></label>\n                <input v-model=\"params.duration\" type=\"number\" placeholder=\"10\" class=\"al-input\">\n            </div>\n            <div v-if=\"selectedType === 'tcp_flood'\">\n                <label class=\"al-label\">Target</label>\n                <input v-model=\"params.target\" placeholder=\"mosquitto\" class=\"al-input\">\n                <label class=\"al-label\">Port</label>\n                <input v-model=\"params.port\" type=\"number\" placeholder=\"1883\" class=\"al-input\">\n                <label class=\"al-label\">Count <span class=\"al-hint\">(total packets)</span></label>\n                <input v-model=\"params.count\" type=\"number\" placeholder=\"1000\" class=\"al-input\">\n                <label class=\"al-label\">Rate <span class=\"al-hint\">(rate packets/sec)</span></label>\n                <input v-model=\"params.rate\" type=\"number\" placeholder=\"1000\" class=\"al-input\">\n            </div>\n            <div v-if=\"selectedType === 'custom_cmd'\">\n                <label class=\"al-label\">Command <span class=\"al-hint\">(any shell command)</span></label>\n                <input v-model=\"params.command\" placeholder=\"echo hello\" class=\"al-input al-input-wide\">\n            </div>\n            <div class=\"al-form-actions\">\n                <button class=\"al-btn al-btn-add\" @click=\"addStep\" :disabled=\"!canAdd\">+ Add Step</button>\n            </div>\n        </div>\n        <div v-if=\"scenario.length > 0\" class=\"al-section\">\n            <h3 class=\"al-section-title\">2. Attack Sequence ({{ scenario.length }})</h3>\n            <div v-for=\"(step, idx) in scenario\" :key=\"step.id\" class=\"al-step\">\n                <span class=\"al-step-num\">{{ idx + 1 }}.</span>\n                <span class=\"al-step-type\" :class=\"'al-type-' + step.type\">{{ step.label }}</span>\n                <span class=\"al-step-params\">{{ formatParams(step.params) }}</span>\n                <button class=\"al-btn-del\" @click=\"deleteStep(idx)\" title=\"Remove\">X</button>\n            </div>\n        </div>\n        <div v-if=\"!selectedType && scenario.length === 0\" class=\"al-empty\">\n            <p>Select attack type above, configure params, then click + Add.</p>\n        </div>\n    </div>\n</template>\n<script>\nexport default {\n    data() {\n        return {\n            selectedType: '',\n            params: {},\n            scenario: [],\n            typeLabels: {\n                port_scan: 'Port Scan',\n                mqtt_sniff: 'MQTT Sniff',\n                mqtt_inject: 'MQTT Inject',\n                mqtt_dos: 'MQTT DoS',\n                tcp_flood: 'TCP Flood',\n                custom_cmd: 'Custom Cmd'\n            }\n        };\n    },\n    computed: {\n        canAdd() {\n            if (!this.selectedType) return false;\n            if (this.selectedType === 'custom_cmd' && !this.params.command) return false;\n            return true;\n        }\n    },\n    watch: {\n        msg: {\n            handler(val) {\n                if (!val || !val.payload) return;\n                if (val.payload.scenario) this.scenario = val.payload.scenario;\n                if (val.payload.selectedType) this.selectedType = val.payload.selectedType;\n            },\n            immediate: true,\n            deep: true\n        }\n    },\n    methods: {\n        onTypeChange() { this.params = {}; },\n        addStep() {\n            if (!this.canAdd) return;\n            fetch('/attack-lab/step', {method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({action: 'add_step', type: this.selectedType, label: this.typeLabels[this.selectedType] || this.selectedType, params: {...this.params}})}).then(r => r.json()).then(data => { if (data.scenario) this.scenario = data.scenario; }).catch(e => console.error('Attack Lab:', e));\n        },\n        deleteStep(idx) {\n            fetch('/attack-lab/step', {method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({action: 'delete_step', index: idx})}).then(r => r.json()).then(data => { if (data.scenario) this.scenario = data.scenario; }).catch(e => console.error(e));\n        },\n        formatParams(params) {\n            if (!params) return '';\n            return Object.entries(params).filter(([k, v]) => v && v !== '').map(([k, v]) => k + '=' + v).join(', ');\n        }\n    }\n};\n</script>\n<style>\n.al-container { padding: 8px; background: #0f172a; border-radius: 6px; }\n.al-section { margin-bottom: 16px; }\n.al-section-title { margin: 0 0 8px 0; font-size: 14px; color: #ffffff; font-weight: bold; }\n.al-label { display: block; margin-bottom: 4px; font-size: 12px; color: #f1f5f9; text-transform: uppercase; letter-spacing: 0.5px; font-weight: 600; }\n.al-hint { color: #cbd5e1; text-transform: none; letter-spacing: 0; font-weight: normal; }\n.al-input, .al-select { width: 100%; padding: 8px 10px; margin-bottom: 10px; background: #1e293b; border: 1px solid #334155; border-radius: 4px; color: #f8fafc; font-family: monospace; font-size: 13px; box-sizing: border-box; }\n.al-select { cursor: pointer; }\n.al-input:focus, .al-select:focus { outline: none; border-color: #38bdf8; }\n.al-form { background: #0f172a; padding: 12px; border-radius: 6px; border: 1px solid #1e293b; }\n.al-form-actions { margin-top: 12px; }\n.al-btn { padding: 8px 20px; border: none; border-radius: 4px; cursor: pointer; font-size: 13px; font-weight: bold; font-family: monospace; }\n.al-btn:disabled { opacity: 0.4; cursor: not-allowed; }\n.al-btn-add { background: #059669; color: white; }\n.al-btn-add:hover:not(:disabled) { background: #10b981; }\n.al-empty { text-align: center; padding: 40px 20px; color: #f1f5f9; font-family: monospace; }\n.al-step { display: flex; align-items: center; padding: 8px 10px; margin-bottom: 6px; background: #1e293b; border-radius: 4px; border-left: 3px solid #38bdf8; gap: 8px; }\n.al-step-num { color: #94a3b8; min-width: 24px; font-family: monospace; }\n.al-step-type { color: #38bdf8; font-weight: bold; font-size: 12px; min-width: 90px; font-family: monospace; }\n.al-step-params { color: #cbd5e1; font-size: 11px; flex: 1; font-family: monospace; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }\n.al-btn-del { background: transparent; border: 1px solid #ef4444; color: #ef4444; cursor: pointer; padding: 2px 6px; border-radius: 3px; font-size: 12px; }\n.al-btn-del:hover { background: rgba(239,68,68,0.2); }\n</style>",
-        "storeOutMessages": true,
-        "passthru": false,
-        "resendOnRefresh": true,
-        "templateScope": "local",
-        "className": "",
-        "x": 380,
-        "y": 200,
-        "wires": [
-            [
-                "al_http_handler"
-            ]
-        ]
-    },
-    {
-        "id": "al_quick_recon_btn",
-        "type": "ui-button",
-        "z": "al_tab",
-        "group": "al_quick_group",
-        "name": "Recon Nmap",
-        "label": "Recon (Nmap)",
-        "order": 1,
-        "width": 0,
-        "height": 0,
-        "emulateClick": false,
-        "tooltip": "Add Recon",
-        "color": "white",
-        "bgcolor": "#0284c7",
-        "className": "",
-        "icon": "wifi_tethering",
-        "iconPosition": "left",
-        "payload": "",
-        "payloadType": "str",
-        "topic": "topic",
-        "topicType": "msg",
-        "x": 80,
-        "y": 580,
-        "wires": [
-            [
-                "al_quick_add_recon"
-            ]
-        ]
-    },
-    {
-        "id": "al_quick_sniff_btn",
-        "type": "ui-button",
-        "z": "al_tab",
-        "group": "al_quick_group",
-        "name": "MQTT Sniff",
-        "label": "Sniff MQTT",
-        "order": 2,
-        "width": 0,
-        "height": 0,
-        "emulateClick": false,
-        "tooltip": "Add Sniff",
-        "color": "white",
-        "bgcolor": "#10b981",
-        "className": "",
-        "icon": "visibility",
-        "iconPosition": "left",
-        "payload": "",
-        "payloadType": "str",
-        "topic": "topic",
-        "topicType": "msg",
-        "x": 80,
-        "y": 640,
-        "wires": [
-            [
-                "al_quick_add_sniff"
-            ]
-        ]
-    },
-    {
-        "id": "al_quick_dos_btn",
-        "type": "ui-button",
-        "z": "al_tab",
-        "group": "al_quick_group",
-        "name": "MQTT DoS",
-        "label": "DoS MQTT",
-        "order": 3,
-        "width": 0,
-        "height": 0,
-        "emulateClick": false,
-        "tooltip": "Add DoS",
-        "color": "white",
-        "bgcolor": "#dc2626",
-        "className": "",
-        "icon": "bolt",
-        "iconPosition": "left",
-        "payload": "",
-        "payloadType": "str",
-        "topic": "topic",
-        "topicType": "msg",
-        "x": 80,
-        "y": 700,
-        "wires": [
-            [
-                "al_quick_add_dos"
-            ]
-        ]
-    },
-    {
-        "id": "al_quick_flood_btn",
-        "type": "ui-button",
-        "z": "al_tab",
-        "group": "al_quick_group",
-        "name": "TCP Flood",
-        "label": "TCP Flood",
-        "order": 4,
-        "width": 0,
-        "height": 0,
-        "emulateClick": false,
-        "tooltip": "Add Flood",
-        "color": "white",
-        "bgcolor": "#7c3aed",
-        "className": "",
-        "icon": "waves",
-        "iconPosition": "left",
-        "payload": "",
-        "payloadType": "str",
-        "topic": "topic",
-        "topicType": "msg",
-        "x": 80,
-        "y": 760,
-        "wires": [
-            [
-                "al_quick_add_flood"
-            ]
-        ]
-    },
-    {
-        "id": "al_quick_inject_btn",
-        "type": "ui-button",
-        "z": "al_tab",
-        "group": "al_quick_group",
-        "name": "MQTT Inject",
-        "label": "Inject MQTT",
-        "order": 5,
-        "width": 0,
-        "height": 0,
-        "emulateClick": false,
-        "tooltip": "Add Inject",
-        "color": "white",
-        "bgcolor": "#0891b2",
-        "className": "",
-        "icon": "send",
-        "iconPosition": "left",
-        "payload": "",
-        "payloadType": "str",
-        "topic": "topic",
-        "topicType": "msg",
-        "x": 80,
-        "y": 820,
-        "wires": [
-            [
-                "al_quick_add_inject"
-            ]
-        ]
-    },
-    {
-        "id": "al_quick_add_recon",
-        "type": "function",
-        "z": "al_tab",
-        "name": "Add Recon",
-        "func": "var s=flow.get('al_scenario')||[];s.push({id:'s'+Date.now(),type:'port_scan',label:'Subnet Scan',params:{target:'172.18.0.0/24',ports:'1883,1880,8086',speed:'T4'},delay:1});flow.set('al_scenario',s);return[{payload:{scenario:s}},{payload:'[+]Recon.\\n'}]",
-        "outputs": 2,
-        "x": 320,
-        "y": 580,
-        "wires": [
-            [
-                "al_config_template"
-            ],
-            [
-                "al_terminal_template"
-            ]
-        ]
-    },
-    {
-        "id": "al_quick_add_sniff",
-        "type": "function",
-        "z": "al_tab",
-        "name": "Add Sniff",
-        "func": "var s=flow.get('al_scenario')||[];s.push({id:'s'+Date.now(),type:'mqtt_sniff',label:'MQTT Sniff',params:{broker:'mosquitto',timeout:10},delay:1});flow.set('al_scenario',s);return[{payload:{scenario:s}},{payload:'[+]Sniff.\\n'}]",
-        "outputs": 2,
-        "x": 320,
-        "y": 640,
-        "wires": [
-            [
-                "al_config_template"
-            ],
-            [
-                "al_terminal_template"
-            ]
-        ]
-    },
-    {
-        "id": "al_quick_add_dos",
-        "type": "function",
-        "z": "al_tab",
-        "name": "Add DoS",
-        "func": "var s=flow.get('al_scenario')||[];s.push({id:'s'+Date.now(),type:'mqtt_dos',label:'DoS Attack',params:{broker:'mosquitto',threads:30,duration:8},delay:1});flow.set('al_scenario',s);return[{payload:{scenario:s}},{payload:'[+]DoS.\\n'}]",
-        "outputs": 2,
-        "x": 320,
-        "y": 700,
-        "wires": [
-            [
-                "al_config_template"
-            ],
-            [
-                "al_terminal_template"
-            ]
-        ]
-    },
-    {
-        "id": "al_quick_add_flood",
-        "type": "function",
-        "z": "al_tab",
-        "name": "Add Flood",
-        "func": "var s=flow.get('al_scenario')||[];s.push({id:'s'+Date.now(),type:'tcp_flood',label:'TCP Flood',params:{target:'mosquitto',port:1883,count:500,rate:500},delay:1});flow.set('al_scenario',s);return[{payload:{scenario:s}},{payload:'[+]Flood.\\n'}]",
-        "outputs": 2,
-        "x": 320,
-        "y": 760,
-        "wires": [
-            [
-                "al_config_template"
-            ],
-            [
-                "al_terminal_template"
-            ]
-        ]
-    },
-    {
-        "id": "al_quick_add_inject",
-        "type": "function",
-        "z": "al_tab",
-        "name": "Add Inject",
-        "func": "var s=flow.get('al_scenario')||[];s.push({id:'s'+Date.now(),type:'mqtt_inject',label:'MQTT Inject',params:{topic:'sensors/data',value:9999},delay:1});flow.set('al_scenario',s);return[{payload:{scenario:s}},{payload:'[+]Inject.\\n'}]",
-        "outputs": 2,
-        "x": 320,
-        "y": 820,
-        "wires": [
-            [
-                "al_config_template"
-            ],
-            [
-                "al_terminal_template"
-            ]
-        ]
-    },
-    {
-        "id": "al_execute_init",
-        "type": "function",
-        "z": "al_tab",
-        "name": "Exec Init",
-        "func": "function bc(s){switch(s.type){case'port_scan':return['sh','-c','nmap -sS -n -T'+(s.params.speed||'T5').replace(/^T/i,'')+' -p '+(s.params.ports||'1883,1880,8086')+' --min-rate 100 '+(s.params.target||'172.18.0.0/24')];case'mqtt_sniff':return['python','mqtt_sniff.py','--broker',s.params.broker||'mosquitto','--timeout',String(s.params.timeout||10)];case'mqtt_inject':return['python','mqtt_inject.py','--broker','mosquitto','--topic',s.params.topic||'sensors/data','--value',String(s.params.value||9000)];case'mqtt_dos':return['python','mqtt_dos.py','--broker',s.params.broker||'mosquitto','--threads',String(s.params.threads||50),'--duration',String(s.params.duration||10)];case'tcp_flood':return['nping','--tcp','--flags','SYN','-p',String(s.params.port||1883),'-c',String(s.params.count||1000),'--rate',String(s.params.rate||1000),s.params.target||'mosquitto'];case'custom_cmd':return['sh','-c',s.params.command||'echo none'];default:return['echo','unknown']}}if(flow.get('al_exec_running'))return[null,{payload:'[!]Busy\\n'}];flow.set('al_exec_stop',false);flow.set('al_exec_running',true);var x=flow.get('al_scenario')||[];if(!x.length){flow.set('al_exec_running',false);return[null,{payload:'[!]Add steps.\\n'}]}return[{cmd:bc(x[0]),_stepIdx:0,_total:x.length,_scenario:x},null]",
-        "outputs": 2,
-        "x": 340,
-        "y": 280,
-        "wires": [
-            [
-                "al_prep_exec"
-            ],
-            [
-                "al_terminal_template"
-            ]
-        ]
-    },
-    {
-        "id": "al_prep_exec",
-        "type": "function",
-        "z": "al_tab",
-        "name": "Prep Exec",
-        "func": "var c=msg.cmd;if(!c||!c.length)return[null,{payload:'No cmd'}];msg.executed_cmd=c.join(' ');msg.url='http://docker-proxy:2375/containers/iot_attacker_node/exec';msg.method='POST';msg.payload={AttachStdout:true,AttachStderr:true,Tty:true,Cmd:c};return[msg,null]",
-        "outputs": 2,
-        "x": 580,
-        "y": 280,
-        "wires": [
-            [
-                "al_exec_create"
-            ],
-            [
-                "al_terminal_template"
-            ]
-        ]
-    },
-    {
-        "id": "al_exec_create",
-        "type": "http request",
-        "z": "al_tab",
-        "name": "Exec Create",
-        "method": "use",
-        "ret": "obj",
-        "paytoqs": "ignore",
-        "url": "",
-        "tls": "",
-        "persist": false,
-        "proxy": "",
-        "authType": "",
-        "senderr": true,
-        "x": 820,
-        "y": 280,
-        "wires": [
-            [
-                "al_start_exec"
-            ]
-        ]
-    },
-    {
-        "id": "al_start_exec",
-        "type": "function",
-        "z": "al_tab",
-        "name": "Start Exec",
-        "func": "if(msg.statusCode&&msg.statusCode>=400){flow.set('al_exec_running',false);return[null,{payload:'HTTP err'}]}if(!msg.payload||!msg.payload.Id){flow.set('al_exec_running',false);return[null,{payload:'Exec fail'}]}msg.url='http://docker-proxy:2375/exec/'+msg.payload.Id+'/start';msg.method='POST';msg.payload={Detach:false,Tty:true};return[msg,null]",
-        "outputs": 2,
-        "x": 1060,
-        "y": 280,
-        "wires": [
-            [
-                "al_exec_start"
-            ],
-            [
-                "al_terminal_template"
-            ]
-        ]
-    },
-    {
-        "id": "al_exec_start",
-        "type": "http request",
-        "z": "al_tab",
-        "name": "Exec Start",
-        "method": "use",
-        "ret": "txt",
-        "paytoqs": "ignore",
-        "url": "",
-        "tls": "",
-        "persist": false,
-        "proxy": "",
-        "authType": "",
-        "senderr": true,
-        "x": 1320,
-        "y": 280,
-        "wires": [
-            [
-                "al_format_output"
-            ]
-        ]
-    },
-    {
-        "id": "al_format_output",
-        "type": "function",
-        "z": "al_tab",
-        "name": "Format Out",
-        "func": "var r=msg.executed_cmd||'?';if(msg.statusCode&&msg.statusCode>=400){flow.set('al_exec_running',false);msg.payload='<span>HTTP '+msg.statusCode+'</span>';return msg}if(typeof msg.payload==='object'&&msg.statusCode===undefined){flow.set('al_exec_running',false);msg.payload='<span>Conn fail</span>';return msg}var o='<span class=\"prompt\">root:~#</span><span class=\"cmd-text\">'+r+'</span><br>';var t=String(msg.payload||'');if(!t.trim())t='[+]OK';var l=t.toLowerCase();var b=l.includes('host seems down')||(l.includes('filtered')&&r.includes('nmap'))||(l.includes('reset by peer')&&!l.includes('errno 111'))||l.includes('errno 104')||l.includes('error 104');t=t.replace(/</g,'&lt;');o+='<div class=\"'+(b?'output-blocked':'output-success')+'\">'+t+'</div>';if(b)o+='<div class=\"alert-box\">BLOCKED</div>';msg.payload=o;return msg",
-        "outputs": 1,
-        "x": 1560,
-        "y": 280,
-        "wires": [
-            [
-                "al_terminal_template",
-                "al_execute_next"
-            ]
-        ]
-    },
-    {
-        "id": "al_execute_next",
-        "type": "function",
-        "z": "al_tab",
-        "name": "Exec Next",
-        "func": "if(msg._stepIdx===undefined)return null;if(msg.statusCode&&msg.statusCode>=400){flow.set('al_exec_running',false);return null}if(flow.get('al_exec_stop')){flow.set('al_exec_running',false);return[null,{payload:'Aborted'}]}var i=msg._stepIdx+1;var t=msg._total||1;var s=msg._scenario||flow.get('al_scenario')||[];if(i<t){var st=s[i];var cmd;switch(st.type){case'port_scan':cmd=['sh','-c','nmap -sS -n -T'+(st.params.speed||'T5').replace(/^T/i,'')+' -p '+(st.params.ports||'1883,1880,8086')+' --min-rate 100 '+(st.params.target||'172.18.0.0/24')];break;case'mqtt_sniff':cmd=['python','mqtt_sniff.py','--broker',st.params.broker||'mosquitto','--timeout',String(st.params.timeout||10)];break;case'mqtt_inject':cmd=['python','mqtt_inject.py','--broker','mosquitto','--topic',st.params.topic||'sensors/data','--value',String(st.params.value||9000)];break;case'mqtt_dos':cmd=['python','mqtt_dos.py','--broker',st.params.broker||'mosquitto','--threads',String(st.params.threads||50),'--duration',String(st.params.duration||10)];break;case'tcp_flood':cmd=['nping','--tcp','--flags','SYN','-p',String(st.params.port||1883),'-c',String(st.params.count||1000),'--rate',String(st.params.rate||1000),st.params.target||'mosquitto'];break;case'custom_cmd':cmd=['sh','-c',st.params.command||'echo none'];break;default:cmd=['echo','unknown']}return[{cmd:cmd,_stepIdx:i,_total:t,_scenario:s},null]}else{flow.set('al_exec_running',false);return[null,{payload:'<span>Complete!</span>'}]}",
-        "outputs": 2,
-        "x": 1800,
-        "y": 280,
-        "wires": [
-            [
-                "al_prep_exec"
-            ],
-            [
-                "al_terminal_template"
-            ]
-        ]
-    },
-    {
-        "id": "al_terminal_template",
-        "type": "ui-template",
-        "z": "al_tab",
-        "group": "al_right_group",
-        "name": "Attack Terminal",
-        "order": 1,
-        "width": 0,
-        "height": 0,
-        "format": "<template><div class=\"hacker-terminal\"><div v-html=\"displayHtml\"></div></div></template><script>export default{data(){return{buffer:\"\"}},computed:{displayHtml(){return this.buffer||\"<span class=\\'prompt\\'>attack-lab:~#</span>\"}},watch:{msg:{handler(v){if(v&&v.payload&&typeof v.payload===\"string\")this.buffer+=v.payload;if(v&&v.payload&&v.payload._clear)this.buffer=\"\"},immediate:true}}}</script><style>.hacker-terminal{background:#0f172a;padding:15px;height:700px;min-height:700px;overflow-y:auto;font-family:monospace;color:#10b981}.prompt{color:#38bdf8;font-weight:bold}.output-success{color:#10b981;white-space:pre-wrap}.output-blocked{color:#94a3b8}.alert-box{color:#ef4444;padding:10px;border:1px solid #ef4444;background:rgba(239,68,68,.1);border-radius:4px}</style>",
-        "storeOutMessages": false,
-        "passthru": false,
-        "resendOnRefresh": false,
-        "templateScope": "local",
-        "className": "",
-        "x": 1540,
-        "y": 80,
-        "wires": [
-            []
-        ]
-    },
-    {
-        "id": "al_clear_terminal_btn",
-        "type": "ui-button",
-        "z": "al_tab",
-        "group": "al_left_group",
-        "name": "Clear Term",
-        "label": "Clear Terminal",
-        "order": 8,
-        "width": 0,
-        "height": 0,
-        "emulateClick": false,
-        "tooltip": "Clear",
-        "color": "white",
-        "bgcolor": "#64748b",
-        "className": "",
-        "icon": "delete",
-        "iconPosition": "left",
-        "payload": "{\"_clear\":true}",
-        "payloadType": "json",
-        "topic": "topic",
-        "topicType": "msg",
-        "x": 80,
-        "y": 460,
-        "wires": [
-            [
-                "al_terminal_template"
-            ]
-        ]
-    },
-    {
-        "id": "al_guide_template",
-        "type": "ui-template",
-        "z": "al_tab",
-        "group": "al_guide_group",
-        "name": "Guide",
-        "order": 1,
-        "width": 0,
-        "height": 0,
-        "format": "<div style='padding:10px;font-family:monospace;color:#e2e8f0;line-height:1.6;'><h3 style='color:#38bdf8;margin:0 0 12px 0;'>Scenario Builder Guide</h3><div style='background:#1e293b;border-radius:6px;padding:12px;margin-bottom:12px;'><b style='color:#facc15;'>Step 1:</b> Click 'Start Attacker Node' to deploy container.<br><b style='color:#facc15;'>Step 2:</b> Click 'Breach Into Network' to connect to target network.<br><b style='color:#facc15;'>Step 3:</b> Choose attack type below, configure params, click + Add Step.<br><b style='color:#facc15;'>Step 4:</b> Add multiple steps to build your attack chain.<br><b style='color:#facc15;'>Step 5:</b> Click 'Execute Scenario' to run all steps in sequence.</div><h4 style='color:#38bdf8;margin:12px 0 8px 0;'>Attack Types</h4><div style='display:grid;grid-template-columns:1fr 1fr;gap:8px;'><div style='background:#1e293b;border-radius:6px;padding:10px;'><b style='color:#10b981;'>Port Scan</b><br><span style='color:#94a3b8;font-size:12px;'>nmap SYN scan on target subnet.</span></div><div style='background:#1e293b;border-radius:6px;padding:10px;'><b style='color:#10b981;'>MQTT Sniff</b><br><span style='color:#94a3b8;font-size:12px;'>Intercept all MQTT traffic via # wildcard.</span></div><div style='background:#1e293b;border-radius:6px;padding:10px;'><b style='color:#10b981;'>MQTT Inject</b><br><span style='color:#94a3b8;font-size:12px;'>Publish fake telemetry to any topic.</span></div><div style='background:#1e293b;border-radius:6px;padding:10px;'><b style='color:#10b981;'>MQTT DoS</b><br><span style='color:#94a3b8;font-size:12px;'>Exhaust broker connections.</span></div><div style='background:#1e293b;border-radius:6px;padding:10px;'><b style='color:#10b981;'>TCP Flood</b><br><span style='color:#94a3b8;font-size:12px;'>SYN flood via nping.</span></div><div style='background:#1e293b;border-radius:6px;padding:10px;'><b style='color:#10b981;'>Custom Command</b><br><span style='color:#94a3b8;font-size:12px;'>Run any shell command.</span></div></div><h4 style='color:#38bdf8;margin:12px 0 8px 0;'>Find Service IPs</h4><div style='background:#1e293b;border-radius:6px;padding:12px;font-size:12px;'><b style='color:#facc15;'>getent hosts mosquitto</b> &rarr; 172.18.0.5<br><b style='color:#facc15;'>getent hosts nodered</b> &rarr; 172.18.0.25<br><b style='color:#facc15;'>getent hosts influxdb</b> &rarr; 172.18.0.4<br><b style='color:#facc15;'>getent hosts grafana</b> &rarr; varies<br><br>Or use nmap inside attacker:<br><b style='color:#facc15;'>nmap -sL 172.18.0.0/24</b> &rarr; list hosts<br><b style='color:#facc15;'>nmap -sn 172.18.0.0/24</b> &rarr; ping sweep<br><b style='color:#facc15;'>nmap -sS -p 8086,1880,1883 172.18.0.0/24</b> &rarr; find services</div><h4 style='color:#38bdf8;margin:12px 0 8px 0;'>Available Tools in Custom Command</h4><div style='background:#1e293b;border-radius:6px;padding:12px;'><table style='width:100%;border-collapse:collapse;font-size:12px;'><tr style='border-bottom:1px solid #334155;'><th style='text-align:left;padding:4px 8px;color:#38bdf8;width:120px;'>Command</th><th style='text-align:left;padding:4px 8px;color:#38bdf8;'>Usage Example</th></tr><tr style='border-bottom:1px solid #1e293b;'><td style='padding:4px 8px;color:#facc15;'>nmap</td><td style='padding:4px 8px;color:#f8fafc;'>nmap -sV -p 1883 &lt;broker-ip&gt;</td></tr><tr style='border-bottom:1px solid #1e293b;'><td style='padding:4px 8px;color:#facc15;'>curl</td><td style='padding:4px 8px;color:#f8fafc;'>curl http://&lt;broker-ip&gt;:8086</td></tr><tr style='border-bottom:1px solid #1e293b;'><td style='padding:4px 8px;color:#facc15;'>nping</td><td style='padding:4px 8px;color:#f8fafc;'>nping --tcp -p 1883 -c 100</td></tr><tr style='border-bottom:1px solid #1e293b;'><td style='padding:4px 8px;color:#facc15;'>tcpdump</td><td style='padding:4px 8px;color:#f8fafc;'>tcpdump -i eth0 port 1883</td></tr><tr style='border-bottom:1px solid #1e293b;'><td style='padding:4px 8px;color:#facc15;'>ip</td><td style='padding:4px 8px;color:#f8fafc;'>ip addr / ip route</td></tr><tr style='border-bottom:1px solid #1e293b;'><td style='padding:4px 8px;color:#facc15;'>python</td><td style='padding:4px 8px;color:#f8fafc;'>python -c 'print(\"hello\")'</td></tr><tr style='border-bottom:1px solid #1e293b;'><td style='padding:4px 8px;color:#facc15;'>mqtt_sniff.py</td><td style='padding:4px 8px;color:#f8fafc;'>python mqtt_sniff.py --broker mosquitto</td></tr><tr style='border-bottom:1px solid #1e293b;'><td style='padding:4px 8px;color:#facc15;'>mqtt_inject.py</td><td style='padding:4px 8px;color:#f8fafc;'>python mqtt_inject.py --topic sensors/data</td></tr><tr><td style='padding:4px 8px;color:#facc15;'>mqtt_dos.py</td><td style='padding:4px 8px;color:#f8fafc;'>python mqtt_dos.py --broker mosquitto</td></tr></table></div><div style='background:#0f172a;border-radius:6px;padding:10px;margin-top:12px;border:1px solid #334155;'><b style='color:#facc15;'>Tips:</b><br><span style='color:#94a3b8;font-size:12px;'>Steps run sequentially (top to bottom). Use Stop Execution to cancel mid-sequence. Suricata IPS may block attacks &mdash; watch for red BLOCKED alerts in terminal.</span></div></div>",
-        "storeOutMessages": true,
-        "passthru": false,
-        "resendOnRefresh": true,
-        "templateScope": "local",
-        "className": "",
-        "x": 90,
-        "y": 860,
-        "wires": [
-            []
-        ]
     }
 ]

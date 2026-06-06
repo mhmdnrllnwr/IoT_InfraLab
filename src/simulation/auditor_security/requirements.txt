@@ -1,6 +1,7 @@
 google-genai
 python-nmap
 paho-mqtt
+openai
 opentelemetry-api
 opentelemetry-sdk
 opentelemetry-exporter-otlp

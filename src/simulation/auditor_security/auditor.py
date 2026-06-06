@@ -5,6 +5,7 @@ import threading
 import paho.mqtt.client as mqtt
 from paho.mqtt.enums import CallbackAPIVersion
 from google import genai
+from openai import OpenAI
 
 from opentelemetry import trace
 from opentelemetry.exporter.otlp.proto.grpc.trace_exporter import OTLPSpanExporter
@@ -14,18 +15,15 @@ from opentelemetry.sdk.resources import Resource
 
 # --- CONFIG ---
 API_KEY = os.getenv("GEMINI_API_KEY")
+DEEPSEEK_API_KEY = os.getenv("DEEPSEEK_API_KEY")
 BROKER = "mosquitto"
-TARGET_SUBNET = "172.18.0.0/24" 
-COOLDOWN_TIME = 30 
+TARGET_SUBNET = "172.18.0.0/24"
+COOLDOWN_TIME = 30
 
-# --- PRE-FLIGHT VALIDATION ---
-if not API_KEY:
-    print("❌ ERROR: GEMINI_API_KEY not found in environment variables.")
-    # In a real app, you might want to exit here, but we'll let it 
-    # try to connect to MQTT so you can at least see the status.
-
-client_ai = genai.Client(api_key=API_KEY)
-MODEL_ID = "gemini-2.0-flash"
+# --- AI CLIENTS ---
+client_ai = genai.Client(api_key=API_KEY) if API_KEY else None
+client_deepseek = OpenAI(api_key=DEEPSEEK_API_KEY, base_url="https://api.deepseek.com") if DEEPSEEK_API_KEY else None
+MODEL_ID = "deepseek-chat"
 
 last_scan_time = 0
 is_scanning = False
@@ -53,10 +51,12 @@ def perform_audit():
 
         try:
             # 1. INITIALIZATION CHECK
-            if not API_KEY:
-                raise ValueError("Missing API Key. Check your .env file.")
+            if MODEL_ID.startswith("deepseek-") and not DEEPSEEK_API_KEY:
+                raise ValueError("Missing DEEPSEEK_API_KEY. Check your .env file.")
+            if MODEL_ID.startswith("gemini-") and not API_KEY:
+                raise ValueError("Missing GEMINI_API_KEY. Check your .env file.")
 
-            print(f"[INFO] Using Gemini Model: {MODEL_ID}")
+            print(f"[INFO] Using AI Model: {MODEL_ID}")
             client_mqtt.publish("lab/security/status", "Auditor Running...")
 
             # 2. SCANNING VALIDATION
@@ -67,7 +67,7 @@ def perform_audit():
                 nm = nmap.PortScanner()
 
                 try:
-                    nm.scan(hosts=TARGET_SUBNET, arguments='-sT -T4')
+                    nm.scan(hosts=TARGET_SUBNET, arguments='-sS -n -T5 -p 8086,1880,1883 --host-timeout 15s --max-rtt-timeout 300ms --min-rate 100')
                 except nmap.PortScannerError as e:
                     raise Exception(f"Nmap Error: Ensure container has NET_RAW capabilities. {e}")
 
@@ -95,7 +95,7 @@ def perform_audit():
 
             # 4. AI ANALYSIS & API VALIDATION
             with tracer.start_as_current_span("ai_analysis") as ai_span:
-                print(f"[INFO] Sending structured scan data to Gemini AI ({MODEL_ID})...")
+                print(f"[INFO] Sending structured scan data to AI model ({MODEL_ID})...")
                 ai_span.set_attribute("model", MODEL_ID)
                 client_mqtt.publish("lab/security/status", "AI Analyzing Network & MQTT...")
 
@@ -120,11 +120,19 @@ def perform_audit():
                 """
 
                 try:
-                    response = client_ai.models.generate_content(
-                        model=MODEL_ID,
-                        contents=strict_prompt
-                    )
-                    ai_span.set_attribute("report_length", len(response.text))
+                    if MODEL_ID.startswith("deepseek-"):
+                        res = client_deepseek.chat.completions.create(
+                            model=MODEL_ID,
+                            messages=[{"role": "user", "content": strict_prompt}],
+                        )
+                        report_text = res.choices[0].message.content
+                    else:
+                        res = client_ai.models.generate_content(
+                            model=MODEL_ID,
+                            contents=strict_prompt
+                        )
+                        report_text = res.text
+                    ai_span.set_attribute("report_length", len(report_text))
                 except Exception as ai_err:
                     err_str = str(ai_err)
                     ai_span.set_attribute("error", err_str)
@@ -138,10 +146,10 @@ def perform_audit():
             # 5. PUBLISH SUCCESS
             with tracer.start_as_current_span("publish_report") as pub_span:
                 print("[SUCCESS] AI Analysis Complete. Publishing final report.")
-                print(f"--- AI Report ---\n{response.text[:200]}...\n-----------------")
-                client_mqtt.publish("lab/security/report", response.text)
+                print(f"--- AI Report ---\n{report_text[:200]}...\n-----------------")
+                client_mqtt.publish("lab/security/report", report_text)
                 client_mqtt.publish("lab/security/status", "Audit Complete")
-                pub_span.set_attribute("report_length", len(response.text))
+                pub_span.set_attribute("report_length", len(report_text))
 
         except Exception as e:
             audit_span.set_attribute("error", str(e))
@@ -196,27 +204,17 @@ def on_message(client, userdata, msg):
         print("[INFO] Launching background audit thread execution...")
         threading.Thread(target=perform_audit, daemon=True).start()
 
-<<<<<<< HEAD
-# --- MQTT CONNECTION VALIDATION ---
+# --- MQTT CONNECTION ---
 client_mqtt = mqtt.Client(CallbackAPIVersion.VERSION2)
 client_mqtt.on_connect = on_connect
 client_mqtt.on_message = on_message
-=======
-# --- MQTT CONNECTION VALIDATION (set up in __main__ below, global for callbacks) ---
-client_mqtt = None
->>>>>>> 5c2e3209325271a94b2baa66820495b50f41d0e3
 
 if __name__ == "__main__":
-    _client_mqtt = mqtt.Client(CallbackAPIVersion.VERSION1)
-    _client_mqtt.on_connect = on_connect
-    _client_mqtt.on_message = on_message
-
     try:
         print(f"\n[INFO] Starting Security Auditor...")
         print(f"[INFO] Connecting to Broker: {BROKER}...")
-        _client_mqtt.connect(BROKER, 1883)
-        _client_mqtt.loop_start()
-        client_mqtt = _client_mqtt
+        client_mqtt.connect(BROKER, 1883)
+        client_mqtt.loop_start()
     except Exception as e:
         print(f"❌ [CRITICAL] MQTT ERROR: Could not connect to {BROKER}. {e}")
 

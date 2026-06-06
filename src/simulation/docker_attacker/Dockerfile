@@ -1,6 +1,6 @@
 FROM python:3.9-alpine
 
-RUN apk add --no-cache curl nmap iproute2 tcpdump
+RUN apk add --no-cache curl nmap nmap-nping iproute2 tcpdump
 
 WORKDIR /attacker
 

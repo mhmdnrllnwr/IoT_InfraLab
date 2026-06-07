@@ -1,4 +1,4 @@
-[
+﻿[
     {
         "id": "89c26b2630a7d108",
         "type": "tab",
@@ -2679,8 +2679,8 @@
         "resendOnRefresh": true,
         "templateScope": "local",
         "className": "",
-        "x": 130,
-        "y": 180,
+        "x": 540,
+        "y": 120,
         "wires": [
             []
         ]
@@ -2716,8 +2716,8 @@
         "once": true,
         "onceDelay": 0.5,
         "topic": "",
-        "x": 100,
-        "y": 60,
+        "x": 170,
+        "y": 100,
         "wires": [
             [
                 "fe5f944518faeb35"
@@ -2738,8 +2738,8 @@
         "proxy": "",
         "authType": "",
         "senderr": false,
-        "x": 300,
-        "y": 60,
+        "x": 370,
+        "y": 100,
         "wires": [
             [
                 "1f8ece1238ec50d0"
@@ -2753,8 +2753,8 @@
         "name": "Parse IPs & Update Map",
         "func": "let html = '<table style=\"width:100%; text-align:left; border-collapse:collapse; color:#e2e8f0;\"><tr style=\"border-bottom:1px solid #555;\"><th style=\"padding:6px;\">Node Name</th><th style=\"padding:6px;\">IP Address</th><th style=\"padding:6px;\">State</th></tr>';\nlet ipMap = {};\n\nif (msg.payload && Array.isArray(msg.payload)) {\n    msg.payload.forEach(c => {\n        let name = c.Names[0].replace('/','');\n        let nets = (c.NetworkSettings && c.NetworkSettings.Networks) ? c.NetworkSettings.Networks : {};\n        let netInfo = nets['iot_infralab_net'];\n        let ip = netInfo ? netInfo.IPAddress : null;\n        let state = c.State;\n        \n        if (ip) {\n            html += `<tr style=\"border-bottom:1px solid #333;\"><td style=\"padding:6px;\">${name}</td><td style=\"padding:6px;color:#3b82f6;font-family:monospace;font-weight:bold;\">${ip}</td><td style=\"padding:6px;color:#10b981;\">${state}</td></tr>`;\n            ipMap[ip] = name;\n        } else {\n            html += `<tr style=\"border-bottom:1px solid #333;\"><td style=\"padding:6px;color:#64748b;\">${name}</td><td style=\"padding:6px;color:#ef4444;font-family:monospace;\">Disconnected</td><td style=\"padding:6px;color:#64748b;\">${state}</td></tr>`;\n        }\n    });\n}\nhtml += '</table>';\n\n// Save the live active map globally so Suricata alerts can check against it\nflow.set('network_ip_map', ipMap);\n\nreturn { payload: html };",
         "outputs": 1,
-        "x": 530,
-        "y": 60,
+        "x": 600,
+        "y": 100,
         "wires": [
             [
                 "e2536164d2e97496"
@@ -2776,8 +2776,8 @@
         "resendOnRefresh": true,
         "templateScope": "local",
         "className": "",
-        "x": 780,
-        "y": 60,
+        "x": 850,
+        "y": 100,
         "wires": [
             []
         ]
@@ -4412,7 +4412,7 @@
         "group": "al_left_group",
         "name": "Start Attacker",
         "label": "1. Start Attacker Node",
-        "order": 1,
+        "order": 2,
         "width": 0,
         "height": 0,
         "emulateClick": false,
@@ -4441,7 +4441,7 @@
         "group": "al_left_group",
         "name": "Breach Network",
         "label": "2. Breach Into Network",
-        "order": 2,
+        "order": 3,
         "width": 0,
         "height": 0,
         "emulateClick": false,
@@ -4470,7 +4470,7 @@
         "group": "al_left_group",
         "name": "Execute",
         "label": "Execute Scenario",
-        "order": 5,
+        "order": 6,
         "width": 0,
         "height": 0,
         "emulateClick": false,
@@ -4499,7 +4499,7 @@
         "group": "al_left_group",
         "name": "Stop",
         "label": "Stop Execution",
-        "order": 6,
+        "order": 7,
         "width": 0,
         "height": 0,
         "emulateClick": false,
@@ -4528,7 +4528,7 @@
         "group": "al_left_group",
         "name": "Clear",
         "label": "Clear All Steps",
-        "order": 7,
+        "order": 8,
         "width": 0,
         "height": 0,
         "emulateClick": false,
@@ -4557,7 +4557,7 @@
         "group": "al_left_group",
         "name": "Remove Attacker",
         "label": "Remove Attacker Node",
-        "order": 3,
+        "order": 4,
         "width": 0,
         "height": 0,
         "emulateClick": false,
@@ -4848,7 +4848,7 @@
         "z": "al_tab",
         "group": "al_left_group",
         "name": "Attack Configurator",
-        "order": 4,
+        "order": 5,
         "width": 0,
         "height": 0,
         "format": "<template>\n    <div class=\"al-container\">\n        <div class=\"al-section\">\n            <label class=\"al-label\">1. Choose Attack Type</label>\n            <select v-model=\"selectedType\" @change=\"onTypeChange\" class=\"al-select\">\n                <option value=\"\">-- Select Attack --</option>\n                <option value=\"port_scan\">Port Scan (Nmap)</option>\n                <option value=\"mqtt_sniff\">MQTT Sniff</option>\n                <option value=\"mqtt_inject\">MQTT Inject</option>\n                <option value=\"mqtt_dos\">MQTT DoS</option>\n                <option value=\"tcp_flood\">TCP Flood (Nping)</option>\n                <option value=\"custom_cmd\">Custom Command</option>\n            </select>\n        </div>\n        <div v-if=\"selectedType\" class=\"al-section al-form\">\n            <div v-if=\"selectedType === 'port_scan'\">\n                <label class=\"al-label\">Target <span class=\"al-hint\">(target IP or subnet)</span></label>\n                <input v-model=\"params.target\" placeholder=\"<target-subnet>\" class=\"al-input\">\n                <label class=\"al-label\">Ports <span class=\"al-hint\">(e.g. 1883,8086)</span></label>\n                <input v-model=\"params.ports\" placeholder=\"1883,1880,8086\" class=\"al-input\">\n                <label class=\"al-label\">Speed</label>\n                <select v-model=\"params.speed\" class=\"al-select\">\n                    <option value=\"T4\">Normal (T4)</option>\n                    <option value=\"T5\">Insane (T5)</option>\n                </select>\n            </div>\n            <div v-if=\"selectedType === 'mqtt_sniff'\">\n                <label class=\"al-label\">Broker <span class=\"al-hint\">(broker hostname)</span></label>\n                <input v-model=\"params.broker\" placeholder=\"mosquitto\" class=\"al-input\">\n                <label class=\"al-label\">Timeout <span class=\"al-hint\">(duration in seconds)</span></label>\n                <input v-model=\"params.timeout\" type=\"number\" placeholder=\"10\" class=\"al-input\">\n            </div>\n            <div v-if=\"selectedType === 'mqtt_inject'\">\n                <label class=\"al-label\">Topic <span class=\"al-hint\">(base MQTT path)</span></label>\n                <input v-model=\"params.topic\" placeholder=\"sensors/factory\" class=\"al-input\">\n                <label class=\"al-label\">Sensor ID</label>\n                <input v-model=\"params.sensor_id\" placeholder=\"C_ENV_02\" class=\"al-input\">\n                <label class=\"al-label\">Sensor Type <span class=\"al-hint\">(temperature, humidity, etc.)</span></label>\n                <input v-model=\"params.sensor_type\" placeholder=\"temperature\" class=\"al-input\">\n                <label class=\"al-label\">Value <span class=\"al-hint\">(fake sensor value)</span></label>\n                <input v-model=\"params.value\" type=\"number\" placeholder=\"900\" class=\"al-input\">\n            </div>\n            <div v-if=\"selectedType === 'mqtt_dos'\">\n                <label class=\"al-label\">Broker <span class=\"al-hint\">(broker hostname or IP)</span></label>\n                <input v-model=\"params.broker\" placeholder=\"<iot-broker-ip>\" class=\"al-input\">\n                <label class=\"al-label\">Threads</label>\n                <input v-model=\"params.threads\" type=\"number\" placeholder=\"50\" class=\"al-input\">\n                <label class=\"al-label\">Duration <span class=\"al-hint\">(seconds)</span></label>\n                <input v-model=\"params.duration\" type=\"number\" placeholder=\"10\" class=\"al-input\">\n            </div>\n            <div v-if=\"selectedType === 'tcp_flood'\">\n                <label class=\"al-label\">Target</label>\n                <input v-model=\"params.target\" placeholder=\"mosquitto\" class=\"al-input\">\n                <label class=\"al-label\">Port</label>\n                <input v-model=\"params.port\" type=\"number\" placeholder=\"1883\" class=\"al-input\">\n                <label class=\"al-label\">Count <span class=\"al-hint\">(total packets)</span></label>\n                <input v-model=\"params.count\" type=\"number\" placeholder=\"1000\" class=\"al-input\">\n                <label class=\"al-label\">Rate <span class=\"al-hint\">(rate packets/sec)</span></label>\n                <input v-model=\"params.rate\" type=\"number\" placeholder=\"1000\" class=\"al-input\">\n            </div>\n            <div v-if=\"selectedType === 'custom_cmd'\">\n                <label class=\"al-label\">Command <span class=\"al-hint\">(any shell command)</span></label>\n                <input v-model=\"params.command\" placeholder=\"echo hello\" class=\"al-input al-input-wide\">\n            </div>\n            <div class=\"al-form-actions\">\n                <button class=\"al-btn al-btn-add\" @click=\"addStep\" :disabled=\"!canAdd\">+ Add Step</button>\n            </div>\n        </div>\n        <div v-if=\"scenario.length > 0\" class=\"al-section\">\n            <h3 class=\"al-section-title\">2. Attack Sequence ({{ scenario.length }})</h3>\n            <div v-for=\"(step, idx) in scenario\" :key=\"step.id\" class=\"al-step\">\n                <span class=\"al-step-num\">{{ idx + 1 }}.</span>\n                <span class=\"al-step-type\" :class=\"'al-type-' + step.type\">{{ step.label }}</span>\n                <span class=\"al-step-params\">{{ formatParams(step.params) }}</span>\n                <button class=\"al-btn-del\" @click=\"deleteStep(idx)\" title=\"Remove\">X</button>\n            </div>\n        </div>\n        <div v-if=\"!selectedType && scenario.length === 0\" class=\"al-empty\">\n            <p>Select attack type above, configure params, then click + Add.</p>\n        </div>\n    </div>\n</template>\n<script>\nexport default {\n    data() {\n        return {\n            selectedType: '',\n            params: {},\n            scenario: [],\n            typeLabels: {\n                port_scan: 'Port Scan',\n                mqtt_sniff: 'MQTT Sniff',\n                mqtt_inject: 'MQTT Inject',\n                mqtt_dos: 'MQTT DoS',\n                tcp_flood: 'TCP Flood',\n                custom_cmd: 'Custom Cmd'\n            }\n        };\n    },\n    computed: {\n        canAdd() {\n            if (!this.selectedType) return false;\n            if (this.selectedType === 'custom_cmd' && !this.params.command) return false;\n            return true;\n        }\n    },\n    watch: {\n        msg: {\n            handler(val) {\n                if (!val || !val.payload) return;\n                if (val.payload.scenario) this.scenario = val.payload.scenario;\n                if (val.payload.selectedType) this.selectedType = val.payload.selectedType;\n            },\n            immediate: true,\n            deep: true\n        }\n    },\n    methods: {\n        onTypeChange() { this.params = {}; },\n        addStep() {\n            if (!this.canAdd) return;\n            fetch('/attack-lab/step', {method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({action: 'add_step', type: this.selectedType, label: this.typeLabels[this.selectedType] || this.selectedType, params: {...this.params}})}).then(r => r.json()).then(data => { if (data.scenario) this.scenario = data.scenario; }).catch(e => console.error('Attack Lab:', e));\n        },\n        deleteStep(idx) {\n            fetch('/attack-lab/step', {method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({action: 'delete_step', index: idx})}).then(r => r.json()).then(data => { if (data.scenario) this.scenario = data.scenario; }).catch(e => console.error(e));\n        },\n        formatParams(params) {\n            if (!params) return '';\n            return Object.entries(params).filter(([k, v]) => v && v !== '').map(([k, v]) => k + '=' + v).join(', ');\n        }\n    }\n};\n</script>\n<style>\n.al-container { padding: 8px; background: #0f172a; border-radius: 6px; }\n.al-section { margin-bottom: 16px; }\n.al-section-title { margin: 0 0 8px 0; font-size: 14px; color: #ffffff; font-weight: bold; }\n.al-label { display: block; margin-bottom: 4px; font-size: 12px; color: #f1f5f9; text-transform: uppercase; letter-spacing: 0.5px; font-weight: 600; }\n.al-hint { color: #cbd5e1; text-transform: none; letter-spacing: 0; font-weight: normal; }\n.al-input, .al-select { width: 100%; padding: 8px 10px; margin-bottom: 10px; background: #1e293b; border: 1px solid #334155; border-radius: 4px; color: #f8fafc; font-family: monospace; font-size: 13px; box-sizing: border-box; }\n.al-select { cursor: pointer; }\n.al-input:focus, .al-select:focus { outline: none; border-color: #38bdf8; }\n.al-form { background: #0f172a; padding: 12px; border-radius: 6px; border: 1px solid #1e293b; }\n.al-form-actions { margin-top: 12px; }\n.al-btn { padding: 8px 20px; border: none; border-radius: 4px; cursor: pointer; font-size: 13px; font-weight: bold; font-family: monospace; }\n.al-btn:disabled { opacity: 0.4; cursor: not-allowed; }\n.al-btn-add { background: #059669; color: white; }\n.al-btn-add:hover:not(:disabled) { background: #10b981; }\n.al-empty { text-align: center; padding: 40px 20px; color: #f1f5f9; font-family: monospace; }\n.al-step { display: flex; align-items: center; padding: 8px 10px; margin-bottom: 6px; background: #1e293b; border-radius: 4px; border-left: 3px solid #38bdf8; gap: 8px; }\n.al-step-num { color: #94a3b8; min-width: 24px; font-family: monospace; }\n.al-step-type { color: #38bdf8; font-weight: bold; font-size: 12px; min-width: 90px; font-family: monospace; }\n.al-step-params { color: #cbd5e1; font-size: 11px; flex: 1; font-family: monospace; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }\n.al-btn-del { background: transparent; border: 1px solid #ef4444; color: #ef4444; cursor: pointer; padding: 2px 6px; border-radius: 3px; font-size: 12px; }\n.al-btn-del:hover { background: rgba(239,68,68,0.2); }\n</style>",
@@ -5260,7 +5260,7 @@
         "group": "al_left_group",
         "name": "Clear Term",
         "label": "Clear Terminal",
-        "order": 8,
+        "order": 9,
         "width": 0,
         "height": 0,
         "emulateClick": false,
@@ -5297,8 +5297,8 @@
         "resendOnRefresh": true,
         "templateScope": "local",
         "className": "",
-        "x": 90,
-        "y": 860,
+        "x": 270,
+        "y": 920,
         "wires": [
             []
         ]
@@ -5359,7 +5359,7 @@
         ],
         "payload": "",
         "topic": "topic",
-        "x": 100,
+        "x": 140,
         "y": 100,
         "wires": [
             [
@@ -5379,7 +5379,7 @@
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 300,
+        "x": 340,
         "y": 100,
         "wires": [
             [
@@ -5402,8 +5402,8 @@
         "resendOnRefresh": false,
         "templateScope": "local",
         "className": "",
-        "x": 100,
-        "y": 200,
+        "x": 620,
+        "y": 100,
         "wires": [
             [
                 "tp_flow_var_setter"
@@ -5422,8 +5422,8 @@
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 300,
-        "y": 200,
+        "x": 920,
+        "y": 100,
         "wires": []
     },
     {
@@ -5447,8 +5447,8 @@
         "payloadType": "str",
         "topic": "topic",
         "topicType": "msg",
-        "x": 100,
-        "y": 300,
+        "x": 140,
+        "y": 180,
         "wires": [
             [
                 "tp_prepare_apply"
@@ -5467,8 +5467,8 @@
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 300,
-        "y": 300,
+        "x": 340,
+        "y": 180,
         "wires": [
             [
                 "tp_create_exec"
@@ -5491,8 +5491,8 @@
         "authType": "",
         "senderr": false,
         "headers": [],
-        "x": 500,
-        "y": 300,
+        "x": 540,
+        "y": 180,
         "wires": [
             [
                 "tp_start_exec"
@@ -5511,8 +5511,8 @@
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 700,
-        "y": 300,
+        "x": 740,
+        "y": 180,
         "wires": [
             [
                 "tp_run_exec"
@@ -5535,8 +5535,8 @@
         "authType": "",
         "senderr": false,
         "headers": [],
-        "x": 900,
-        "y": 300,
+        "x": 940,
+        "y": 180,
         "wires": [
             [
                 "tp_prepare_cat"
@@ -5555,8 +5555,8 @@
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 300,
-        "y": 400,
+        "x": 460,
+        "y": 280,
         "wires": [
             [
                 "tp_create_cat_exec"
@@ -5579,8 +5579,8 @@
         "authType": "",
         "senderr": false,
         "headers": [],
-        "x": 500,
-        "y": 400,
+        "x": 660,
+        "y": 280,
         "wires": [
             [
                 "tp_start_cat_exec"
@@ -5599,8 +5599,8 @@
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 700,
-        "y": 400,
+        "x": 860,
+        "y": 280,
         "wires": [
             [
                 "tp_run_cat_exec"
@@ -5623,8 +5623,8 @@
         "authType": "",
         "senderr": false,
         "headers": [],
-        "x": 900,
-        "y": 400,
+        "x": 1060,
+        "y": 280,
         "wires": [
             [
                 "tp_format_cat"
@@ -5643,8 +5643,8 @@
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 1100,
-        "y": 400,
+        "x": 480,
+        "y": 360,
         "wires": [
             [
                 "tp_terminal"
@@ -5672,8 +5672,8 @@
         "payloadType": "str",
         "topic": "topic",
         "topicType": "msg",
-        "x": 100,
-        "y": 360,
+        "x": 140,
+        "y": 240,
         "wires": [
             [
                 "tp_prepare_cat"
@@ -5695,8 +5695,8 @@
         "resendOnRefresh": false,
         "templateScope": "local",
         "className": "",
-        "x": 1340,
-        "y": 400,
+        "x": 720,
+        "y": 360,
         "wires": [
             []
         ]
@@ -5722,8 +5722,8 @@
         "topic": "",
         "payload": "",
         "payloadType": "date",
-        "x": 100,
-        "y": 440,
+        "x": 180,
+        "y": 320,
         "wires": [
             [
                 "tp_prepare_cat"
@@ -7069,6 +7069,87 @@
             [
                 "b06b645f5d9bfd12"
             ]
+        ]
+    },
+    {
+        "id": "al_attacker_status_poll",
+        "type": "inject",
+        "z": "al_tab",
+        "name": "Poll Attacker Status",
+        "props": [],
+        "repeat": "3",
+        "crontab": "",
+        "once": true,
+        "onceDelay": 0.5,
+        "topic": "attacker-status",
+        "x": 100,
+        "y": 100,
+        "wires": [
+            [
+                "al_attacker_status_get"
+            ]
+        ]
+    },
+    {
+        "id": "al_attacker_status_get",
+        "type": "http request",
+        "z": "al_tab",
+        "name": "GET Attacker Container",
+        "method": "GET",
+        "ret": "obj",
+        "paytoqs": "ignore",
+        "url": "http://docker-proxy:2375/containers/iot_attacker_node/json",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "authType": "",
+        "senderr": true,
+        "x": 300,
+        "y": 100,
+        "wires": [
+            [
+                "al_attacker_status_parse"
+            ]
+        ]
+    },
+    {
+        "id": "al_attacker_status_parse",
+        "type": "function",
+        "z": "al_tab",
+        "name": "Parse Attacker Status",
+        "func": "if (msg.statusCode === 404) {\n    return { payload: { status: 'not_deployed', label: 'Not Deployed' } };\n}\nif (msg.statusCode === 200) {\n    try {\n        let info = msg.payload;\n        if (info.State && info.State.Running) {\n            return { payload: { status: 'running', label: 'Running' } };\n        }\n        let stateLabel = info.State ? info.State.Status : 'Dead';\n        return { payload: { status: 'dead', label: stateLabel.charAt(0).toUpperCase() + stateLabel.slice(1) } };\n    } catch(e) {\n        return { payload: { status: 'error', label: 'Parse Error' } };\n    }\n}\nreturn { payload: { status: 'error', label: 'Error' } };",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 500,
+        "y": 100,
+        "wires": [
+            [
+                "al_attacker_status_display"
+            ]
+        ]
+    },
+    {
+        "id": "al_attacker_status_display",
+        "type": "ui-template",
+        "z": "al_tab",
+        "group": "al_left_group",
+        "name": "Attacker Status",
+        "order": 1,
+        "width": 0,
+        "height": 0,
+        "format": "<template><div class=\"attacker-status-bar\" :class=\"statusClass\"><span class=\"status-dot\"></span><span class=\"status-label\">Attacker: {{ statusText }}</span></div></template><script>export default{data(){return{statusText:'Not Deployed',statusClass:'status-not-deployed'}},watch:{msg:{handler(v){if(v&&v.payload){let s=v.payload;this.statusText=s.label||'Unknown';this.statusClass='status-'+(s.status||'unknown')}},immediate:true}}}</script><style>.attacker-status-bar{display:flex;align-items:center;gap:8px;padding:8px 14px;border-radius:6px;margin:4px 0 12px 0;font-family:monospace;font-size:13px;background:#1e293b;border:1px solid #334155}.status-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0;display:inline-block}.status-label{color:#e2e8f0}.status-running .status-dot{background:#10b981;box-shadow:0 0 6px rgba(16,185,129,.4)}.status-dead .status-dot{background:#ef4444}.status-not-deployed .status-dot{background:#6b7280}.status-error .status-dot{background:#f59e0b}</style>",
+        "storeOutMessages": false,
+        "passthru": false,
+        "resendOnRefresh": true,
+        "templateScope": "local",
+        "className": "",
+        "x": 700,
+        "y": 100,
+        "wires": [
+            []
         ]
     }
 ]

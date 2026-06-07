@@ -60,6 +60,30 @@ class TestMqttInject:
         args = mqtt_inject.parser.parse_args(["--broker", "x", "--sensor-type", "humidity"])
         assert args.sensor_type == "humidity"
 
+    def test_default_sensor_id(self):
+        args = mqtt_inject.parser.parse_args(["--broker", "x"])
+        assert args.sensor_id is None  # resolved at runtime from topic
+
+    def test_custom_sensor_id(self):
+        args = mqtt_inject.parser.parse_args(["--broker", "x", "--sensor-id", "MY_SENSOR"])
+        assert args.sensor_id == "MY_SENSOR"
+
+    def test_sensor_id_resolved_from_topic(self):
+        result = mqtt_inject._default_sensor_id("sensors/factory/C_ENV_02")
+        assert result == "C_ENV_02"
+
+    def test_sensor_id_resolved_from_flat_topic(self):
+        result = mqtt_inject._default_sensor_id("sensors/data")
+        assert result == "data"
+
+    def test_default_profile(self):
+        args = mqtt_inject.parser.parse_args(["--broker", "x"])
+        assert args.profile == "normal"
+
+    def test_custom_profile(self):
+        args = mqtt_inject.parser.parse_args(["--broker", "x", "--profile", "failing"])
+        assert args.profile == "failing"
+
 
 class TestMqttSniff:
     """mqtt_sniff.py argument parsing."""

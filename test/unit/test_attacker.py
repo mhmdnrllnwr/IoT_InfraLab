@@ -44,21 +44,21 @@ class TestMqttInject:
         args = mqtt_inject.parser.parse_args(["--broker", "x", "--topic", "my/topic"])
         assert args.topic == "my/topic"
 
-    def test_default_value(self):
+    def test_default_readings(self):
         args = mqtt_inject.parser.parse_args(["--broker", "x"])
-        assert args.value == 9000
+        assert args.readings == ["temperature=9000"]
 
-    def test_custom_value(self):
-        args = mqtt_inject.parser.parse_args(["--broker", "x", "--value", "42"])
-        assert args.value == 42
+    def test_custom_readings(self):
+        args = mqtt_inject.parser.parse_args(["--broker", "x", "--readings", "temperature=40.9", "pressure=104.8"])
+        assert args.readings == ["temperature=40.9", "pressure=104.8"]
 
-    def test_default_sensor_type(self):
-        args = mqtt_inject.parser.parse_args(["--broker", "x"])
-        assert args.sensor_type == "temperature"
+    def test_parse_readings_single(self):
+        result = mqtt_inject._parse_readings(["temperature=40.9"])
+        assert result == {"temperature": 40.9}
 
-    def test_custom_sensor_type(self):
-        args = mqtt_inject.parser.parse_args(["--broker", "x", "--sensor-type", "humidity"])
-        assert args.sensor_type == "humidity"
+    def test_parse_readings_multi(self):
+        result = mqtt_inject._parse_readings(["temperature=40.9", "pressure=104.8", "power_draw=223.9"])
+        assert result == {"temperature": 40.9, "pressure": 104.8, "power_draw": 223.9}
 
     def test_default_sensor_id(self):
         args = mqtt_inject.parser.parse_args(["--broker", "x"])

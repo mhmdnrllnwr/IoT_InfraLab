@@ -3,8 +3,17 @@ import time
 import json
 import argparse
 
-VALID_SENSOR_TYPES = ("temperature", "humidity", "pressure", "vibration", "power_draw")
-VALID_PROFILES = ("normal", "erratic", "failing")
+def _parse_readings(raw):
+    """Parse ['temperature=40.9', 'pressure=104.8'] into dict."""
+    readings = {}
+    for pair in raw:
+        if "=" in pair:
+            k, v = pair.split("=", 1)
+            try:
+                readings[k] = float(v)
+            except ValueError:
+                readings[k] = v
+    return readings
 
 
 def on_connect(client, userdata, flags, rc):
@@ -26,26 +35,25 @@ parser.add_argument("--port", type=int, default=1883, help="MQTT Broker Port")
 parser.add_argument("--topic", default="sensors/data", help="Target topic")
 parser.add_argument("--sensor-id", default=None, help="Sensor ID (default: last segment of --topic)")
 parser.add_argument(
-    "--sensor-type", default="temperature",
-    choices=VALID_SENSOR_TYPES,
-    help="Sensor type for readings key",
-)
-parser.add_argument("--value", type=int, default=9000, help="Fake sensor value to inject")
-parser.add_argument(
     "--profile", default="normal",
-    choices=VALID_PROFILES,
     help="Sensor behavior profile (tags the InfluxDB point)",
+)
+parser.add_argument(
+    "--readings", nargs="*", default=["temperature=9000"],
+    help="Readings as key=val pairs, e.g. temperature=40.9 pressure=104.8",
 )
 
 if __name__ == "__main__":
     args = parser.parse_args()
 
     sensor_id = args.sensor_id or _default_sensor_id(args.topic)
+    readings = _parse_readings(args.readings)
     payload = {
         "sensor_id": sensor_id,
         "profile": args.profile,
+        "readings": readings,
         "fake_injection": True,
-        "readings": {args.sensor_type: args.value},
+        "timestamp": time.time(),
     }
     payload_str = json.dumps(payload)
     print(f"Injecting malicious payload to '{args.topic}': {payload_str}")

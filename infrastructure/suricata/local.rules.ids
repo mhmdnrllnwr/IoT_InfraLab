@@ -1,23 +1,30 @@
 # ==========================================
-# local.rules.ids - IDS MODE (Alert Only)
+# local.rules.ids — IDS MODE (Alert Only)
 # ==========================================
+# Alerts on attacks. Never blocks.
 
-# Safelist internal management traffic
-pass ip 172.18.0.100 any <> any any (msg:"Safelisting Security Auditor"; sid:9900001; rev:1;)
-pass ip 172.18.0.25 any <> any any (msg:"Safelisting Node-RED"; sid:9900002; rev:1;)
-pass ip 172.18.0.10 any <> any any (msg:"Safelisting Promtail"; sid:9900003; rev:1;)
+# ---------- SAFELIST ----------
+pass ip 172.18.0.100 any <> any any (msg:"SAFELIST — Security Auditor"; sid:9900001; rev:1;)
+pass ip 172.18.0.25 any <> any any (msg:"SAFELIST — Node-RED"; sid:9900002; rev:1;)
+pass ip 172.18.0.10 any <> any any (msg:"SAFELIST — Promtail"; sid:9900003; rev:1;)
 
-# 1. MQTT SYN Flood (DoS)
+# ---------- 1. SYN FLOOD (>100 SYNs/sec to port 1883) ----------
 alert tcp any any -> any 1883 (msg:"DoS Attempt: MQTT SYN Flood Detected"; flow:to_server,stateless; flags:S; threshold:type both, track by_src, count 100, seconds 1; classtype:attempted-dos; sid:1000001; rev:2;)
 
-# 2. Nmap Port Scan (Stealth SYN)
-alert tcp any any -> any any (msg:"Nmap SYN Stealth Scan Detected"; flow:stateless; flags:S; threshold:type both, track by_src, count 3, seconds 5; classtype:attempted-recon; sid:1000002; rev:2;)
+# ---------- 2. PORT SCAN (>20 SYNs/5s, raised 3->20 to reduce FP) ----------
+alert tcp any any -> any any (msg:"Nmap SYN Stealth Scan Detected"; flow:stateless; flags:S; threshold:type both, track by_src, count 20, seconds 5; classtype:attempted-recon; sid:1000002; rev:3;)
 
-# 3. Protocol Mismatch (Telemetry Injection with HTTP methods)
+# ---------- 3. PROTOCOL MISMATCH (HTTP verb on MQTT port) ----------
 alert tcp any any -> any 1883 (msg:"Protocol Mismatch: HTTP Method sent to MQTT Broker"; flow:to_server,established; pcre:"/^(GET|POST|PUT|DELETE)\\s+/i"; classtype:protocol-command-decode; sid:1000003; rev:2;)
 
-# 4a. Rogue Subscriber (Native MQTT Parser - Commented Out)
-# alert mqtt any any -> any 1883 (msg:"Rogue Subscriber Detected: Native MQTT Wildcard '#'"; mqtt.subscribe.topic:"#"; classtype:attempted-recon; sid:1000005; rev:2;)
+# ---------- 4a. ROGUE SUBSCRIBER (Native MQTT Parser — catches mqtt_sniff.py) ----------
+alert mqtt any any -> any 1883 (msg:"Rogue Subscriber Detected: MQTT Wildcard '#'"; mqtt.subscribe.topic; content:"#"; classtype:attempted-recon; sid:1000005; rev:2;)
 
-# 4b. Rogue Subscriber (Raw TCP Fallback)
+# ---------- 4b. ROGUE SUBSCRIBER (Raw Hex Fallback) ----------
 alert tcp any any -> any 1883 (msg:"Rogue Subscriber Detected: Raw Hex Wildcard '#'"; flow:to_server; content:"|00 01 23|"; classtype:attempted-recon; sid:1000007; rev:2;)
+
+# ---------- 5. APP-LAYER DoS (>50 msgs/sec — catches mqtt_dos.py) ----------
+alert mqtt any any -> any 1883 (msg:"MQTT DoS: Rapid Flood Detected"; threshold:type both, track by_src, count 50, seconds 1; classtype:attempted-dos; sid:1000009; rev:1;)
+
+# ---------- 6. FAKE TELEMETRY (matches 'fake_injection' — catches mqtt_inject.py) ----------
+alert tcp any any -> any 1883 (msg:"MQTT Injection: Fake Telemetry Detected"; flow:to_server,established; content:"fake_injection"; nocase; classtype:attempted-recon; sid:1000010; rev:1;)

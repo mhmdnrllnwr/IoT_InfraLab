@@ -1,0 +1,54 @@
+Connecting to mosquitto:1883...
+Sniffing traffic for 20 seconds...
+
+Connected to broker! Subscribing to all topics (#)...
+[SNIFFED] Topic: sensor/metadata | Payload: {"temperature":[10,40],"humidity":[30,90],"pressure":[950,1050],"vibration":[0,10],"power_consumption":[50,500]}
+[SNIFFED] Topic: sensor/saved | Payload: [{"id":"A_CNCMILL_01","types":"temperature,vibration,power_draw","profile":"normal","interval":5,"saved_at":"2026-03-18T16:09:53.168Z"},{"id":"A_CNCMILL_02","types":"temperature,vibration,power_draw","profile":"failing","interval":5,"saved_at":"2026-03-18T16:10:08.480Z"},{"id":"B_CNCMILL_01","types":"temperature,vibration,power_draw","profile":"normal","interval":5,"saved_at":"2026-03-18T16:10:32.336Z"},{"id":"B_CNCMILL_02","types":"temperature,vibration,power_draw","profile":"normal","interval":5,"saved_at":"2026-03-18T16:10:37.898Z"},{"id":"C_COMP_01","types":"power_draw,pressure,temperature","profile":"normal","interval":5,"saved_at":"2026-03-18T16:12:41.127Z"},{"id":"C_COMP_02","types":"power_draw,pressure,temperature","profile":"failing","interval":5,"saved_at":"2026-03-18T16:12:59.774Z"},{"id":"C_ENV_01","types":"temperature,humidity","profile":"normal","interval":5,"saved_at":"2026-03-18T16:13:36.672Z"},{"id":"C_ENV_02","types":"temperature,humidity","profile":"normal","interval":5,"saved_at":"2026-03-18T16:13:40.231Z"},{"id":"B_COOLINGPUMP_01","types":"pressure,flow_rate,power_draw","profile":"normal","interval":5,"saved_at":"2026-03-19T08:12:18.717Z"},{"id":"A_COOLINGPUMP_01","types":"pressure,flow_rate,power_draw","profile":"erratic","interval":5,"saved_at":"2026-03-19T08:12:35.695Z"}]
+[SNIFFED] Topic: sensors/factory/A_CNCMILL_01 | Payload: {"sensor_id": "A_CNCMILL_01", "profile": "normal", "readings": {"temperature": 44.6, "vibration": 0.557, "power_draw": 220.1}, "timestamp": 1780840150.9904006}
+[SNIFFED] Topic: sensors/factory/A_COOLINGPUMP_01 | Payload: {"sensor_id": "A_COOLINGPUMP_01", "profile": "erratic", "readings": {"pressure": 256.5, "flow_rate": 55.2, "power_draw": 474.4}, "timestamp": 1780840152.0993707}
+[SNIFFED] Topic: sensors/factory/C_ENV_01 | Payload: {"sensor_id": "C_ENV_01", "profile": "normal", "readings": {"temperature": 44.7, "humidity": 33.5}, "timestamp": 1780840152.288131}
+[SNIFFED] Topic: sensors/factory/A_CNCMILL_02 | Payload: {"sensor_id": "A_CNCMILL_02", "profile": "failing", "readings": {"temperature": 685.2, "vibration": 17.443, "power_draw": 3645.1}, "timestamp": 1780840152.8384297}
+[SNIFFED] Topic: sensors/factory/C_ENV_02 | Payload: {"sensor_id": "C_ENV_02", "profile": "normal", "readings": {"temperature": 44.9, "humidity": 34.5}, "timestamp": 1780840153.0590227}
+[SNIFFED] Topic: sensors/factory/B_CNCMILL_02 | Payload: {"sensor_id": "B_CNCMILL_02", "profile": "normal", "readings": {"temperature": 40.3, "vibration": 0.532, "power_draw": 225.7}, "timestamp": 1780840153.1554868}
+[SNIFFED] Topic: sensors/factory/B_CNCMILL_01 | Payload: {"sensor_id": "B_CNCMILL_01", "profile": "normal", "readings": {"temperature": 40.5, "vibration": 1.108, "power_draw": 227.2}, "timestamp": 1780840153.434235}
+[SNIFFED] Topic: sensors/factory/C_COMP_02 | Payload: {"sensor_id": "C_COMP_02", "profile": "failing", "readings": {"power_draw": 3601.2, "pressure": 1511.7, "temperature": 689.0}, "timestamp": 1780840154.2495387}
+[SNIFFED] Topic: sensors/factory/C_COMP_01 | Payload: {"sensor_id": "C_COMP_01", "profile": "normal", "readings": {"power_draw": 226.9, "pressure": 94.6, "temperature": 45.0}, "timestamp": 1780840154.2983434}
+[SNIFFED] Topic: sensors/factory/B_COOLINGPUMP_01 | Payload: {"sensor_id": "B_COOLINGPUMP_01", "profile": "normal", "readings": {"pressure": 94.5, "flow_rate": 58.9, "power_draw": 224.9}, "timestamp": 1780840154.2990413}
+[STATUS] Still sniffing... 15 seconds left
+[SNIFFED] Topic: sensors/factory/C_ENV_02 | Payload: {"fake_injection": true, "temp": 777, "humidity": 0.0, "pressure": 0.0, "vibration": 0.0, "power_draw": 0.0}
+[SNIFFED] Topic: sensors/factory/A_CNCMILL_01 | Payload: {"sensor_id": "A_CNCMILL_01", "profile": "normal", "readings": {"temperature": 40.6, "vibration": 0.504, "power_draw": 229.1}, "timestamp": 1780840155.995803}
+[SNIFFED] Topic: sensors/factory/A_COOLINGPUMP_01 | Payload: {"sensor_id": "A_COOLINGPUMP_01", "profile": "erratic", "readings": {"pressure": 104.6, "flow_rate": 54.5, "power_draw": 226.8}, "timestamp": 1780840157.1018434}
+[SNIFFED] Topic: sensors/factory/C_ENV_01 | Payload: {"sensor_id": "C_ENV_01", "profile": "normal", "readings": {"temperature": 40.5, "humidity": 35.3}, "timestamp": 1780840157.2893875}
+[SNIFFED] Topic: sensors/factory/A_CNCMILL_02 | Payload: {"sensor_id": "A_CNCMILL_02", "profile": "failing", "readings": {"temperature": 674.0, "vibration": 11.273, "power_draw": 3603.3}, "timestamp": 1780840157.8395493}
+[SNIFFED] Topic: sensors/factory/C_ENV_02 | Payload: {"sensor_id": "C_ENV_02", "profile": "normal", "readings": {"temperature": 41.3, "humidity": 32.6}, "timestamp": 1780840158.064033}
+[SNIFFED] Topic: sensors/factory/B_CNCMILL_02 | Payload: {"sensor_id": "B_CNCMILL_02", "profile": "normal", "readings": {"temperature": 40.9, "vibration": 0.898, "power_draw": 225.6}, "timestamp": 1780840158.1590946}
+[SNIFFED] Topic: sensors/factory/B_CNCMILL_01 | Payload: {"sensor_id": "B_CNCMILL_01", "profile": "normal", "readings": {"temperature": 43.1, "vibration": 0.567, "power_draw": 226.5}, "timestamp": 1780840158.4406555}
+[SNIFFED] Topic: sensors/factory/C_COMP_02 | Payload: {"sensor_id": "C_COMP_02", "profile": "failing", "readings": {"power_draw": 3655.6, "pressure": 1465.3, "temperature": 704.8}, "timestamp": 1780840159.2526388}
+[SNIFFED] Topic: sensors/factory/C_COMP_01 | Payload: {"sensor_id": "C_COMP_01", "profile": "normal", "readings": {"power_draw": 224.3, "pressure": 100.2, "temperature": 40.6}, "timestamp": 1780840159.299381}
+[SNIFFED] Topic: sensors/factory/B_COOLINGPUMP_01 | Payload: {"sensor_id": "B_COOLINGPUMP_01", "profile": "normal", "readings": {"pressure": 93.8, "flow_rate": 53.3, "power_draw": 222.9}, "timestamp": 1780840159.3011274}
+[STATUS] Still sniffing... 10 seconds left
+[SNIFFED] Topic: sensors/factory/A_CNCMILL_01 | Payload: {"sensor_id": "A_CNCMILL_01", "profile": "normal", "readings": {"temperature": 43.5, "vibration": 0.607, "power_draw": 220.1}, "timestamp": 1780840161.0021613}
+[SNIFFED] Topic: sensors/factory/A_COOLINGPUMP_01 | Payload: {"sensor_id": "A_COOLINGPUMP_01", "profile": "erratic", "readings": {"pressure": 101.3, "flow_rate": 58.2, "power_draw": 228.1}, "timestamp": 1780840162.1062622}
+[SNIFFED] Topic: sensors/factory/C_ENV_01 | Payload: {"sensor_id": "C_ENV_01", "profile": "normal", "readings": {"temperature": 43.0, "humidity": 39.3}, "timestamp": 1780840162.297244}
+[SNIFFED] Topic: sensors/factory/A_CNCMILL_02 | Payload: {"sensor_id": "A_CNCMILL_02", "profile": "failing", "readings": {"temperature": 656.2, "vibration": 10.467, "power_draw": 3562.8}, "timestamp": 1780840162.8457057}
+[SNIFFED] Topic: sensors/factory/C_ENV_02 | Payload: {"sensor_id": "C_ENV_02", "profile": "normal", "readings": {"temperature": 43.2, "humidity": 30.7}, "timestamp": 1780840163.0689955}
+[SNIFFED] Topic: sensors/factory/B_CNCMILL_02 | Payload: {"sensor_id": "B_CNCMILL_02", "profile": "normal", "readings": {"temperature": 42.5, "vibration": 1.066, "power_draw": 226.3}, "timestamp": 1780840163.1607397}
+[SNIFFED] Topic: sensors/factory/B_CNCMILL_01 | Payload: {"sensor_id": "B_CNCMILL_01", "profile": "normal", "readings": {"temperature": 41.5, "vibration": 0.767, "power_draw": 221.0}, "timestamp": 1780840163.4470494}
+[SNIFFED] Topic: sensors/factory/C_COMP_02 | Payload: {"sensor_id": "C_COMP_02", "profile": "failing", "readings": {"power_draw": 3584.7, "pressure": 1451.0, "temperature": 709.6}, "timestamp": 1780840164.259137}
+[SNIFFED] Topic: sensors/factory/C_COMP_01 | Payload: {"sensor_id": "C_COMP_01", "profile": "normal", "readings": {"power_draw": 221.1, "pressure": 100.4, "temperature": 40.3}, "timestamp": 1780840164.3001783}
+[SNIFFED] Topic: sensors/factory/B_COOLINGPUMP_01 | Payload: {"sensor_id": "B_COOLINGPUMP_01", "profile": "normal", "readings": {"pressure": 98.7, "flow_rate": 55.8, "power_draw": 228.0}, "timestamp": 1780840164.3066366}
+[STATUS] Still sniffing... 5 seconds left
+[SNIFFED] Topic: sensors/factory/A_CNCMILL_01 | Payload: {"sensor_id": "A_CNCMILL_01", "profile": "normal", "readings": {"temperature": 40.6, "vibration": 1.043, "power_draw": 226.0}, "timestamp": 1780840164.4596708}
+[SNIFFED] Topic: sensors/factory/A_COOLINGPUMP_01 | Payload: {"sensor_id": "A_COOLINGPUMP_01", "profile": "erratic", "readings": {"pressure": 101.4, "flow_rate": 56.1, "power_draw": 224.4}, "timestamp": 1780840165.5637567}
+[SNIFFED] Topic: sensors/factory/C_ENV_01 | Payload: {"sensor_id": "C_ENV_01", "profile": "normal", "readings": {"temperature": 43.8, "humidity": 39.0}, "timestamp": 1780840165.7579818}
+[SNIFFED] Topic: sensors/factory/A_CNCMILL_02 | Payload: {"sensor_id": "A_CNCMILL_02", "profile": "failing", "readings": {"temperature": 656.0, "vibration": 8.576, "power_draw": 3540.2}, "timestamp": 1780840166.3055122}
+[SNIFFED] Topic: sensors/factory/C_ENV_02 | Payload: {"sensor_id": "C_ENV_02", "profile": "normal", "readings": {"temperature": 40.5, "humidity": 30.1}, "timestamp": 1780840166.5287879}
+[SNIFFED] Topic: sensors/factory/B_CNCMILL_02 | Payload: {"sensor_id": "B_CNCMILL_02", "profile": "normal", "readings": {"temperature": 42.3, "vibration": 0.653, "power_draw": 225.6}, "timestamp": 1780840166.6217127}
+[SNIFFED] Topic: sensors/factory/B_CNCMILL_01 | Payload: {"sensor_id": "B_CNCMILL_01", "profile": "normal", "readings": {"temperature": 40.2, "vibration": 0.531, "power_draw": 225.5}, "timestamp": 1780840166.9064264}
+[SNIFFED] Topic: sensors/factory/C_COMP_02 | Payload: {"sensor_id": "C_COMP_02", "profile": "failing", "readings": {"power_draw": 3605.5, "pressure": 1657.3, "temperature": 638.7}, "timestamp": 1780840167.714706}
+[SNIFFED] Topic: sensors/factory/C_COMP_01 | Payload: {"sensor_id": "C_COMP_01", "profile": "normal", "readings": {"power_draw": 220.4, "pressure": 94.0, "temperature": 43.6}, "timestamp": 1780840167.7597992}
+[SNIFFED] Topic: sensors/factory/B_COOLINGPUMP_01 | Payload: {"sensor_id": "B_COOLINGPUMP_01", "profile": "normal", "readings": {"pressure": 95.3, "flow_rate": 52.6, "power_draw": 229.1}, "timestamp": 1780840167.7623837}
+[STATUS] Still sniffing... 0 seconds left
+
+Time is up. Stopping interception.
+Disconnected.

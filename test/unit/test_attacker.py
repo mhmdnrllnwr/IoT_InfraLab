@@ -52,6 +52,14 @@ class TestMqttInject:
         args = mqtt_inject.parser.parse_args(["--broker", "x", "--value", "42"])
         assert args.value == 42
 
+    def test_default_sensor_type(self):
+        args = mqtt_inject.parser.parse_args(["--broker", "x"])
+        assert args.sensor_type == "temperature"
+
+    def test_custom_sensor_type(self):
+        args = mqtt_inject.parser.parse_args(["--broker", "x", "--sensor-type", "humidity"])
+        assert args.sensor_type == "humidity"
+
 
 class TestMqttSniff:
     """mqtt_sniff.py argument parsing."""

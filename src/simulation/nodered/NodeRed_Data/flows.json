@@ -230,7 +230,7 @@
         ],
         "order": 5,
         "className": "",
-        "visible": true,
+        "visible": false,
         "disabled": false
     },
     {
@@ -713,6 +713,7 @@
         "width": "6",
         "order": 1,
         "showTitle": true,
+        "visible": false,
         "groupType": "default"
     },
     {
@@ -723,6 +724,7 @@
         "width": "6",
         "order": 2,
         "showTitle": true,
+        "visible": false,
         "groupType": "default"
     },
     {
@@ -2697,8 +2699,8 @@
         "resendOnRefresh": true,
         "templateScope": "local",
         "className": "",
-        "x": 130,
-        "y": 1900,
+        "x": 150,
+        "y": 1500,
         "wires": [
             []
         ]
@@ -3236,8 +3238,8 @@
         "name": "Prep Suricata Restart",
         "func": "// Step 4: Restart Suricata so it re-attaches to Mosquitto's network space\nmsg.url = \"http://docker-proxy:2375/containers/suricata-ids/restart\";\nmsg.method = \"POST\";\nmsg.payload = {};\nreturn msg;",
         "outputs": 1,
-        "x": 1640,
-        "y": 1000,
+        "x": 800,
+        "y": 940,
         "wires": [
             [
                 "3f91e3e609243315"
@@ -3258,8 +3260,8 @@
         "proxy": "",
         "authType": "",
         "senderr": false,
-        "x": 1900,
-        "y": 1000,
+        "x": 1060,
+        "y": 940,
         "wires": [
             [
                 "2a6bd4127eb59aec"
@@ -3403,8 +3405,8 @@
         "proxy": "",
         "authType": "",
         "senderr": false,
-        "x": 1410,
-        "y": 1000,
+        "x": 580,
+        "y": 940,
         "wires": [
             [
                 "0f902d13eb7aaa73"
@@ -3701,8 +3703,8 @@
         "name": "Format Toast",
         "func": "msg.topic = 'system_log';\nif (msg.statusCode >= 200 && msg.statusCode < 300) {\n    msg.payload = \"MOSQUITTO EVENT: \" + msg.notification_text;\n} else {\n    msg.payload = `MOSQUITTO ERROR: Failed to restart broker (API returned ${msg.statusCode})`;\n}\nreturn msg;",
         "outputs": 1,
-        "x": 2130,
-        "y": 1000,
+        "x": 1290,
+        "y": 940,
         "wires": [
             [
                 "5a9e7b1d4c3ffce4"
@@ -3860,7 +3862,7 @@
         "onceDelay": 0.5,
         "topic": "",
         "x": 140,
-        "y": 1320,
+        "y": 1220,
         "wires": [
             [
                 "ba9805537f962ad2"
@@ -3875,7 +3877,7 @@
         "func": "msg.url = \"http://docker-proxy:2375/containers/iot_broker/exec\";\nmsg.method = \"POST\";\nmsg.payload = {\n    \"AttachStdout\": true,\n    \"Tty\": true,\n    \"Cmd\": [\"cat\", \"/mosquitto/config/mosquitto.conf\"]\n};\nreturn msg;",
         "outputs": 1,
         "x": 360,
-        "y": 1320,
+        "y": 1220,
         "wires": [
             [
                 "877124e460d9b5d0"
@@ -3897,7 +3899,7 @@
         "authType": "",
         "senderr": false,
         "x": 550,
-        "y": 1320,
+        "y": 1220,
         "wires": [
             [
                 "693a2e29fc4dd823"
@@ -3912,7 +3914,7 @@
         "func": "if (msg.payload && msg.payload.Id) {\n    msg.url = \"http://docker-proxy:2375/exec/\" + msg.payload.Id + \"/start\";\n    msg.method = \"POST\";\n    msg.payload = { \"Detach\": false, \"Tty\": true };\n    return msg;\n}",
         "outputs": 1,
         "x": 710,
-        "y": 1320,
+        "y": 1220,
         "wires": [
             [
                 "2f9bb4791d534af9"
@@ -3934,7 +3936,7 @@
         "authType": "",
         "senderr": false,
         "x": 860,
-        "y": 1320,
+        "y": 1220,
         "wires": [
             [
                 "0c845e846f767f0e"
@@ -3949,7 +3951,7 @@
         "func": "// Strip hidden Docker control characters to ensure clean text\nlet cleanMosq = msg.payload.replace(/[^\\x20-\\x7E\\n\\r]/g, \"\");\n// Remove empty lines for a tighter UI\ncleanMosq = cleanMosq.split('\\n').filter(line => line.trim() !== '').join('\\n');\n\n// Store Mosquitto output safely while we fetch Suricata\nmsg.mosq_conf = cleanMosq;\n\n// Prepare Suricata command\nmsg.url = \"http://docker-proxy:2375/containers/suricata-ids/exec\";\nmsg.method = \"POST\";\nmsg.payload = {\n    \"AttachStdout\": true,\n    \"Tty\": true,\n    \"Cmd\": [\"cat\", \"/etc/suricata/rules/local.rules\"]\n};\nreturn msg;",
         "outputs": 1,
         "x": 1060,
-        "y": 1320,
+        "y": 1220,
         "wires": [
             [
                 "3f717cce3f84d5c3"
@@ -3971,7 +3973,7 @@
         "authType": "",
         "senderr": false,
         "x": 330,
-        "y": 1380,
+        "y": 1280,
         "wires": [
             [
                 "0e26d6aa9601189d"
@@ -3986,7 +3988,7 @@
         "func": "if (msg.payload && msg.payload.Id) {\n    msg.url = \"http://docker-proxy:2375/exec/\" + msg.payload.Id + \"/start\";\n    msg.method = \"POST\";\n    msg.payload = { \"Detach\": false, \"Tty\": true };\n    return msg;\n}",
         "outputs": 1,
         "x": 490,
-        "y": 1380,
+        "y": 1280,
         "wires": [
             [
                 "a32d9f1d81d01ab7"
@@ -4008,7 +4010,7 @@
         "authType": "",
         "senderr": false,
         "x": 650,
-        "y": 1380,
+        "y": 1280,
         "wires": [
             [
                 "2c185cf0420c3e4c"
@@ -4023,7 +4025,7 @@
         "func": "let cleanSuri = msg.payload.replace(/[^\\x20-\\x7E\\n\\r]/g, \"\");\ncleanSuri = cleanSuri.split('\\n').filter(line => line.trim() !== '').join('\\n');\nlet mosq = msg.mosq_conf;\n\n// Send pure data to the Vue template\nmsg.payload = {\n    mosquitto: mosq,\n    suricata: cleanSuri\n};\n\n// CRITICAL: Force the topic so the UI knows this is file data\nmsg.topic = \"live_configs\";\n\nreturn msg;",
         "outputs": 1,
         "x": 850,
-        "y": 1380,
+        "y": 1280,
         "wires": [
             [
                 "5a9e7b1d4c3ffce4"
@@ -4093,7 +4095,7 @@
         "templateScope": "local",
         "className": "",
         "x": 140,
-        "y": 1580,
+        "y": 1360,
         "wires": [
             [
                 "508ec1981d19dc0f"
@@ -4113,7 +4115,7 @@
         "finalize": "",
         "libs": [],
         "x": 420,
-        "y": 1580,
+        "y": 1360,
         "wires": []
     },
     {
@@ -4147,8 +4149,8 @@
         "enablePointerup": false,
         "pointerupPayload": "",
         "pointerupPayloadType": "str",
-        "x": 140,
-        "y": 1680,
+        "x": 100,
+        "y": 1420,
         "wires": [
             [
                 "f12ea3bec24b9327"
@@ -4167,8 +4169,8 @@
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 340,
-        "y": 1680,
+        "x": 300,
+        "y": 1420,
         "wires": [
             [
                 "78692cead474f82f"
@@ -4191,8 +4193,8 @@
         "authType": "",
         "senderr": false,
         "headers": [],
-        "x": 540,
-        "y": 1680,
+        "x": 500,
+        "y": 1420,
         "wires": [
             [
                 "fdf2276a23e12312"
@@ -4211,8 +4213,8 @@
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 740,
-        "y": 1680,
+        "x": 700,
+        "y": 1420,
         "wires": [
             [
                 "2cf40ee6b5cdbfa0"
@@ -4235,8 +4237,8 @@
         "authType": "",
         "senderr": false,
         "headers": [],
-        "x": 940,
-        "y": 1680,
+        "x": 900,
+        "y": 1420,
         "wires": [
             [
                 "07d79169802004c7"
@@ -4255,8 +4257,8 @@
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 340,
-        "y": 1780,
+        "x": 1140,
+        "y": 1420,
         "wires": [
             [
                 "6ecf3c5ac4870920"
@@ -4279,8 +4281,8 @@
         "authType": "",
         "senderr": false,
         "headers": [],
-        "x": 540,
-        "y": 1780,
+        "x": 1340,
+        "y": 1420,
         "wires": [
             [
                 "b4cb898fca4304f6"
@@ -4299,8 +4301,8 @@
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 740,
-        "y": 1780,
+        "x": 1220,
+        "y": 1480,
         "wires": [
             [
                 "c2036021ea6d55e2"
@@ -4323,8 +4325,8 @@
         "authType": "",
         "senderr": false,
         "headers": [],
-        "x": 940,
-        "y": 1780,
+        "x": 1420,
+        "y": 1480,
         "wires": [
             [
                 "f6baefa6e6aeccce"
@@ -4352,8 +4354,8 @@
         "topic": "",
         "payload": "",
         "payloadType": "date",
-        "x": 140,
-        "y": 1820,
+        "x": 940,
+        "y": 1460,
         "wires": [
             [
                 "07d79169802004c7"
@@ -4372,8 +4374,8 @@
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 1180,
-        "y": 1780,
+        "x": 1220,
+        "y": 1540,
         "wires": [
             [
                 "2215cb7219cc32b1"
@@ -4397,8 +4399,8 @@
         "resendOnRefresh": false,
         "templateScope": "local",
         "className": "",
-        "x": 1420,
-        "y": 1780,
+        "x": 1460,
+        "y": 1540,
         "wires": [
             []
         ]
@@ -5673,8 +5675,8 @@
         "resendOnRefresh": false,
         "templateScope": "local",
         "className": "",
-        "x": 1500,
-        "y": 380,
+        "x": 1340,
+        "y": 400,
         "wires": [
             []
         ]

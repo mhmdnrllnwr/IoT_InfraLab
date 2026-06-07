@@ -31,17 +31,17 @@
         "env": []
     },
     {
-        "id": "b78d14cc362e1196",
+        "id": "4acab47cf7e84e94",
         "type": "tab",
-        "label": "Cyber Attack Simulation",
+        "label": "Backend",
         "disabled": false,
         "info": "",
         "env": []
     },
     {
-        "id": "4acab47cf7e84e94",
+        "id": "b78d14cc362e1196",
         "type": "tab",
-        "label": "Backend",
+        "label": "Cyber Attack Simulation",
         "disabled": false,
         "info": "",
         "env": []
@@ -372,7 +372,7 @@
         "name": "Logs & Rules",
         "page": "5a633147924a28d1",
         "width": "6",
-        "height": "",
+        "height": "1",
         "order": 4,
         "showTitle": true,
         "className": "",
@@ -733,6 +733,20 @@
         "width": 6,
         "height": 1,
         "order": 6,
+        "showTitle": true,
+        "className": "",
+        "visible": "true",
+        "disabled": "false",
+        "groupType": "default"
+    },
+    {
+        "id": "fa3fdfe80dee07da",
+        "type": "ui-group",
+        "name": "Suricata Rules Terminal",
+        "page": "5a633147924a28d1",
+        "width": 6,
+        "height": 1,
+        "order": 7,
         "showTitle": true,
         "className": "",
         "visible": "true",
@@ -2325,8 +2339,8 @@
         "crontab": "",
         "once": true,
         "onceDelay": 0.5,
-        "x": 1510,
-        "y": 120,
+        "x": 150,
+        "y": 1660,
         "wires": [
             [
                 "b001f5a2ea9edced"
@@ -2341,8 +2355,8 @@
         "filename": "/data/config/sensor_types.json",
         "format": "utf8",
         "chunk": false,
-        "x": 1750,
-        "y": 120,
+        "x": 390,
+        "y": 1660,
         "wires": [
             [
                 "41a12cd7d803d01c"
@@ -2356,8 +2370,8 @@
         "name": "Update All Dropdowns",
         "func": "let data = {};\ntry {\n    data = JSON.parse(msg.payload);\n} catch(e) { return null; }\n\nglobal.set('sensorTypesDB', data);\n\nlet opts = Object.keys(data).map(key => ({\n    label: key.charAt(0).toUpperCase() + key.slice(1).replace(/_/g, ' '),\n    value: key\n}));\n\nmsg.options = opts;\nmsg.payload = \"\";\nreturn msg;",
         "outputs": 1,
-        "x": 2030,
-        "y": 120,
+        "x": 670,
+        "y": 1660,
         "wires": [
             [
                 "84229573cbb609c6",
@@ -2377,8 +2391,8 @@
         "height": 0,
         "passthru": true,
         "options": [],
-        "x": 2300,
-        "y": 80,
+        "x": 940,
+        "y": 1620,
         "wires": [
             [
                 "856603363f3089d0"
@@ -2399,8 +2413,8 @@
         "multiple": true,
         "options": [],
         "className": "",
-        "x": 2300,
-        "y": 160,
+        "x": 940,
+        "y": 1700,
         "wires": [
             [
                 "96f5a377bc015803"
@@ -2414,8 +2428,8 @@
         "name": "Fill Form Info",
         "func": "let typeName = msg.payload;\nglobal.set('lastSelectedId', typeName);\nlet db = global.get('sensorTypesDB') || {};\n\nif (typeName && db[typeName]) {\n    msg.payload = {\n        typeName: typeName,\n        min: db[typeName].range[0],\n        max: db[typeName].range[1]\n    };\n    return msg;\n} return null;",
         "outputs": 1,
-        "x": 2550,
-        "y": 80,
+        "x": 1190,
+        "y": 1620,
         "wires": [
             [
                 "b2eb713f526ac7dd"
@@ -2451,8 +2465,8 @@
         "enablePointerup": false,
         "pointerupPayload": "",
         "pointerupPayloadType": "str",
-        "x": 2760,
-        "y": 140,
+        "x": 1400,
+        "y": 1680,
         "wires": [
             [
                 "23b437e91f3ea332"
@@ -2466,8 +2480,8 @@
         "name": "CRUD Logic Engine",
         "func": "let db = global.get('sensorTypesDB') || {};\n\nif (msg.topic === \"save\") {\n    let d = msg.payload;\n    let safeName = d.typeName.toLowerCase().replace(/ /g, \"_\");\n    \n    db[safeName] = {\n        range: [parseFloat(d.min), parseFloat(d.max)]\n    };\n}\nelse if (msg.topic === \"delete\") {\n    let selectedId = global.get('lastSelectedId');\n    if(selectedId && db[selectedId]) {\n        delete db[selectedId];\n    }\n}\n\nmsg.payload = JSON.stringify(db, null, 2);\nmsg.topic = \"cmd/system/reload\";\nreturn msg;",
         "outputs": 1,
-        "x": 3020,
-        "y": 100,
+        "x": 1660,
+        "y": 1640,
         "wires": [
             [
                 "097b94979be78346",
@@ -2487,8 +2501,8 @@
         "createDir": true,
         "overwriteFile": "true",
         "encoding": "none",
-        "x": 3320,
-        "y": 60,
+        "x": 1960,
+        "y": 1600,
         "wires": [
             []
         ]
@@ -2507,8 +2521,8 @@
         "correl": "",
         "expiry": "",
         "broker": "ff_mqtt_broker",
-        "x": 3320,
-        "y": 140,
+        "x": 1960,
+        "y": 1680,
         "wires": []
     },
     {
@@ -2518,8 +2532,8 @@
         "name": "Save Sensors",
         "func": "flow.set('cfg_sensors', msg.payload);\nreturn msg;",
         "outputs": 1,
-        "x": 2520,
-        "y": 160,
+        "x": 1160,
+        "y": 1700,
         "wires": [
             []
         ]
@@ -2541,8 +2555,8 @@
         "drop": false,
         "allowrate": false,
         "outputs": 1,
-        "x": 3290,
-        "y": 280,
+        "x": 1930,
+        "y": 1820,
         "wires": [
             [
                 "b001f5a2ea9edced"
@@ -2595,8 +2609,8 @@
         "splitLayout": false,
         "className": "",
         "dropdownOptions": [],
-        "x": 2780,
-        "y": 80,
+        "x": 1420,
+        "y": 1620,
         "wires": [
             [
                 "23b437e91f3ea332"
@@ -3409,6 +3423,8 @@
         "height": 0,
         "passthru": true,
         "multiple": false,
+        "chips": false,
+        "clearable": false,
         "options": [
             {
                 "label": "Vulnerable (pass all)",
@@ -3421,11 +3437,6 @@
                 "type": "str"
             },
             {
-                "label": "IPS (block/drop)",
-                "value": "ips",
-                "type": "str"
-            },
-            {
                 "label": "Custom (user rules)",
                 "value": "custom",
                 "type": "str"
@@ -3434,6 +3445,9 @@
         "payload": "",
         "topic": "topic",
         "topicType": "msg",
+        "className": "",
+        "typeIsComboBox": true,
+        "msgTrigger": "onChange",
         "x": 150,
         "y": 1080,
         "wires": [
@@ -3447,14 +3461,14 @@
         "type": "function",
         "z": "53b83243ce3bfc91",
         "name": "Prepare Rule Swap Exec",
-        "func": "var profile = msg.payload;\n\nif (profile === 'ids') {\n    msg.cmd = ['sh', '-c', 'cp /etc/suricata/rules/local.rules.ids /etc/suricata/rules/local.rules && suricatasc -c reload-rules'];\n    msg.mode_text = 'IDS Mode (Alert)';\n} else if (profile === 'ips') {\n    msg.cmd = ['sh', '-c', 'cp /etc/suricata/rules/local.rules.ips /etc/suricata/rules/local.rules && suricatasc -c reload-rules'];\n    msg.mode_text = 'IPS Mode (Drop)';\n} else if (profile === 'custom') {\n    msg.cmd = ['sh', '-c', 'cp /etc/suricata/rules/local.rules.custom /etc/suricata/rules/local.rules && suricatasc -c reload-rules'];\n    msg.mode_text = 'Custom Mode';\n} else {\n    msg.cmd = ['sh', '-c', 'cp /etc/suricata/rules/local.rules.vuln /etc/suricata/rules/local.rules && suricatasc -c reload-rules'];\n    msg.mode_text = 'Vulnerable Mode (Pass All)';\n}\n\nmsg.url = 'http://docker-proxy:2375/containers/suricata-ids/exec';\nmsg.method = 'POST';\nmsg.payload = {\n    'AttachStdout': false,\n    'AttachStderr': false,\n    'Tty': false,\n    'Cmd': msg.cmd\n};\nreturn msg;",
+        "func": "var profile = msg.payload;\nflow.set('active_profile', profile);\n\nif (profile === 'ids') {\n    msg.cmd = ['sh', '-c', 'cp /etc/suricata/rules/local.rules.ids /etc/suricata/rules/local.rules && suricatasc -c reload-rules'];\n    msg.mode_text = 'IDS Mode (Alert)';\n} else if (profile === 'ips') {\n    msg.cmd = ['sh', '-c', 'cp /etc/suricata/rules/local.rules.ips /etc/suricata/rules/local.rules && suricatasc -c reload-rules'];\n    msg.mode_text = 'IPS Mode (Drop)';\n} else if (profile === 'custom') {\n    msg.cmd = ['sh', '-c', 'cp /etc/suricata/rules/local.rules.custom /etc/suricata/rules/local.rules && suricatasc -c reload-rules'];\n    msg.mode_text = 'Custom Mode';\n} else {\n    msg.cmd = ['sh', '-c', 'cp /etc/suricata/rules/local.rules.vuln /etc/suricata/rules/local.rules && suricatasc -c reload-rules'];\n    msg.mode_text = 'Vulnerable Mode (Pass All)';\n}\n\nmsg.url = 'http://docker-proxy:2375/containers/suricata-ids/exec';\nmsg.method = 'POST';\nmsg.payload = {\n    'AttachStdout': false,\n    'AttachStderr': false,\n    'Tty': false,\n    'Cmd': msg.cmd\n};\nreturn msg;",
         "outputs": 1,
         "timeout": 0,
         "noerr": 0,
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 360,
+        "x": 420,
         "y": 1080,
         "wires": [
             [
@@ -3478,7 +3492,7 @@
         "authType": "",
         "senderr": false,
         "headers": [],
-        "x": 570,
+        "x": 630,
         "y": 1080,
         "wires": [
             [
@@ -3498,7 +3512,7 @@
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 760,
+        "x": 820,
         "y": 1080,
         "wires": [
             [
@@ -3522,7 +3536,7 @@
         "authType": "",
         "senderr": false,
         "headers": [],
-        "x": 940,
+        "x": 1000,
         "y": 1080,
         "wires": [
             [
@@ -3635,7 +3649,8 @@
         "wires": [
             [
                 "f101078e40659b3c",
-                "5a9e7b1d4c3ffce4"
+                "5a9e7b1d4c3ffce4",
+                "07d79169802004c7"
             ]
         ]
     },
@@ -3667,14 +3682,14 @@
         "order": 1,
         "width": "0",
         "height": "0",
-        "format": "<template>\n    <div class=\"soc-container\">\n        \n        <div class=\"sys-logs-wrapper\">\n            <div class=\"sys-log-header\">\n                <v-icon icon=\"mdi-console-line\" class=\"icon-space\"></v-icon> SOC AUDIT LOG (ACTIONS & ALERTS)\n            </div>\n            <div class=\"sys-log-content\">\n                <div v-if=\"logs.length === 0\" style=\"color: #64748b;\">Awaiting operator actions...</div>\n                <div v-for=\"(log, index) in logs\" :key=\"index\" class=\"log-entry\">\n                    <span class=\"log-time\">{{ log.time }}</span> \n                    <span class=\"log-msg\">{{ log.text }}</span>\n                </div>\n            </div>\n        </div>\n\n        \n        <div v-if=\"!configs?.mosquitto\" class=\"waiting\">\n            Awaiting live configuration sync...\n        </div>\n        \n        <div v-else class=\"tables-wrapper\">\n            <table class=\"soc-table mosq-table\">\n                <thead>\n                    <tr>\n                        <th>\n                            <v-icon icon=\"mdi-message-text-outline\" class=\"icon-space\"></v-icon> \n                            iot_broker : /mosquitto/config/mosquitto.conf\n                        </th>\n                    </tr>\n                </thead>\n                <tbody>\n                    <tr>\n                        <td><pre>{{ configs.mosquitto }}</pre></td>\n                    </tr>\n                </tbody>\n            </table>\n\n            <table class=\"soc-table suri-table\">\n                <thead>\n                    <tr>\n                        <th>\n                            <v-icon icon=\"mdi-shield-check\" class=\"icon-space\"></v-icon> \n                            suricata-ids : /etc/suricata/rules/local.rules\n                        </th>\n                    </tr>\n                </thead>\n                <tbody>\n                    <tr>\n                        <td><pre>{{ configs.suricata }}</pre></td>\n                    </tr>\n                </tbody>\n            </table>\n        </div>\n    </div>\n</template>\n\n<script>\nexport default {\n    data() {\n        return {\n            configs: { mosquitto: '', suricata: '' },\n            logs: []\n        }\n    },\n    watch: {\n        msg: {\n            deep: true,\n            handler(newMsg) {\n                if (!newMsg) return;\n                \n                // Handle new System Log Events\n                if (newMsg.topic === 'system_log') {\n                    const timeStr = new Date().toLocaleTimeString();\n                    this.logs.unshift({ time: `[${timeStr}]`, text: newMsg.payload });\n                    \n                    // Keep only the last 8 events to prevent the UI from getting too tall\n                    if (this.logs.length > 8) this.logs.pop();\n                } \n                // Handle Live Docker Config Polling\n                else if (newMsg.payload && newMsg.payload.mosquitto !== undefined) {\n                    this.configs = newMsg.payload;\n                }\n            }\n        }\n    }\n}\n</script>\n\n<style>\n/* Base Container */\n.soc-container {\n    width: 100%;\n    height: 100%;\n    padding: 15px;\n    background-color: #121212;\n    border-radius: 6px;\n    box-sizing: border-box;\n    overflow-y: auto;\n}\n.waiting {\n    text-align: center;\n    color: #64748b;\n    margin-top: 20px;\n    font-family: sans-serif;\n}\n.tables-wrapper {\n    display: flex;\n    flex-direction: column;\n    gap: 20px;\n}\n\n/* Global Table Styles */\n.soc-table {\n    width: 100%;\n    border-collapse: collapse;\n    font-family: sans-serif;\n    background-color: #1e293b;\n    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.5);\n}\n.soc-table th {\n    padding: 12px;\n    text-align: left;\n    color: #f1f5f9;\n    font-size: 14px;\n    font-weight: 600;\n}\n.soc-table td {\n    background-color: #0f172a;\n    padding: 15px;\n}\n.soc-table pre {\n    margin: 0;\n    font-family: monospace;\n    white-space: pre-wrap;\n    word-wrap: break-word;\n    font-size: 13px;\n}\n.icon-space { margin-right: 8px; }\n\n/* Mosquitto Specific Colors */\n.mosq-table th { border-left: 4px solid #3b82f6; }\n.mosq-table th .v-icon { color: #3b82f6; }\n.mosq-table pre { color: #38bdf8; }\n\n/* Suricata Specific Colors */\n.suri-table th { border-left: 4px solid #ef4444; }\n.suri-table th .v-icon { color: #ef4444; }\n.suri-table pre { color: #10b981; }\n\n/* --- NEW: System Logs Styles --- */\n.sys-logs-wrapper {\n    margin-bottom: 20px;\n    background-color: #1e293b;\n    border-radius: 4px;\n    border-left: 4px solid #f59e0b; /* Amber alert color */\n    box-shadow: 0 4px 6px -1px rgba(0,0,0,0.5);\n}\n.sys-log-header {\n    padding: 10px 12px;\n    color: #f1f5f9;\n    font-weight: 600;\n    font-size: 14px;\n    background-color: rgba(0,0,0,0.2);\n    border-bottom: 1px solid #334155;\n}\n.sys-log-content {\n    padding: 12px;\n    font-family: monospace;\n    font-size: 13px;\n    max-height: 140px;\n    overflow-y: auto;\n}\n.log-entry { margin-bottom: 6px; }\n.log-time { color: #94a3b8; margin-right: 8px; }\n.log-msg { color: #fbbf24; }\n</style>",
+        "format": "<template>\n    <div class=\"soc-container\">\n        \n        <div class=\"sys-logs-wrapper\">\n            <div class=\"sys-log-header\">\n                <v-icon icon=\"mdi-console-line\" class=\"icon-space\"></v-icon> SOC AUDIT LOG (ACTIONS & ALERTS)\n            </div>\n            <div class=\"sys-log-content\">\n                <div v-if=\"logs.length === 0\" style=\"color: #64748b;\">Awaiting operator actions...</div>\n                <div v-for=\"(log, index) in logs\" :key=\"index\" class=\"log-entry\">\n                    <span class=\"log-time\">{{ log.time }}</span> \n                    <span class=\"log-msg\">{{ log.text }}</span>\n                </div>\n            </div>\n        </div>\n\n        \n        <div v-if=\"!configs?.mosquitto\" class=\"waiting\">\n            Awaiting live configuration sync...\n        </div>\n        \n        <div v-else class=\"tables-wrapper\">\n            <table class=\"soc-table mosq-table\">\n                <thead>\n                    <tr>\n                        <th>\n                            <v-icon icon=\"mdi-message-text-outline\" class=\"icon-space\"></v-icon> \n                            iot_broker : /mosquitto/config/mosquitto.conf\n                        </th>\n                    </tr>\n                </thead>\n                <tbody>\n                    <tr>\n                        <td><pre>{{ configs.mosquitto }}</pre></td>\n                    </tr>\n                </tbody>\n            </table>\n        </div>\n    </div>\n</template>\n\n<script>\nexport default {\n    data() {\n        return {\n            configs: { mosquitto: '' },\n            logs: []\n        }\n    },\n    watch: {\n        msg: {\n            deep: true,\n            handler(newMsg) {\n                if (!newMsg) return;\n                \n                // Handle new System Log Events\n                if (newMsg.topic === 'system_log') {\n                    const timeStr = new Date().toLocaleTimeString();\n                    this.logs.unshift({ time: `[${timeStr}]`, text: newMsg.payload });\n                    \n                    // Keep only the last 8 events to prevent the UI from getting too tall\n                    if (this.logs.length > 8) this.logs.pop();\n                } \n                // Handle Live Docker Config Polling\n                else if (newMsg.payload && newMsg.payload.mosquitto !== undefined) {\n                    this.configs = newMsg.payload;\n                }\n            }\n        }\n    }\n}\n</script>\n\n<style>\n/* Base Container */\n.soc-container {\n    width: 100%;\n    height: 500px;\n    padding: 15px;\n    background-color: #121212;\n    border-radius: 6px;\n    box-sizing: border-box;\n    overflow-y: auto;\n}\n.waiting {\n    text-align: center;\n    color: #64748b;\n    margin-top: 20px;\n    font-family: sans-serif;\n}\n.tables-wrapper {\n    display: flex;\n    flex-direction: column;\n    gap: 20px;\n}\n\n/* Global Table Styles */\n.soc-table {\n    width: 100%;\n    border-collapse: collapse;\n    font-family: sans-serif;\n    background-color: #1e293b;\n    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.5);\n}\n.soc-table th {\n    padding: 12px;\n    text-align: left;\n    color: #f1f5f9;\n    font-size: 14px;\n    font-weight: 600;\n}\n.soc-table td {\n    background-color: #0f172a;\n    padding: 15px;\n}\n.soc-table pre {\n    margin: 0;\n    font-family: monospace;\n    white-space: pre-wrap;\n    word-wrap: break-word;\n    font-size: 13px;\n}\n.icon-space { margin-right: 8px; }\n\n/* Mosquitto Specific Colors */\n.mosq-table th { border-left: 4px solid #3b82f6; }\n.mosq-table th .v-icon { color: #3b82f6; }\n.mosq-table pre { color: #38bdf8; }\n\n/* --- NEW: System Logs Styles --- */\n.sys-logs-wrapper {\n    margin-bottom: 20px;\n    background-color: #1e293b;\n    border-radius: 4px;\n    border-left: 4px solid #f59e0b; /* Amber alert color */\n    box-shadow: 0 4px 6px -1px rgba(0,0,0,0.5);\n}\n.sys-log-header {\n    padding: 10px 12px;\n    color: #f1f5f9;\n    font-weight: 600;\n    font-size: 14px;\n    background-color: rgba(0,0,0,0.2);\n    border-bottom: 1px solid #334155;\n}\n.sys-log-content {\n    padding: 12px;\n    font-family: monospace;\n    font-size: 13px;\n    max-height: 140px;\n    overflow-y: auto;\n}\n.log-entry { margin-bottom: 6px; }\n.log-time { color: #94a3b8; margin-right: 8px; }\n.log-msg { color: #fbbf24; }\n</style>",
         "storeOutMessages": true,
         "passthru": true,
         "resendOnRefresh": true,
         "templateScope": "local",
         "className": "",
-        "x": 1240,
-        "y": 160,
+        "x": 1660,
+        "y": 240,
         "wires": [
             []
         ]
@@ -3731,8 +3746,8 @@
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 390,
-        "y": 240,
+        "x": 1190,
+        "y": 300,
         "wires": [
             [
                 "d23401a13c109ee0"
@@ -3795,8 +3810,8 @@
         "proxy": "",
         "authType": "",
         "senderr": false,
-        "x": 640,
-        "y": 200,
+        "x": 720,
+        "y": 280,
         "wires": [
             [
                 "e97b5e31885b6e31"
@@ -3810,8 +3825,8 @@
         "name": "Format API Result",
         "func": "msg.topic = 'system_log';\nif(msg.statusCode === 200 || msg.statusCode === 204 || msg.statusCode === 500) {\n    msg.payload = `NAC ACTION: Successfully isolated container [${msg.containerName}] from the network.`;\n} else {\n    msg.payload = `NAC FAILED: Could not isolate target. Status: ${msg.statusCode}`;\n}\nreturn msg;",
         "outputs": 1,
-        "x": 890,
-        "y": 220,
+        "x": 1190,
+        "y": 260,
         "wires": [
             [
                 "5a9e7b1d4c3ffce4"
@@ -4026,7 +4041,7 @@
         "order": 1,
         "width": 0,
         "height": 0,
-        "format": "<template>\n    <div class=\"hacker-terminal\">\n        <div>\n            <pre v-if=\"displayText\" :class=\"{ 'alert-text': hasAlert, 'secure-text': !hasAlert }\">{{ displayText }}</pre>\n            <pre v-else class=\"secure-text\">Waiting for IDS alerts...</pre>\n        </div>\n    </div>\n</template>\n\n<script>\nexport default {\n    data() {\n        return {\n            displayText: '',\n            hasAlert: false,\n            timer: null\n        }\n    },\n    watch: {\n        msg: {\n            handler(val) {\n                if (val && val.payload) {\n                    this.displayText = val.payload;\n                    this.hasAlert = val.payload.includes('DETECTED:') || val.payload.includes('ALARM');\n                    if (this.timer) clearTimeout(this.timer);\n                    this.timer = setTimeout(() => {\n                        this.displayText = '';\n                        this.hasAlert = false;\n                    }, 10000);\n                }\n            },\n            immediate: true\n        }\n    }\n}\n</script>\n\n<style>\n.hacker-terminal {\n    background: #0f172a;\n    padding: 15px;\n    height: 600px;\n    min-height: 600px;\n    overflow-y: auto;\n    font-family: monospace;\n    color: #10b981;\n}\n.terminal-content pre {\n    margin: 0;\n    font-family: monospace;\n    font-size: 13px;\n    white-space: pre-wrap;\n    line-height: 1.5;\n}\n.alert-text { color: #f87171; }\n.secure-text { color: #4ade80; }\n</style>",
+        "format": "<template>\n    <div class=\"hacker-terminal\">\n        <div>\n            <pre v-if=\"displayText\" :class=\"{ 'alert-text': hasAlert, 'secure-text': !hasAlert }\">{{ displayText }}</pre>\n            <pre v-else class=\"secure-text\">Waiting for IDS alerts...</pre>\n        </div>\n    </div>\n</template>\n\n<script>\nexport default {\n    data() {\n        return {\n            displayText: '',\n            hasAlert: false,\n            timer: null\n        }\n    },\n    watch: {\n        msg: {\n            handler(val) {\n                if (val && val.payload) {\n                    this.displayText = val.payload;\n                    this.hasAlert = val.payload.includes('DETECTED:') || val.payload.includes('ALARM');\n                    if (this.timer) clearTimeout(this.timer);\n                    this.timer = setTimeout(() => {\n                        this.displayText = '';\n                        this.hasAlert = false;\n                    }, 10000);\n                }\n            },\n            immediate: true\n        }\n    }\n}\n</script>\n\n<style>\n.hacker-terminal {\n    background: #0f172a;\n    padding: 15px;\n    height: 500px;\n    min-height: 500px;\n    overflow-y: auto;\n    font-family: monospace;\n    color: #10b981;\n}\n.terminal-content pre {\n    margin: 0;\n    font-family: monospace;\n    font-size: 13px;\n    white-space: pre-wrap;\n    line-height: 1.5;\n}\n.alert-text { color: #f87171; white-space: pre-wrap; }\n.secure-text { color: #4ade80; white-space: pre-wrap; }\n</style>",
         "storeOutMessages": true,
         "passthru": true,
         "resendOnRefresh": true,
@@ -4061,61 +4076,6 @@
         ]
     },
     {
-        "id": "85f4a10737403ba3",
-        "type": "ui-dropdown",
-        "z": "53b83243ce3bfc91",
-        "group": "e20cfd3b0364c5bc",
-        "name": "Profile Selector",
-        "label": "Suricata Profile",
-        "order": 1,
-        "width": 0,
-        "height": 0,
-        "passthru": true,
-        "multiple": false,
-        "chips": false,
-        "clearable": false,
-        "options": [
-            {
-                "label": "Custom (user rules)",
-                "value": "custom",
-                "type": "str"
-            }
-        ],
-        "payload": "",
-        "topic": "topic",
-        "topicType": "str",
-        "className": "",
-        "typeIsComboBox": true,
-        "msgTrigger": "onChange",
-        "x": 140,
-        "y": 1480,
-        "wires": [
-            [
-                "51a327502445370b"
-            ]
-        ]
-    },
-    {
-        "id": "51a327502445370b",
-        "type": "function",
-        "z": "53b83243ce3bfc91",
-        "name": "Save Selected Profile",
-        "func": "flow.set('tp_selected_profile', msg.payload);\nreturn {payload: msg.payload};",
-        "outputs": 1,
-        "timeout": 0,
-        "noerr": 0,
-        "initialize": "",
-        "finalize": "",
-        "libs": [],
-        "x": 340,
-        "y": 1480,
-        "wires": [
-            [
-                "e0d573e9774ddac8"
-            ]
-        ]
-    },
-    {
         "id": "e0d573e9774ddac8",
         "type": "ui-template",
         "z": "53b83243ce3bfc91",
@@ -4126,7 +4086,7 @@
         "order": 2,
         "width": 0,
         "height": 0,
-        "format": "<template><div v-if=\"showEditor\"><textarea v-model=\"customRules\" class=\"rule-editor\" @input=\"onInput\" placeholder=\"Enter custom Suricata rules here...\"></textarea></div></template><script>export default{data(){return{customRules:'',showEditor:false,_debounce:null}},methods:{onInput(){clearTimeout(this._debounce);this._debounce=setTimeout(()=>{this.send({payload:{_customRules:this.customRules}})},500)}},watch:{msg:{handler(v){if(v&&v.payload==='custom')this.showEditor=true;else if(v&&v.payload)this.showEditor=false},immediate:true}}}</script><style>.rule-editor{width:100%;height:300px;background:#0f172a;color:#10b981;font-family:monospace;font-size:13px;border:1px solid #334155;border-radius:4px;padding:10px;resize:vertical}.rule-editor:focus{outline:none;border-color:#38bdf8}</style>",
+        "format": "<template><textarea v-model=\"customRules\" class=\"rule-editor\" @input=\"onInput\" placeholder=\"Enter custom Suricata rules here...\"></textarea></template><script>export default{data(){return{customRules:'',_debounce:null}},methods:{onInput(){clearTimeout(this._debounce);this._debounce=setTimeout(()=>{this.send({payload:{_customRules:this.customRules}})},500)}}}</script><style>.rule-editor{width:100%;height:500px;min-height:500px;background:#0f172a;color:#10b981;font-family:monospace;font-size:13px;border:1px solid #334155;border-radius:4px;padding:10px;resize:none}.rule-editor:focus{outline:none;border-color:#38bdf8}</style>",
         "storeOutMessages": true,
         "passthru": true,
         "resendOnRefresh": false,
@@ -4200,7 +4160,7 @@
         "type": "function",
         "z": "53b83243ce3bfc91",
         "name": "Prepare Apply Exec",
-        "func": "var profile = flow.get('tp_selected_profile') || 'vuln';\n\nif (profile === 'custom') {\n    var customRules = flow.get('tp_custom_rules') || '';\n    var b64 = Buffer.from(customRules).toString('base64');\n    msg.cmd = ['sh', '-c', 'echo ' + b64 + ' | base64 -d > /etc/suricata/rules/local.rules.custom && cp /etc/suricata/rules/local.rules.custom /etc/suricata/rules/local.rules && suricatasc -c reload-rules'];\n    msg.mode_text = 'Custom Mode';\n} else if (profile === 'ids') {\n    msg.cmd = ['sh', '-c', 'cp /etc/suricata/rules/local.rules.ids /etc/suricata/rules/local.rules && suricatasc -c reload-rules'];\n    msg.mode_text = 'IDS Mode (Alert)';\n} else if (profile === 'ips') {\n    msg.cmd = ['sh', '-c', 'cp /etc/suricata/rules/local.rules.ips /etc/suricata/rules/local.rules && suricatasc -c reload-rules'];\n    msg.mode_text = 'IPS Mode (Drop)';\n} else {\n    msg.cmd = ['sh', '-c', 'cp /etc/suricata/rules/local.rules.vuln /etc/suricata/rules/local.rules && suricatasc -c reload-rules'];\n    msg.mode_text = 'Vulnerable Mode';\n}\n\nmsg.url = 'http://docker-proxy:2375/containers/suricata-ids/exec';\nmsg.method = 'POST';\nmsg.payload = {\n    'AttachStdout': false,\n    'AttachStderr': false,\n    'Tty': false,\n    'Cmd': msg.cmd\n};\nreturn msg;",
+        "func": "flow.set('active_profile', 'custom');\nvar customRules = flow.get('tp_custom_rules') || '';\nvar b64 = Buffer.from(customRules).toString('base64');\nmsg.cmd = ['sh', '-c', 'echo ' + b64 + ' | base64 -d > /etc/suricata/rules/local.rules.custom && cp /etc/suricata/rules/local.rules.custom /etc/suricata/rules/local.rules && suricatasc -c reload-rules'];\nmsg.mode_text = 'Custom Mode';\n\nmsg.url = 'http://docker-proxy:2375/containers/suricata-ids/exec';\nmsg.method = 'POST';\nmsg.payload = {\n    'AttachStdout': false,\n    'AttachStderr': false,\n    'Tty': false,\n    'Cmd': msg.cmd\n};\nreturn msg;",
         "outputs": 1,
         "timeout": 0,
         "noerr": 0,
@@ -4366,7 +4326,9 @@
         "x": 940,
         "y": 1780,
         "wires": [
-            []
+            [
+                "f6baefa6e6aeccce"
+            ]
         ]
     },
     {
@@ -4396,6 +4358,49 @@
             [
                 "07d79169802004c7"
             ]
+        ]
+    },
+    {
+        "id": "f6baefa6e6aeccce",
+        "type": "function",
+        "z": "53b83243ce3bfc91",
+        "name": "Format Rules Display",
+        "func": "var profile = flow.get('active_profile') || 'vuln';\nvar profileNames = {\n    'vuln': 'Vulnerable (pass all)',\n    'ids': 'IDS (alert only)',\n    'ips': 'IPS (block/drop)',\n    'custom': 'Custom (user rules)'\n};\nvar profileName = profileNames[profile] || profile;\nvar rules = msg.payload || '[empty]';\nmsg.payload = '<span class=\"output-success\">=== Current Profile: ' + profileName + ' ===</span><br><br>' + rules;\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1180,
+        "y": 1780,
+        "wires": [
+            [
+                "2215cb7219cc32b1"
+            ]
+        ]
+    },
+    {
+        "id": "2215cb7219cc32b1",
+        "type": "ui-template",
+        "z": "53b83243ce3bfc91",
+        "group": "fa3fdfe80dee07da",
+        "page": "",
+        "ui": "",
+        "name": "Rules Terminal",
+        "order": 1,
+        "width": 0,
+        "height": 0,
+        "format": "<template><div class=\"hacker-terminal\"><div v-html=\"displayHtml\"></div></div></template><script>export default{data(){return{buffer:''}},computed:{displayHtml(){return this.buffer||'<span class=\"prompt\">test:~#</span>'}},watch:{msg:{handler(v){if(v&&v.payload&&typeof v.payload==='string')this.buffer=v.payload;if(v&&v.payload&&v.payload._clear)this.buffer=''},immediate:true}}}</script><style>.hacker-terminal{background:#0f172a;padding:15px;height:500px;min-height:500px;overflow-y:auto;font-family:monospace;color:#10b981}.prompt{color:#38bdf8;font-weight:bold}.output-success{color:#10b981;white-space:pre-wrap}</style>",
+        "storeOutMessages": false,
+        "passthru": false,
+        "resendOnRefresh": false,
+        "templateScope": "local",
+        "className": "",
+        "x": 1420,
+        "y": 1780,
+        "wires": [
+            []
         ]
     },
     {
@@ -5704,673 +5709,6 @@
         ]
     },
     {
-        "id": "tour_cyber",
-        "type": "ui-template",
-        "z": "b78d14cc362e1196",
-        "group": "7d01403463477825",
-        "name": "Tour: Cyber Attack",
-        "order": 8,
-        "width": 0,
-        "height": 0,
-        "format": "<link rel=\"stylesheet\" href=\"https://cdn.jsdelivr.net/npm/driver.js@1.3.1/dist/driver.css\"/>\n<img src=\"x\" style=\"display:none\" onerror=\"\n(function(){\n  if(localStorage.getItem('tour_cyber_done')) return;\n  var s=document.createElement('script');\n  s.src='https://cdn.jsdelivr.net/npm/driver.js@1.3.1/dist/driver.js.iife.js';\n  s.onload=function(){\n    setTimeout(function(){\n      var d=window.driver.js.driver({\n        showProgress:true,\n        animate:true,\n        opacity:0.75,\n        allowClose:true,\n        stagePadding:10,\n        popoverOffset:10,\n        steps:[\n{element:'#nrdb-ui-group-7d01403463477825',popover:{title:'Attack Phases',description:'Execute a multi-phase cyber attack simulation. Each phase builds on the previous one.',side:'top',align:'start'}},\n{element:'#nrdb-ui-widget-f3a234f009c5f686',popover:{title:'Phase 0: Start Attacker',description:'Deploys attacker container on isolated bridge network. Prerequisite for all phases.',side:'bottom',align:'start'}},\n{element:'#nrdb-ui-widget-ba12655f18c4af1e',popover:{title:'Phase 1: Breach Network',description:'Connects attacker container to iot_infralab_net. Attacker gains internal access.',side:'bottom',align:'start'}},\n{element:'#nrdb-ui-widget-e91e042b507e0a99',popover:{title:'Phase 2: Reconnaissance',description:'Runs Nmap SYN scan on ports 8086, 1880, 1883 across subnet. Maps live hosts.',side:'bottom',align:'start'}},\n{element:'#nrdb-ui-widget-b7ec64369078978c',popover:{title:'Phase 3: Sniff Traffic',description:'Starts tcpdump to intercept MQTT traffic on the internal network.',side:'bottom',align:'start'}},\n{element:'#nrdb-ui-widget-d60c24acd2df66f0',popover:{title:'Phase 4: DDoS Flood',description:'Launches hping3 SYN flood against Mosquitto on port 1883. 1000 packets.',side:'bottom',align:'start'}},\n{element:'#nrdb-ui-widget-a4381f9196d8c23f',popover:{title:'Phase 5: Remove Traces',description:'Force-deletes the attacker container. Removes evidence from the lab.',side:'bottom',align:'start'}},\n{element:'#nrdb-ui-group-a70e7057f4859509',popover:{title:'Attacker Console',description:'Live terminal showing real-time output from each attack phase.',side:'top',align:'start'}},\n{element:'#nrdb-ui-widget-b06b645f5d9bfd12',popover:{title:'Console Output',description:'Displays phase execution logs, command output, and status messages in green terminal style.',side:'left',align:'start'}}\n        ],\n        onDestroyed:function(){ localStorage.setItem('tour_cyber_done','1'); },\n        onCloseClick:function(){ localStorage.setItem('tour_cyber_done','1'); d.destroy(); }\n      });\n      d.drive();\n    },1200);\n  };\n  document.head.appendChild(s);\n})();\n\">",
-        "storeOutMessages": true,
-        "resendOnRefresh": true,
-        "templateScope": "local",
-        "className": "",
-        "x": 0,
-        "y": 0,
-        "wires": [
-            []
-        ]
-    },
-    {
-        "id": "8deaa0ec0d2e015b",
-        "type": "function",
-        "z": "b78d14cc362e1196",
-        "name": "Loading Msg",
-        "func": "return { payload: '[*] Compiling payload...\\n[*] Connecting to daemon...\\n[*] Please wait for execution to finish...' };",
-        "outputs": 1,
-        "x": 420,
-        "y": 440,
-        "wires": [
-            [
-                "b06b645f5d9bfd12"
-            ]
-        ]
-    },
-    {
-        "id": "f3a234f009c5f686",
-        "type": "ui-button",
-        "z": "b78d14cc362e1196",
-        "group": "7d01403463477825",
-        "name": "Phase 0 Button",
-        "label": "Start Attacker Node",
-        "order": 1,
-        "width": 0,
-        "height": 0,
-        "emulateClick": false,
-        "tooltip": "Creates node isolated from target network",
-        "color": "white",
-        "bgcolor": "#475569",
-        "className": "",
-        "icon": "server",
-        "iconPosition": "left",
-        "payload": "",
-        "payloadType": "str",
-        "topic": "topic",
-        "topicType": "msg",
-        "buttonColor": "",
-        "textColor": "",
-        "iconColor": "",
-        "enableClick": true,
-        "enablePointerdown": false,
-        "pointerdownPayload": "",
-        "pointerdownPayloadType": "str",
-        "enablePointerup": false,
-        "pointerupPayload": "",
-        "pointerupPayloadType": "str",
-        "x": 80,
-        "y": 40,
-        "wires": [
-            [
-                "54a75fb40cd57891",
-                "8deaa0ec0d2e015b"
-            ]
-        ]
-    },
-    {
-        "id": "54a75fb40cd57891",
-        "type": "function",
-        "z": "b78d14cc362e1196",
-        "name": "Prep Create",
-        "func": "msg.url = 'http://docker-proxy:2375/containers/create?name=iot_attacker_node';\nmsg.method = 'POST';\n// Important: explicitly define request timeout to avoid 120s limit failure\nmsg.timeout = 300000; \nmsg.payload = {\n  'Image': 'iot-attacker',\n  'Tty': true,\n  'OpenStdin': true,\n  'HostConfig': {\n    'NetworkMode': 'bridge',\n    'AutoRemove': true\n  }\n};\nreturn msg;",
-        "outputs": 1,
-        "x": 420,
-        "y": 80,
-        "wires": [
-            [
-                "5938ca266a62db7b"
-            ]
-        ]
-    },
-    {
-        "id": "5938ca266a62db7b",
-        "type": "http request",
-        "z": "b78d14cc362e1196",
-        "name": "Create API",
-        "method": "POST",
-        "ret": "obj",
-        "paytoqs": "ignore",
-        "url": "",
-        "tls": "",
-        "persist": false,
-        "proxy": "",
-        "authType": "",
-        "senderr": false,
-        "x": 580,
-        "y": 80,
-        "wires": [
-            [
-                "994e6124db30d480"
-            ]
-        ]
-    },
-    {
-        "id": "994e6124db30d480",
-        "type": "function",
-        "z": "b78d14cc362e1196",
-        "name": "Prep Start",
-        "func": "if(!msg.payload || !msg.payload.Id) {\n  return [null, {payload:'[-] Failed to create container. Already exists?\\n' + JSON.stringify(msg.payload)}];\n}\nmsg.url = 'http://docker-proxy:2375/containers/iot_attacker_node/start';\nmsg.method = 'POST';\nmsg.payload = {};\nmsg.timeout = 300000;\nreturn [msg, null];",
-        "outputs": 2,
-        "x": 740,
-        "y": 80,
-        "wires": [
-            [
-                "9d2629760da4dba4"
-            ],
-            [
-                "b06b645f5d9bfd12"
-            ]
-        ]
-    },
-    {
-        "id": "9d2629760da4dba4",
-        "type": "http request",
-        "z": "b78d14cc362e1196",
-        "name": "Start API",
-        "method": "POST",
-        "ret": "txt",
-        "paytoqs": "ignore",
-        "url": "",
-        "tls": "",
-        "persist": false,
-        "proxy": "",
-        "authType": "",
-        "senderr": false,
-        "x": 900,
-        "y": 80,
-        "wires": [
-            [
-                "e188ef681638795c"
-            ]
-        ]
-    },
-    {
-        "id": "e188ef681638795c",
-        "type": "function",
-        "z": "b78d14cc362e1196",
-        "name": "Parse Success",
-        "func": "msg.payload = '[+] Attacker VM successfully provisioned.\\n[+] Container running outside target network (isolated bridge).\\n[+] Ready to execute Phase 1.';\nreturn msg;",
-        "outputs": 1,
-        "x": 1050,
-        "y": 80,
-        "wires": [
-            [
-                "b06b645f5d9bfd12"
-            ]
-        ]
-    },
-    {
-        "id": "ba12655f18c4af1e",
-        "type": "ui-button",
-        "z": "b78d14cc362e1196",
-        "group": "7d01403463477825",
-        "name": "Phase 1 Button",
-        "label": "Breach Into Network",
-        "order": 2,
-        "width": 0,
-        "height": 0,
-        "emulateClick": false,
-        "tooltip": "Connects attacker to internal network",
-        "color": "white",
-        "bgcolor": "#57534e",
-        "className": "",
-        "icon": "login",
-        "iconPosition": "left",
-        "payload": "",
-        "payloadType": "str",
-        "topic": "topic",
-        "topicType": "msg",
-        "buttonColor": "",
-        "textColor": "",
-        "iconColor": "",
-        "enableClick": true,
-        "enablePointerdown": false,
-        "pointerdownPayload": "",
-        "pointerdownPayloadType": "str",
-        "enablePointerup": false,
-        "pointerupPayload": "",
-        "pointerupPayloadType": "str",
-        "x": 80,
-        "y": 100,
-        "wires": [
-            [
-                "fb7f5ec1c7e90584",
-                "8deaa0ec0d2e015b"
-            ]
-        ]
-    },
-    {
-        "id": "fb7f5ec1c7e90584",
-        "type": "function",
-        "z": "b78d14cc362e1196",
-        "name": "Set Connect POST",
-        "func": "msg.url = 'http://docker-proxy:2375/networks/iot_infralab_net/connect';\nmsg.method = 'POST';\nmsg.payload = { \"Container\": \"iot_attacker_node\" };\nmsg.timeout = 300000;\nreturn msg;",
-        "outputs": 1,
-        "x": 440,
-        "y": 140,
-        "wires": [
-            [
-                "11777b1bd8b603cb"
-            ]
-        ]
-    },
-    {
-        "id": "11777b1bd8b603cb",
-        "type": "http request",
-        "z": "b78d14cc362e1196",
-        "name": "Connect API",
-        "method": "use",
-        "ret": "txt",
-        "paytoqs": "ignore",
-        "url": "",
-        "tls": "",
-        "persist": false,
-        "proxy": "",
-        "authType": "",
-        "senderr": false,
-        "x": 620,
-        "y": 140,
-        "wires": [
-            [
-                "46242eb6875059d1"
-            ]
-        ]
-    },
-    {
-        "id": "46242eb6875059d1",
-        "type": "function",
-        "z": "b78d14cc362e1196",
-        "name": "Fmt Response",
-        "func": "if(msg.statusCode === 200) {\n  msg.payload = '[+] Initial Access Achieved.\\n[+] Exploit successful. Attacker node bridged into iot_infralab_net.\\n[+] Target internal network is now reachable.';\n} else if(msg.statusCode === 403) {\n  msg.payload = '[*] Target perimeter already breached.\\n[*] Node is already attached to the internal network.\\n[+] Proceed to Phase 2.';\n} else {\n  msg.payload = '[-] Sploit Failed. Make sure Phase 0 is complete.\\nError: ' + msg.payload;\n}\nreturn msg;",
-        "outputs": 1,
-        "x": 790,
-        "y": 140,
-        "wires": [
-            [
-                "b06b645f5d9bfd12"
-            ]
-        ]
-    },
-    {
-        "id": "e91e042b507e0a99",
-        "type": "ui-button",
-        "z": "b78d14cc362e1196",
-        "group": "7d01403463477825",
-        "name": "Phase 2 Button",
-        "label": "Reconnaissance (Nmap)",
-        "order": 3,
-        "width": 0,
-        "height": 0,
-        "emulateClick": false,
-        "tooltip": "Fast Nmap subnet scan",
-        "color": "white",
-        "bgcolor": "#0284c7",
-        "className": "",
-        "icon": "wifi_tethering",
-        "iconPosition": "left",
-        "payload": "",
-        "payloadType": "str",
-        "topic": "topic",
-        "topicType": "msg",
-        "buttonColor": "",
-        "textColor": "",
-        "iconColor": "",
-        "enableClick": true,
-        "enablePointerdown": false,
-        "pointerdownPayload": "",
-        "pointerdownPayloadType": "str",
-        "enablePointerup": false,
-        "pointerupPayload": "",
-        "pointerupPayloadType": "str",
-        "x": 100,
-        "y": 160,
-        "wires": [
-            [
-                "657a51cff56a8575",
-                "8deaa0ec0d2e015b"
-            ]
-        ]
-    },
-    {
-        "id": "657a51cff56a8575",
-        "type": "function",
-        "z": "b78d14cc362e1196",
-        "name": "Cmd: Nmap Fast",
-        "func": "msg.cmd = [\n    'sh', '-c',\n    'nmap -sS -n -T5 -p 8086,1880,1883 --min-rate 5000 --max-retries 1 --host-timeout 5s 172.18.0.0/24'\n];\nreturn msg;",
-        "outputs": 1,
-        "timeout": "",
-        "noerr": 0,
-        "initialize": "",
-        "finalize": "",
-        "libs": [],
-        "x": 420,
-        "y": 200,
-        "wires": [
-            [
-                "f9c9ced707da3789"
-            ]
-        ]
-    },
-    {
-        "id": "d60c24acd2df66f0",
-        "type": "ui-button",
-        "z": "b78d14cc362e1196",
-        "group": "7d01403463477825",
-        "name": "Phase 4 Button",
-        "label": "Impact (DDoS Flood)",
-        "order": 5,
-        "width": 0,
-        "height": 0,
-        "emulateClick": false,
-        "tooltip": "Hping3 Broker Flood",
-        "color": "white",
-        "bgcolor": "#dc2626",
-        "className": "",
-        "icon": "bolt",
-        "iconPosition": "left",
-        "payload": "",
-        "payloadType": "str",
-        "topic": "topic",
-        "topicType": "msg",
-        "buttonColor": "",
-        "textColor": "",
-        "iconColor": "",
-        "enableClick": true,
-        "enablePointerdown": false,
-        "pointerdownPayload": "",
-        "pointerdownPayloadType": "str",
-        "enablePointerup": false,
-        "pointerupPayload": "",
-        "pointerupPayloadType": "str",
-        "x": 100,
-        "y": 280,
-        "wires": [
-            [
-                "1d9233aac0236c75",
-                "8deaa0ec0d2e015b"
-            ]
-        ]
-    },
-    {
-        "id": "1d9233aac0236c75",
-        "type": "function",
-        "z": "b78d14cc362e1196",
-        "name": "Cmd: Hping3",
-        "func": "msg.cmd = ['nping', '--tcp', '--flags', 'SYN', '-p', '1883', '-c', '1000', '--rate', '1000', 'mosquitto'];\nreturn msg;",
-        "outputs": 1,
-        "timeout": "",
-        "noerr": 0,
-        "initialize": "",
-        "finalize": "",
-        "libs": [],
-        "x": 420,
-        "y": 320,
-        "wires": [
-            [
-                "f9c9ced707da3789"
-            ]
-        ]
-    },
-    {
-        "id": "b19e09082a24eb43",
-        "type": "http request",
-        "z": "b78d14cc362e1196",
-        "name": "Exec Create API",
-        "method": "use",
-        "ret": "obj",
-        "paytoqs": "ignore",
-        "url": "",
-        "tls": "",
-        "persist": false,
-        "proxy": "",
-        "authType": "",
-        "senderr": false,
-        "x": 800,
-        "y": 260,
-        "wires": [
-            [
-                "a2c52300aa8f1443"
-            ]
-        ]
-    },
-    {
-        "id": "a2c52300aa8f1443",
-        "type": "function",
-        "z": "b78d14cc362e1196",
-        "name": "Start Exec Trigger",
-        "func": "if(!msg.payload || !msg.payload.Id) {\n  return [null, {payload: '[-] ERROR: Execution failed. Ensure Phase 0 & 1 were completed first.'}];\n}\nmsg.url = 'http://docker-proxy:2375/exec/' + msg.payload.Id + '/start';\nmsg.method = 'POST';\nmsg.timeout = 300000;\nmsg.payload = { 'Detach': false, 'Tty': true };\nreturn [msg, null];",
-        "outputs": 2,
-        "x": 990,
-        "y": 260,
-        "wires": [
-            [
-                "2ae86581d34f9eb7"
-            ],
-            []
-        ]
-    },
-    {
-        "id": "2ae86581d34f9eb7",
-        "type": "http request",
-        "z": "b78d14cc362e1196",
-        "name": "Start Cmd Request",
-        "method": "use",
-        "ret": "txt",
-        "paytoqs": "ignore",
-        "url": "",
-        "tls": "",
-        "persist": false,
-        "proxy": "",
-        "authType": "",
-        "senderr": false,
-        "x": 1210,
-        "y": 260,
-        "wires": [
-            [
-                "b93b4da2d3aa8772"
-            ]
-        ]
-    },
-    {
-        "id": "a4381f9196d8c23f",
-        "type": "ui-button",
-        "z": "b78d14cc362e1196",
-        "group": "7d01403463477825",
-        "name": "Phase 5 Button",
-        "label": "Remove Attacker Node",
-        "order": 6,
-        "width": 0,
-        "height": 0,
-        "emulateClick": false,
-        "tooltip": "Force remove the container to hide tracks",
-        "color": "white",
-        "bgcolor": "#7f1d1d",
-        "className": "",
-        "icon": "delete_forever",
-        "iconPosition": "left",
-        "payload": "",
-        "payloadType": "str",
-        "topic": "topic",
-        "topicType": "msg",
-        "buttonColor": "",
-        "textColor": "",
-        "iconColor": "",
-        "enableClick": true,
-        "enablePointerdown": false,
-        "pointerdownPayload": "",
-        "pointerdownPayloadType": "str",
-        "enablePointerup": false,
-        "pointerupPayload": "",
-        "pointerupPayloadType": "str",
-        "x": 230,
-        "y": 380,
-        "wires": [
-            [
-                "cdd015f4ef35764c",
-                "8deaa0ec0d2e015b"
-            ]
-        ]
-    },
-    {
-        "id": "cdd015f4ef35764c",
-        "type": "function",
-        "z": "b78d14cc362e1196",
-        "name": "Prep Delete",
-        "func": "msg.url = 'http://docker-proxy:2375/containers/iot_attacker_node?force=true';\nmsg.method = 'DELETE';\nmsg.timeout = 300000;\nreturn msg;",
-        "outputs": 1,
-        "x": 420,
-        "y": 380,
-        "wires": [
-            [
-                "ddce95da8c7ffabe"
-            ]
-        ]
-    },
-    {
-        "id": "ddce95da8c7ffabe",
-        "type": "http request",
-        "z": "b78d14cc362e1196",
-        "name": "Delete API",
-        "method": "use",
-        "ret": "txt",
-        "paytoqs": "ignore",
-        "url": "",
-        "tls": "",
-        "persist": false,
-        "proxy": "",
-        "authType": "",
-        "senderr": false,
-        "x": 580,
-        "y": 380,
-        "wires": [
-            [
-                "9fab6ce3108062bd"
-            ]
-        ]
-    },
-    {
-        "id": "9fab6ce3108062bd",
-        "type": "function",
-        "z": "b78d14cc362e1196",
-        "name": "Parse Success",
-        "func": "if(msg.statusCode >= 200 && msg.statusCode < 300) {\n    msg.payload = '[*] Wiping target logs...\\n[+] Evidence Burned.\\n[+] Attacker container forcefully destroyed and removed from underlying host.\\n[+] Kill Chain Sequence Complete. Exiting...';\n} else {\n    msg.payload = '[-] Failed to destroy track. Is the container already dead?\\nError: ' + msg.payload;\n}\nreturn msg;",
-        "outputs": 1,
-        "x": 770,
-        "y": 380,
-        "wires": [
-            [
-                "b06b645f5d9bfd12"
-            ]
-        ]
-    },
-    {
-        "id": "b7ec64369078978c",
-        "type": "ui-button",
-        "z": "b78d14cc362e1196",
-        "group": "7d01403463477825",
-        "name": "Sniff Btn",
-        "label": "Start Interception (Sniffer)",
-        "order": 4,
-        "width": 0,
-        "height": 0,
-        "emulateClick": false,
-        "tooltip": "Sniff all MQTT traffic",
-        "color": "",
-        "bgcolor": "#10b981",
-        "className": "",
-        "icon": "",
-        "iconPosition": "left",
-        "payload": "",
-        "payloadType": "str",
-        "topic": "topic",
-        "topicType": "msg",
-        "buttonColor": "",
-        "textColor": "",
-        "iconColor": "",
-        "enableClick": true,
-        "enablePointerdown": false,
-        "pointerdownPayload": "",
-        "pointerdownPayloadType": "str",
-        "enablePointerup": false,
-        "pointerupPayload": "",
-        "pointerupPayloadType": "str",
-        "x": 220,
-        "y": 260,
-        "wires": [
-            [
-                "1d1ca2216f6d3a10",
-                "a2be4dd380abfee3"
-            ]
-        ]
-    },
-    {
-        "id": "1d1ca2216f6d3a10",
-        "type": "function",
-        "z": "b78d14cc362e1196",
-        "name": "Set Sniff",
-        "func": "msg.cmd=['python','mqtt_sniff.py','--broker','mosquitto']; return msg;",
-        "outputs": 1,
-        "noerr": 0,
-        "initialize": "",
-        "finalize": "",
-        "libs": [],
-        "x": 400,
-        "y": 260,
-        "wires": [
-            [
-                "f9c9ced707da3789"
-            ]
-        ]
-    },
-    {
-        "id": "a2be4dd380abfee3",
-        "type": "function",
-        "z": "b78d14cc362e1196",
-        "name": "Loading msg",
-        "func": "msg.payload = '> Currently sniffing for 10s... Please wait';\nreturn msg;",
-        "outputs": 1,
-        "noerr": 0,
-        "initialize": "",
-        "finalize": "",
-        "libs": [],
-        "x": 630,
-        "y": 220,
-        "wires": [
-            [
-                "b06b645f5d9bfd12"
-            ]
-        ]
-    },
-    {
-        "id": "b06b645f5d9bfd12",
-        "type": "ui-template",
-        "z": "b78d14cc362e1196",
-        "group": "a70e7057f4859509",
-        "page": "",
-        "ui": "",
-        "name": "Hacker Terminal",
-        "order": 1,
-        "width": 0,
-        "height": 0,
-        "format": "<template>\n    <div class=\"hacker-terminal\">\n        <div v-html=\"msg.payload || '<span class=\\'prompt\\'>root@iot-attacker:~#</span> <span class=\\'waiting-text\\'>Awaiting target node deployment...</span>'\"></div>\n    </div>\n</template>\n\n<style>\n.hacker-terminal {\n    background: #0f172a;\n    padding: 15px;\n    height: 100%;\n    min-height: 450px;\n    overflow-y: auto;\n    font-family: monospace;\n    margin: 0;\n    border-radius: 4px;\n    box-sizing: border-box;\n    color: #10b981; /* Default terminal green */\n}\n.prompt { color: #38bdf8; font-weight: bold; }\n.cmd-text { color: #f8fafc; }\n.output-success { color: #10b981; white-space: pre-wrap; margin-top: 10px; }\n.output-blocked { color: #94a3b8; white-space: pre-wrap; margin-top: 10px; }\n.waiting-text { color: #64748b; }\n.alert-box {\n    color: #ef4444;\n    font-weight: bold;\n    padding: 10px;\n    border: 1px solid #ef4444;\n    background: rgba(239, 68, 68, 0.1);\n    border-radius: 4px;\n    margin-top: 15px;\n}\n.alert-sub {\n    font-size: 12px;\n    color: #fca5a5;\n    font-weight: normal;\n}\n</style>",
-        "storeOutMessages": true,
-        "passthru": true,
-        "resendOnRefresh": true,
-        "templateScope": "local",
-        "className": "",
-        "x": 1600,
-        "y": 300,
-        "wires": [
-            []
-        ]
-    },
-    {
-        "id": "f9c9ced707da3789",
-        "type": "function",
-        "z": "b78d14cc362e1196",
-        "name": "Prep Exec Target",
-        "func": "let cmd = msg.cmd;\n\n// SAVE THE COMMAND: Store it so the terminal can print what was just run\nmsg.executed_cmd = cmd.join(' ');\n\nmsg.url = 'http://docker-proxy:2375/containers/iot_attacker_node/exec';\nmsg.method = 'POST';\nmsg.timeout = 300000;\nmsg.payload = {\n  'AttachStdout': true,\n  'AttachStderr': true,\n  'Tty': true,\n  'Cmd': cmd\n};\nreturn msg;",
-        "outputs": 1,
-        "x": 610,
-        "y": 260,
-        "wires": [
-            [
-                "b19e09082a24eb43"
-            ]
-        ]
-    },
-    {
-        "id": "b93b4da2d3aa8772",
-        "type": "function",
-        "z": "b78d14cc362e1196",
-        "name": "Buffer to Terminal Format",
-        "func": "let rawCmd = msg.executed_cmd || \"unknown command\";\n\n// 1. Reconstruct the dynamic terminal prompt using CSS classes\nlet output = `<span class=\"prompt\">root@iot-attacker:~#</span> <span class=\"cmd-text\">${rawCmd}</span><br>`;\n\nif (typeof msg.payload === 'object') {\n    msg.payload = JSON.stringify(msg.payload, null, 2);\n}\n\nlet resultText = msg.payload || \"\";\nif (resultText.trim() === \"\") {\n    resultText = \"[+] Execution finished successfully (No terminal output returned).\";\n}\n\n// 2. Threat Analysis: Smarter detection for IPS/NAC blocks\nlet isBlocked = false;\nlet lowerResult = resultText.toLowerCase();\n\n// Look for definitive network disconnects or firewall drops, \n// completely ignoring standard numbers like '104' to prevent false positives.\nif (lowerResult.includes(\"host seems down\") || \n    (lowerResult.includes(\"filtered\") && rawCmd.includes(\"nmap\")) || \n    lowerResult.includes(\"connection refused\") ||\n    lowerResult.includes(\"reset by peer\") ||\n    lowerResult.includes(\"[errno 104]\") ||\n    lowerResult.includes(\"error 104\")) { \n    isBlocked = true;\n}\n\n// 3. Format the raw output (Escape HTML tags)\nresultText = resultText.replace(/</g, \"&lt;\").replace(/>/g, \"&gt;\");\nlet outputClass = isBlocked ? \"output-blocked\" : \"output-success\";\noutput += `<div class=\"${outputClass}\">${resultText}</div>`;\n\n// 4. Inject the Red Blocked Alert ONLY if actually blocked\nif (isBlocked) {\n    output += `<div class=\"alert-box\">`;\n    output += `EXPLOIT FAILED: CONNECTION INTERCEPTED BY IPS/NAC<br>`;\n    output += `<span class=\"alert-sub\">The target forcefully rejected the attack (Dropped packets / TCP Reset / Connection Severed).</span>`;\n    output += `</div>`;\n}\n\nmsg.payload = output;\nreturn msg;",
-        "outputs": 1,
-        "timeout": "",
-        "noerr": 0,
-        "initialize": "",
-        "finalize": "",
-        "libs": [],
-        "x": 1470,
-        "y": 260,
-        "wires": [
-            [
-                "b06b645f5d9bfd12"
-            ]
-        ]
-    },
-    {
         "id": "030bec7b7de86264",
         "type": "influxdb out",
         "z": "4acab47cf7e84e94",
@@ -7063,5 +6401,672 @@
         "x": 1230,
         "y": 720,
         "wires": []
+    },
+    {
+        "id": "tour_cyber",
+        "type": "ui-template",
+        "z": "b78d14cc362e1196",
+        "group": "7d01403463477825",
+        "name": "Tour: Cyber Attack",
+        "order": 8,
+        "width": 0,
+        "height": 0,
+        "format": "<link rel=\"stylesheet\" href=\"https://cdn.jsdelivr.net/npm/driver.js@1.3.1/dist/driver.css\"/>\n<img src=\"x\" style=\"display:none\" onerror=\"\n(function(){\n  if(localStorage.getItem('tour_cyber_done')) return;\n  var s=document.createElement('script');\n  s.src='https://cdn.jsdelivr.net/npm/driver.js@1.3.1/dist/driver.js.iife.js';\n  s.onload=function(){\n    setTimeout(function(){\n      var d=window.driver.js.driver({\n        showProgress:true,\n        animate:true,\n        opacity:0.75,\n        allowClose:true,\n        stagePadding:10,\n        popoverOffset:10,\n        steps:[\n{element:'#nrdb-ui-group-7d01403463477825',popover:{title:'Attack Phases',description:'Execute a multi-phase cyber attack simulation. Each phase builds on the previous one.',side:'top',align:'start'}},\n{element:'#nrdb-ui-widget-f3a234f009c5f686',popover:{title:'Phase 0: Start Attacker',description:'Deploys attacker container on isolated bridge network. Prerequisite for all phases.',side:'bottom',align:'start'}},\n{element:'#nrdb-ui-widget-ba12655f18c4af1e',popover:{title:'Phase 1: Breach Network',description:'Connects attacker container to iot_infralab_net. Attacker gains internal access.',side:'bottom',align:'start'}},\n{element:'#nrdb-ui-widget-e91e042b507e0a99',popover:{title:'Phase 2: Reconnaissance',description:'Runs Nmap SYN scan on ports 8086, 1880, 1883 across subnet. Maps live hosts.',side:'bottom',align:'start'}},\n{element:'#nrdb-ui-widget-b7ec64369078978c',popover:{title:'Phase 3: Sniff Traffic',description:'Starts tcpdump to intercept MQTT traffic on the internal network.',side:'bottom',align:'start'}},\n{element:'#nrdb-ui-widget-d60c24acd2df66f0',popover:{title:'Phase 4: DDoS Flood',description:'Launches hping3 SYN flood against Mosquitto on port 1883. 1000 packets.',side:'bottom',align:'start'}},\n{element:'#nrdb-ui-widget-a4381f9196d8c23f',popover:{title:'Phase 5: Remove Traces',description:'Force-deletes the attacker container. Removes evidence from the lab.',side:'bottom',align:'start'}},\n{element:'#nrdb-ui-group-a70e7057f4859509',popover:{title:'Attacker Console',description:'Live terminal showing real-time output from each attack phase.',side:'top',align:'start'}},\n{element:'#nrdb-ui-widget-b06b645f5d9bfd12',popover:{title:'Console Output',description:'Displays phase execution logs, command output, and status messages in green terminal style.',side:'left',align:'start'}}\n        ],\n        onDestroyed:function(){ localStorage.setItem('tour_cyber_done','1'); },\n        onCloseClick:function(){ localStorage.setItem('tour_cyber_done','1'); d.destroy(); }\n      });\n      d.drive();\n    },1200);\n  };\n  document.head.appendChild(s);\n})();\n\">",
+        "storeOutMessages": true,
+        "resendOnRefresh": true,
+        "templateScope": "local",
+        "className": "",
+        "x": 0,
+        "y": 0,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "8deaa0ec0d2e015b",
+        "type": "function",
+        "z": "b78d14cc362e1196",
+        "name": "Loading Msg",
+        "func": "return { payload: '[*] Compiling payload...\\n[*] Connecting to daemon...\\n[*] Please wait for execution to finish...' };",
+        "outputs": 1,
+        "x": 420,
+        "y": 440,
+        "wires": [
+            [
+                "b06b645f5d9bfd12"
+            ]
+        ]
+    },
+    {
+        "id": "f3a234f009c5f686",
+        "type": "ui-button",
+        "z": "b78d14cc362e1196",
+        "group": "7d01403463477825",
+        "name": "Phase 0 Button",
+        "label": "Start Attacker Node",
+        "order": 1,
+        "width": 0,
+        "height": 0,
+        "emulateClick": false,
+        "tooltip": "Creates node isolated from target network",
+        "color": "white",
+        "bgcolor": "#475569",
+        "className": "",
+        "icon": "server",
+        "iconPosition": "left",
+        "payload": "",
+        "payloadType": "str",
+        "topic": "topic",
+        "topicType": "msg",
+        "buttonColor": "",
+        "textColor": "",
+        "iconColor": "",
+        "enableClick": true,
+        "enablePointerdown": false,
+        "pointerdownPayload": "",
+        "pointerdownPayloadType": "str",
+        "enablePointerup": false,
+        "pointerupPayload": "",
+        "pointerupPayloadType": "str",
+        "x": 80,
+        "y": 40,
+        "wires": [
+            [
+                "54a75fb40cd57891",
+                "8deaa0ec0d2e015b"
+            ]
+        ]
+    },
+    {
+        "id": "54a75fb40cd57891",
+        "type": "function",
+        "z": "b78d14cc362e1196",
+        "name": "Prep Create",
+        "func": "msg.url = 'http://docker-proxy:2375/containers/create?name=iot_attacker_node';\nmsg.method = 'POST';\n// Important: explicitly define request timeout to avoid 120s limit failure\nmsg.timeout = 300000; \nmsg.payload = {\n  'Image': 'iot-attacker',\n  'Tty': true,\n  'OpenStdin': true,\n  'HostConfig': {\n    'NetworkMode': 'bridge',\n    'AutoRemove': true\n  }\n};\nreturn msg;",
+        "outputs": 1,
+        "x": 420,
+        "y": 80,
+        "wires": [
+            [
+                "5938ca266a62db7b"
+            ]
+        ]
+    },
+    {
+        "id": "5938ca266a62db7b",
+        "type": "http request",
+        "z": "b78d14cc362e1196",
+        "name": "Create API",
+        "method": "POST",
+        "ret": "obj",
+        "paytoqs": "ignore",
+        "url": "",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "authType": "",
+        "senderr": false,
+        "x": 580,
+        "y": 80,
+        "wires": [
+            [
+                "994e6124db30d480"
+            ]
+        ]
+    },
+    {
+        "id": "994e6124db30d480",
+        "type": "function",
+        "z": "b78d14cc362e1196",
+        "name": "Prep Start",
+        "func": "if(!msg.payload || !msg.payload.Id) {\n  return [null, {payload:'[-] Failed to create container. Already exists?\\n' + JSON.stringify(msg.payload)}];\n}\nmsg.url = 'http://docker-proxy:2375/containers/iot_attacker_node/start';\nmsg.method = 'POST';\nmsg.payload = {};\nmsg.timeout = 300000;\nreturn [msg, null];",
+        "outputs": 2,
+        "x": 740,
+        "y": 80,
+        "wires": [
+            [
+                "9d2629760da4dba4"
+            ],
+            [
+                "b06b645f5d9bfd12"
+            ]
+        ]
+    },
+    {
+        "id": "9d2629760da4dba4",
+        "type": "http request",
+        "z": "b78d14cc362e1196",
+        "name": "Start API",
+        "method": "POST",
+        "ret": "txt",
+        "paytoqs": "ignore",
+        "url": "",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "authType": "",
+        "senderr": false,
+        "x": 900,
+        "y": 80,
+        "wires": [
+            [
+                "e188ef681638795c"
+            ]
+        ]
+    },
+    {
+        "id": "e188ef681638795c",
+        "type": "function",
+        "z": "b78d14cc362e1196",
+        "name": "Parse Success",
+        "func": "msg.payload = '[+] Attacker VM successfully provisioned.\\n[+] Container running outside target network (isolated bridge).\\n[+] Ready to execute Phase 1.';\nreturn msg;",
+        "outputs": 1,
+        "x": 1050,
+        "y": 80,
+        "wires": [
+            [
+                "b06b645f5d9bfd12"
+            ]
+        ]
+    },
+    {
+        "id": "ba12655f18c4af1e",
+        "type": "ui-button",
+        "z": "b78d14cc362e1196",
+        "group": "7d01403463477825",
+        "name": "Phase 1 Button",
+        "label": "Breach Into Network",
+        "order": 2,
+        "width": 0,
+        "height": 0,
+        "emulateClick": false,
+        "tooltip": "Connects attacker to internal network",
+        "color": "white",
+        "bgcolor": "#57534e",
+        "className": "",
+        "icon": "login",
+        "iconPosition": "left",
+        "payload": "",
+        "payloadType": "str",
+        "topic": "topic",
+        "topicType": "msg",
+        "buttonColor": "",
+        "textColor": "",
+        "iconColor": "",
+        "enableClick": true,
+        "enablePointerdown": false,
+        "pointerdownPayload": "",
+        "pointerdownPayloadType": "str",
+        "enablePointerup": false,
+        "pointerupPayload": "",
+        "pointerupPayloadType": "str",
+        "x": 80,
+        "y": 100,
+        "wires": [
+            [
+                "fb7f5ec1c7e90584",
+                "8deaa0ec0d2e015b"
+            ]
+        ]
+    },
+    {
+        "id": "fb7f5ec1c7e90584",
+        "type": "function",
+        "z": "b78d14cc362e1196",
+        "name": "Set Connect POST",
+        "func": "msg.url = 'http://docker-proxy:2375/networks/iot_infralab_net/connect';\nmsg.method = 'POST';\nmsg.payload = { \"Container\": \"iot_attacker_node\" };\nmsg.timeout = 300000;\nreturn msg;",
+        "outputs": 1,
+        "x": 440,
+        "y": 140,
+        "wires": [
+            [
+                "11777b1bd8b603cb"
+            ]
+        ]
+    },
+    {
+        "id": "11777b1bd8b603cb",
+        "type": "http request",
+        "z": "b78d14cc362e1196",
+        "name": "Connect API",
+        "method": "use",
+        "ret": "txt",
+        "paytoqs": "ignore",
+        "url": "",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "authType": "",
+        "senderr": false,
+        "x": 620,
+        "y": 140,
+        "wires": [
+            [
+                "46242eb6875059d1"
+            ]
+        ]
+    },
+    {
+        "id": "46242eb6875059d1",
+        "type": "function",
+        "z": "b78d14cc362e1196",
+        "name": "Fmt Response",
+        "func": "if(msg.statusCode === 200) {\n  msg.payload = '[+] Initial Access Achieved.\\n[+] Exploit successful. Attacker node bridged into iot_infralab_net.\\n[+] Target internal network is now reachable.';\n} else if(msg.statusCode === 403) {\n  msg.payload = '[*] Target perimeter already breached.\\n[*] Node is already attached to the internal network.\\n[+] Proceed to Phase 2.';\n} else {\n  msg.payload = '[-] Sploit Failed. Make sure Phase 0 is complete.\\nError: ' + msg.payload;\n}\nreturn msg;",
+        "outputs": 1,
+        "x": 790,
+        "y": 140,
+        "wires": [
+            [
+                "b06b645f5d9bfd12"
+            ]
+        ]
+    },
+    {
+        "id": "e91e042b507e0a99",
+        "type": "ui-button",
+        "z": "b78d14cc362e1196",
+        "group": "7d01403463477825",
+        "name": "Phase 2 Button",
+        "label": "Reconnaissance (Nmap)",
+        "order": 3,
+        "width": 0,
+        "height": 0,
+        "emulateClick": false,
+        "tooltip": "Fast Nmap subnet scan",
+        "color": "white",
+        "bgcolor": "#0284c7",
+        "className": "",
+        "icon": "wifi_tethering",
+        "iconPosition": "left",
+        "payload": "",
+        "payloadType": "str",
+        "topic": "topic",
+        "topicType": "msg",
+        "buttonColor": "",
+        "textColor": "",
+        "iconColor": "",
+        "enableClick": true,
+        "enablePointerdown": false,
+        "pointerdownPayload": "",
+        "pointerdownPayloadType": "str",
+        "enablePointerup": false,
+        "pointerupPayload": "",
+        "pointerupPayloadType": "str",
+        "x": 100,
+        "y": 160,
+        "wires": [
+            [
+                "657a51cff56a8575",
+                "8deaa0ec0d2e015b"
+            ]
+        ]
+    },
+    {
+        "id": "657a51cff56a8575",
+        "type": "function",
+        "z": "b78d14cc362e1196",
+        "name": "Cmd: Nmap Fast",
+        "func": "msg.cmd = [\n    'sh', '-c',\n    'nmap -sS -n -T5 -p 8086,1880,1883 --min-rate 5000 --max-retries 1 --host-timeout 5s 172.18.0.0/24'\n];\nreturn msg;",
+        "outputs": 1,
+        "timeout": "",
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 420,
+        "y": 200,
+        "wires": [
+            [
+                "f9c9ced707da3789"
+            ]
+        ]
+    },
+    {
+        "id": "d60c24acd2df66f0",
+        "type": "ui-button",
+        "z": "b78d14cc362e1196",
+        "group": "7d01403463477825",
+        "name": "Phase 4 Button",
+        "label": "Impact (DDoS Flood)",
+        "order": 5,
+        "width": 0,
+        "height": 0,
+        "emulateClick": false,
+        "tooltip": "Hping3 Broker Flood",
+        "color": "white",
+        "bgcolor": "#dc2626",
+        "className": "",
+        "icon": "bolt",
+        "iconPosition": "left",
+        "payload": "",
+        "payloadType": "str",
+        "topic": "topic",
+        "topicType": "msg",
+        "buttonColor": "",
+        "textColor": "",
+        "iconColor": "",
+        "enableClick": true,
+        "enablePointerdown": false,
+        "pointerdownPayload": "",
+        "pointerdownPayloadType": "str",
+        "enablePointerup": false,
+        "pointerupPayload": "",
+        "pointerupPayloadType": "str",
+        "x": 100,
+        "y": 280,
+        "wires": [
+            [
+                "1d9233aac0236c75",
+                "8deaa0ec0d2e015b"
+            ]
+        ]
+    },
+    {
+        "id": "1d9233aac0236c75",
+        "type": "function",
+        "z": "b78d14cc362e1196",
+        "name": "Cmd: Hping3",
+        "func": "msg.cmd = ['nping', '--tcp', '--flags', 'SYN', '-p', '1883', '-c', '1000', '--rate', '1000', 'mosquitto'];\nreturn msg;",
+        "outputs": 1,
+        "timeout": "",
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 420,
+        "y": 320,
+        "wires": [
+            [
+                "f9c9ced707da3789"
+            ]
+        ]
+    },
+    {
+        "id": "b19e09082a24eb43",
+        "type": "http request",
+        "z": "b78d14cc362e1196",
+        "name": "Exec Create API",
+        "method": "use",
+        "ret": "obj",
+        "paytoqs": "ignore",
+        "url": "",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "authType": "",
+        "senderr": false,
+        "x": 800,
+        "y": 260,
+        "wires": [
+            [
+                "a2c52300aa8f1443"
+            ]
+        ]
+    },
+    {
+        "id": "a2c52300aa8f1443",
+        "type": "function",
+        "z": "b78d14cc362e1196",
+        "name": "Start Exec Trigger",
+        "func": "if(!msg.payload || !msg.payload.Id) {\n  return [null, {payload: '[-] ERROR: Execution failed. Ensure Phase 0 & 1 were completed first.'}];\n}\nmsg.url = 'http://docker-proxy:2375/exec/' + msg.payload.Id + '/start';\nmsg.method = 'POST';\nmsg.timeout = 300000;\nmsg.payload = { 'Detach': false, 'Tty': true };\nreturn [msg, null];",
+        "outputs": 2,
+        "x": 990,
+        "y": 260,
+        "wires": [
+            [
+                "2ae86581d34f9eb7"
+            ],
+            []
+        ]
+    },
+    {
+        "id": "2ae86581d34f9eb7",
+        "type": "http request",
+        "z": "b78d14cc362e1196",
+        "name": "Start Cmd Request",
+        "method": "use",
+        "ret": "txt",
+        "paytoqs": "ignore",
+        "url": "",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "authType": "",
+        "senderr": false,
+        "x": 1210,
+        "y": 260,
+        "wires": [
+            [
+                "b93b4da2d3aa8772"
+            ]
+        ]
+    },
+    {
+        "id": "a4381f9196d8c23f",
+        "type": "ui-button",
+        "z": "b78d14cc362e1196",
+        "group": "7d01403463477825",
+        "name": "Phase 5 Button",
+        "label": "Remove Attacker Node",
+        "order": 6,
+        "width": 0,
+        "height": 0,
+        "emulateClick": false,
+        "tooltip": "Force remove the container to hide tracks",
+        "color": "white",
+        "bgcolor": "#7f1d1d",
+        "className": "",
+        "icon": "delete_forever",
+        "iconPosition": "left",
+        "payload": "",
+        "payloadType": "str",
+        "topic": "topic",
+        "topicType": "msg",
+        "buttonColor": "",
+        "textColor": "",
+        "iconColor": "",
+        "enableClick": true,
+        "enablePointerdown": false,
+        "pointerdownPayload": "",
+        "pointerdownPayloadType": "str",
+        "enablePointerup": false,
+        "pointerupPayload": "",
+        "pointerupPayloadType": "str",
+        "x": 230,
+        "y": 380,
+        "wires": [
+            [
+                "cdd015f4ef35764c",
+                "8deaa0ec0d2e015b"
+            ]
+        ]
+    },
+    {
+        "id": "cdd015f4ef35764c",
+        "type": "function",
+        "z": "b78d14cc362e1196",
+        "name": "Prep Delete",
+        "func": "msg.url = 'http://docker-proxy:2375/containers/iot_attacker_node?force=true';\nmsg.method = 'DELETE';\nmsg.timeout = 300000;\nreturn msg;",
+        "outputs": 1,
+        "x": 420,
+        "y": 380,
+        "wires": [
+            [
+                "ddce95da8c7ffabe"
+            ]
+        ]
+    },
+    {
+        "id": "ddce95da8c7ffabe",
+        "type": "http request",
+        "z": "b78d14cc362e1196",
+        "name": "Delete API",
+        "method": "use",
+        "ret": "txt",
+        "paytoqs": "ignore",
+        "url": "",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "authType": "",
+        "senderr": false,
+        "x": 580,
+        "y": 380,
+        "wires": [
+            [
+                "9fab6ce3108062bd"
+            ]
+        ]
+    },
+    {
+        "id": "9fab6ce3108062bd",
+        "type": "function",
+        "z": "b78d14cc362e1196",
+        "name": "Parse Success",
+        "func": "if(msg.statusCode >= 200 && msg.statusCode < 300) {\n    msg.payload = '[*] Wiping target logs...\\n[+] Evidence Burned.\\n[+] Attacker container forcefully destroyed and removed from underlying host.\\n[+] Kill Chain Sequence Complete. Exiting...';\n} else {\n    msg.payload = '[-] Failed to destroy track. Is the container already dead?\\nError: ' + msg.payload;\n}\nreturn msg;",
+        "outputs": 1,
+        "x": 770,
+        "y": 380,
+        "wires": [
+            [
+                "b06b645f5d9bfd12"
+            ]
+        ]
+    },
+    {
+        "id": "b7ec64369078978c",
+        "type": "ui-button",
+        "z": "b78d14cc362e1196",
+        "group": "7d01403463477825",
+        "name": "Sniff Btn",
+        "label": "Start Interception (Sniffer)",
+        "order": 4,
+        "width": 0,
+        "height": 0,
+        "emulateClick": false,
+        "tooltip": "Sniff all MQTT traffic",
+        "color": "",
+        "bgcolor": "#10b981",
+        "className": "",
+        "icon": "",
+        "iconPosition": "left",
+        "payload": "",
+        "payloadType": "str",
+        "topic": "topic",
+        "topicType": "msg",
+        "buttonColor": "",
+        "textColor": "",
+        "iconColor": "",
+        "enableClick": true,
+        "enablePointerdown": false,
+        "pointerdownPayload": "",
+        "pointerdownPayloadType": "str",
+        "enablePointerup": false,
+        "pointerupPayload": "",
+        "pointerupPayloadType": "str",
+        "x": 220,
+        "y": 260,
+        "wires": [
+            [
+                "1d1ca2216f6d3a10",
+                "a2be4dd380abfee3"
+            ]
+        ]
+    },
+    {
+        "id": "1d1ca2216f6d3a10",
+        "type": "function",
+        "z": "b78d14cc362e1196",
+        "name": "Set Sniff",
+        "func": "msg.cmd=['python','mqtt_sniff.py','--broker','mosquitto']; return msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 400,
+        "y": 260,
+        "wires": [
+            [
+                "f9c9ced707da3789"
+            ]
+        ]
+    },
+    {
+        "id": "a2be4dd380abfee3",
+        "type": "function",
+        "z": "b78d14cc362e1196",
+        "name": "Loading msg",
+        "func": "msg.payload = '> Currently sniffing for 10s... Please wait';\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 630,
+        "y": 220,
+        "wires": [
+            [
+                "b06b645f5d9bfd12"
+            ]
+        ]
+    },
+    {
+        "id": "b06b645f5d9bfd12",
+        "type": "ui-template",
+        "z": "b78d14cc362e1196",
+        "group": "a70e7057f4859509",
+        "page": "",
+        "ui": "",
+        "name": "Hacker Terminal",
+        "order": 1,
+        "width": 0,
+        "height": 0,
+        "format": "<template>\n    <div class=\"hacker-terminal\">\n        <div v-html=\"msg.payload || '<span class=\\'prompt\\'>root@iot-attacker:~#</span> <span class=\\'waiting-text\\'>Awaiting target node deployment...</span>'\"></div>\n    </div>\n</template>\n\n<style>\n.hacker-terminal {\n    background: #0f172a;\n    padding: 15px;\n    height: 100%;\n    min-height: 450px;\n    overflow-y: auto;\n    font-family: monospace;\n    margin: 0;\n    border-radius: 4px;\n    box-sizing: border-box;\n    color: #10b981; /* Default terminal green */\n}\n.prompt { color: #38bdf8; font-weight: bold; }\n.cmd-text { color: #f8fafc; }\n.output-success { color: #10b981; white-space: pre-wrap; margin-top: 10px; }\n.output-blocked { color: #94a3b8; white-space: pre-wrap; margin-top: 10px; }\n.waiting-text { color: #64748b; }\n.alert-box {\n    color: #ef4444;\n    font-weight: bold;\n    padding: 10px;\n    border: 1px solid #ef4444;\n    background: rgba(239, 68, 68, 0.1);\n    border-radius: 4px;\n    margin-top: 15px;\n}\n.alert-sub {\n    font-size: 12px;\n    color: #fca5a5;\n    font-weight: normal;\n}\n</style>",
+        "storeOutMessages": true,
+        "passthru": true,
+        "resendOnRefresh": true,
+        "templateScope": "local",
+        "className": "",
+        "x": 1600,
+        "y": 300,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "f9c9ced707da3789",
+        "type": "function",
+        "z": "b78d14cc362e1196",
+        "name": "Prep Exec Target",
+        "func": "let cmd = msg.cmd;\n\n// SAVE THE COMMAND: Store it so the terminal can print what was just run\nmsg.executed_cmd = cmd.join(' ');\n\nmsg.url = 'http://docker-proxy:2375/containers/iot_attacker_node/exec';\nmsg.method = 'POST';\nmsg.timeout = 300000;\nmsg.payload = {\n  'AttachStdout': true,\n  'AttachStderr': true,\n  'Tty': true,\n  'Cmd': cmd\n};\nreturn msg;",
+        "outputs": 1,
+        "x": 610,
+        "y": 260,
+        "wires": [
+            [
+                "b19e09082a24eb43"
+            ]
+        ]
+    },
+    {
+        "id": "b93b4da2d3aa8772",
+        "type": "function",
+        "z": "b78d14cc362e1196",
+        "name": "Buffer to Terminal Format",
+        "func": "let rawCmd = msg.executed_cmd || \"unknown command\";\n\n// 1. Reconstruct the dynamic terminal prompt using CSS classes\nlet output = `<span class=\"prompt\">root@iot-attacker:~#</span> <span class=\"cmd-text\">${rawCmd}</span><br>`;\n\nif (typeof msg.payload === 'object') {\n    msg.payload = JSON.stringify(msg.payload, null, 2);\n}\n\nlet resultText = msg.payload || \"\";\nif (resultText.trim() === \"\") {\n    resultText = \"[+] Execution finished successfully (No terminal output returned).\";\n}\n\n// 2. Threat Analysis: Smarter detection for IPS/NAC blocks\nlet isBlocked = false;\nlet lowerResult = resultText.toLowerCase();\n\n// Look for definitive network disconnects or firewall drops, \n// completely ignoring standard numbers like '104' to prevent false positives.\nif (lowerResult.includes(\"host seems down\") || \n    (lowerResult.includes(\"filtered\") && rawCmd.includes(\"nmap\")) || \n    lowerResult.includes(\"connection refused\") ||\n    lowerResult.includes(\"reset by peer\") ||\n    lowerResult.includes(\"[errno 104]\") ||\n    lowerResult.includes(\"error 104\")) { \n    isBlocked = true;\n}\n\n// 3. Format the raw output (Escape HTML tags)\nresultText = resultText.replace(/</g, \"&lt;\").replace(/>/g, \"&gt;\");\nlet outputClass = isBlocked ? \"output-blocked\" : \"output-success\";\noutput += `<div class=\"${outputClass}\">${resultText}</div>`;\n\n// 4. Inject the Red Blocked Alert ONLY if actually blocked\nif (isBlocked) {\n    output += `<div class=\"alert-box\">`;\n    output += `EXPLOIT FAILED: CONNECTION INTERCEPTED BY IPS/NAC<br>`;\n    output += `<span class=\"alert-sub\">The target forcefully rejected the attack (Dropped packets / TCP Reset / Connection Severed).</span>`;\n    output += `</div>`;\n}\n\nmsg.payload = output;\nreturn msg;",
+        "outputs": 1,
+        "timeout": "",
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1470,
+        "y": 260,
+        "wires": [
+            [
+                "b06b645f5d9bfd12"
+            ]
+        ]
     }
 ]

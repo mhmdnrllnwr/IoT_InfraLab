@@ -28,8 +28,12 @@ Subscribes to MQTT `#` wildcard topic, dumps all messages to console. Detects Su
 ### mqtt_inject.py
 Publishes fake JSON telemetry to `sensors/data` with `"fake_injection": true` flag. Demonstrates MQTT injection vulnerability in anonymous mode.
 
+**Args:** `--broker` (required), `--port`, `--topic` (default `sensors/data`), `--sensor-id`, `--profile` (tags InfluxDB point), `--readings` (key=val pairs, default `temperature=9000`).
+
 ### mqtt_dos.py
-Launches configurable concurrent MQTT connections (default 50 threads). Each thread maintains a connection and publishes garbage to `sensors/flood` at 0.01s intervals. Configurable via `--threads` argument.
+Launches configurable concurrent MQTT connections (default 50 threads). Each thread maintains a connection and publishes garbage to `sensors/flood` at 0.01s intervals.
+
+**Args:** `--broker` (required), `--port`, `--threads` (default 50), `--duration` (attack duration in seconds, default 10).
 
 ## 5-Stage Killchain
 

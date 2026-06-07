@@ -131,16 +131,16 @@ python test/smoke_test.py
 |---------|-----------|---------|-------|---------|
 | Mosquitto | iot_broker | 1883, 9001 | eclipse-mosquitto:2.0 | MQTT broker (vulnerable config) |
 | Node-RED | iot_nodered | 1880 | (custom build, pinned `4.0.8` base) | Flow automation, sensor management |
-| Docker Proxy | docker_api_proxy | internal | tecnativa/docker-socket-proxy:0.2 | Secure Docker API access |
+| Docker Proxy | docker_api_proxy | internal | tecnativa/docker-socket-proxy:latest | Secure Docker API access |
 | InfluxDB | influxdb | 8086 | influxdb:2.7 | Time-series sensor data |
-| Grafana | grafana | 3000 | grafana/grafana-oss:11.1 | Dashboards and alerting |
-| Loki | loki | 3100 | grafana/loki:3.1 | Log aggregation |
-| Tempo | tempo | internal | grafana/tempo:2.6 | Distributed tracing (OTLP) |
-| Promtail | promtail | internal | grafana/promtail:3.1 | Suricata log shipper to Loki |
-| OTEL Collector | otel_collector | 4317-4318 | otel/opentelemetry-collector-contrib:0.111 | Telemetry ingestion |
-| Suricata | suricata-ids | internal | jasonish/suricata:7.0 | IDS/IPS (network_mode: mosquitto) |
+| Grafana | grafana | 3000 | grafana/grafana-oss:latest | Dashboards and alerting |
+| Loki | loki | 3100 | grafana/loki:latest | Log aggregation |
+| Tempo | tempo | internal | grafana/tempo:latest | Distributed tracing (OTLP) |
+| Promtail | promtail | internal | grafana/promtail:latest | Suricata log shipper to Loki |
+| OTEL Collector | otel_collector | 4317-4318 | otel/opentelemetry-collector:latest | Telemetry ingestion |
+| Suricata | suricata-ids | internal | jasonish/suricata:latest | IDS/IPS (network_mode: mosquitto) |
 | Security Auditor | security_auditor | internal | (built locally) | Attack simulation |
-| Telegraf | telegraf | internal | telegraf:1.32 | Docker host metrics collection |
+| Telegraf | telegraf | internal | telegraf:latest | Docker host metrics collection |
 
 ## Project Structure
 
@@ -200,10 +200,10 @@ curl -H "Authorization: Token $INFLUXDB_TOKEN" \
   --data-urlencode "q=from(bucket:\"sensor_data\") |> range(start: -10m)"
 
 # Generate Grafana dashboards
-python gen_dashboards.py
+python test/gen_dashboards.py
 
 # Explore metrics
-python explore_metrics.py
+python test/explore_metrics.py
 
 # List Docker networks
 docker network ls | grep iot
@@ -222,21 +222,17 @@ To harden:
 
 ## Suricata Rules
 
-Four rule modes available (switch via `command:` in docker-compose):
+Five rule modes available (all mounted, Node-RED switches between them at runtime):
 
 | File | Mode | Behavior |
 |------|------|----------|
-| `local.rules` | IDS (Alert) | Default — generates alerts only |
-| `local.rules.ids` | IDS (Alert) | Alert-only rules |
-| `local.rules.ips` | IPS (Drop) | Drops malicious packets |
-| `local.rules.vuln` | Vulnerable | Rules disabled, no detection |
+| `local.rules` | IDS (Alert) | Default — full rule set, alerts only |
+| `local.rules.ids` | IDS (Alert) | Same rules, dedicated IDS file |
+| `local.rules.ips` | IPS (Drop) | Drops malicious packets (NFQUEUE) |
+| `local.rules.vuln` | Vulnerable | Safelist only, no detection |
+| `local.rules.custom` | Custom | User-defined rules |
 
-Switch by changing the mounted rules file:
-```yaml
-# In docker-compose.yaml suricata service:
-volumes:
-  - ./infrastructure/suricata/local.rules.ips:/etc/suricata/rules/local.rules  # Use IPS mode
-```
+All files are mounted in docker-compose. Node-RED execs into Suricata, replaces the active rule file, and signals reload.
 
 ## Portability
 
@@ -246,7 +242,6 @@ This project is designed to run on any machine with Docker:
 - **Configurable network subnet** — set `IOT_SUBNET` in `.env` if 172.18.0.0/24 conflicts
 - **Configurable project path** — set `IOT_PROJECT_PATH` in `.env` for host bind mounts
 - **Cross-platform setup** — `scripts/setup.sh` (Linux/macOS) and `scripts/setup.ps1` (Windows)
-- **Pinned image versions** — no `:latest` tags, reproducible deployments
 
 For Docker Desktop users: set `IOT_PROJECT_PATH` to the full path using forward slashes (e.g., `C:/Users/user/IoT_InfraLab`).
 
@@ -283,7 +278,7 @@ For Docker Desktop users: set `IOT_PROJECT_PATH` to the full path using forward 
 | `docker-compose.yaml` | Service orchestration, networks, volumes |
 | `.env` | Secrets and runtime configuration |
 | `config/sensor_settings.json` | Sensor type definitions and profiles |
-| `src/simulation/nodered/Dockerfile` | Node-RED custom image (pinned `4.0.8`) |
+| `src/simulation/nodered/Dockerfile` | Node-RED custom image (pinned `4.0.8` base) |
 | `scripts/setup-influxdb.sh` | Linux InfluxDB bucket creation (idempotent) |
 | `scripts/setup-influxdb.ps1` | Windows InfluxDB bucket creation (idempotent) |
 | `infrastructure/suricata/suricata.yaml` | Suricata IDS/IPS engine config |

@@ -35,19 +35,28 @@ outputs:
 
 Flushes `eve.json` every 1 second for real-time alerting. Promtail ships these to Loki.
 
-## Three Rule Sets
+## Five Rule Sets
 
-Suricata mounts three rule files. Node-RED can switch between them at runtime via docker exec + Suricata signal handling.
+Suricata mounts five rule files. Node-RED switches between them at runtime via docker exec + Suricata signal handling.
 
-### local.rules.ids — Alert Mode (active by default)
+### local.rules — Default Mode (active by default)
+
+Default IDS rule set loaded at `/etc/suricata/rules/local.rules`. Full detection with `alert` action.
 
 | SID | Rule | Detection | Action |
 |-----|------|-----------|--------|
 | 9900001-3 | Safelist | Known-good IPs (Auditor, Node-RED, Promtail) | `pass` |
 | 1000001 | MQTT SYN Flood | >100 SYN packets/sec from single source to port 1883 | `alert` |
-| 1000002 | Nmap SYN Stealth Scan | >3 SYN packets in 5 seconds from single source | `alert` |
+| 1000002 | Nmap SYN Stealth Scan | >20 SYNs in 5 seconds from single source | `alert` |
 | 1000003 | Protocol Mismatch | HTTP methods (GET/POST/PUT/DELETE) on MQTT port 1883 | `alert` |
-| 1000007 | Rogue Subscriber | Raw hex `00 01 23` (MQTT subscribe with `#` wildcard) | `alert` |
+| 1000005 | Rogue Subscriber (native) | MQTT parser matches subscribe topic `#` wildcard | `alert` |
+| 1000007 | Rogue Subscriber (raw) | Raw hex `00 01 23` (MQTT subscribe with `#` wildcard) | `alert` |
+| 1000009 | MQTT App DoS | >50 msgs/sec from single source to MQTT broker | `alert` |
+| 1000010 | Fake Telemetry | Payload contains `"fake_injection"` string | `alert` |
+
+### local.rules.ids — IDS Mode (dedicated file)
+
+Same rules as default — provided as a dedicated file for explicit IDS-only mode switching.
 
 ### local.rules.ips — Drop Mode
 
@@ -57,12 +66,16 @@ Same rules as IDS mode but uses `drop` action instead of `alert`. Suricata sends
 
 Only safelist pass rules — no detection rules active. Suricata becomes invisible to the attacker.
 
+### local.rules.custom — Custom Rules
+
+Empty placeholder for user-defined rules. Edit and Suricata picks up changes on next live reload.
+
 ## Safelist Rules
 
 ```
-pass ip 172.18.0.100 any <> any any (msg:"Safelisting Security Auditor"; sid:9900001;)
-pass ip 172.18.0.25 any <> any any (msg:"Safelisting Node-RED"; sid:9900002;)
-pass ip 172.18.0.10 any <> any any (msg:"Safelisting Promtail"; sid:9900003;)
+pass ip 172.18.0.100 any <> any any (msg:"SAFELIST — Security Auditor"; sid:9900001;)
+pass ip 172.18.0.25 any <> any any (msg:"SAFELIST — Node-RED"; sid:9900002;)
+pass ip 172.18.0.10 any <> any any (msg:"SAFELIST — Promtail"; sid:9900003;)
 ```
 
 Prevents legitimate internal traffic from triggering alerts.

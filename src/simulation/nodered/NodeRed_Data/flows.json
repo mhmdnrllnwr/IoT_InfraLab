@@ -2683,8 +2683,8 @@
         "resendOnRefresh": true,
         "templateScope": "local",
         "className": "",
-        "x": 0,
-        "y": 0,
+        "x": 130,
+        "y": 1900,
         "wires": [
             []
         ]
@@ -3686,8 +3686,8 @@
         "name": "Format Toast",
         "func": "msg.topic = 'system_log';\nif (msg.statusCode >= 200 && msg.statusCode < 300) {\n    msg.payload = \"MOSQUITTO EVENT: \" + msg.notification_text;\n} else {\n    msg.payload = `MOSQUITTO ERROR: Failed to restart broker (API returned ${msg.statusCode})`;\n}\nreturn msg;",
         "outputs": 1,
-        "x": 1650,
-        "y": 1080,
+        "x": 2130,
+        "y": 1000,
         "wires": [
             [
                 "5a9e7b1d4c3ffce4"
@@ -4026,7 +4026,7 @@
         "order": 1,
         "width": 0,
         "height": 0,
-        "format": "<template>\n    <div class=\"suri-terminal-container\">\n        <div class=\"terminal-content\">\n            <pre v-if=\"displayText\" :class=\"{ 'alert-text': hasAlert, 'secure-text': !hasAlert }\">{{ displayText }}</pre>\n            <pre v-else class=\"secure-text\">Shields up. Waiting for IDS alerts...</pre>\n        </div>\n    </div>\n</template>\n\n<script>\nexport default {\n    data() {\n        return {\n            displayText: '',\n            hasAlert: false,\n            timer: null\n        }\n    },\n    watch: {\n        msg: {\n            handler(val) {\n                if (val && val.payload) {\n                    this.displayText = val.payload;\n                    this.hasAlert = val.payload.includes('DETECTED:') || val.payload.includes('ALARM');\n                    if (this.timer) clearTimeout(this.timer);\n                    this.timer = setTimeout(() => {\n                        this.displayText = '';\n                        this.hasAlert = false;\n                    }, 10000);\n                }\n            },\n            immediate: true\n        }\n    }\n}\n</script>\n\n<style>\n.suri-terminal-container {\n    background: #020617;\n    border: 1px solid #ef4444;\n    border-radius: 4px;\n    display: flex;\n    flex-direction: column;\n    height: 100%;\n    min-height: 280px;\n    overflow: hidden;\n}\n.terminal-content {\n    padding: 12px;\n    overflow-y: auto;\n    flex-grow: 1;\n}\n.terminal-content pre {\n    margin: 0;\n    font-family: 'JetBrains Mono', monospace;\n    font-size: 13px;\n    white-space: pre-wrap;\n    line-height: 1.5;\n}\n.alert-text { color: #f87171; }\n.secure-text { color: #4ade80; }\n</style>",
+        "format": "<template>\n    <div class=\"hacker-terminal\">\n        <div>\n            <pre v-if=\"displayText\" :class=\"{ 'alert-text': hasAlert, 'secure-text': !hasAlert }\">{{ displayText }}</pre>\n            <pre v-else class=\"secure-text\">Waiting for IDS alerts...</pre>\n        </div>\n    </div>\n</template>\n\n<script>\nexport default {\n    data() {\n        return {\n            displayText: '',\n            hasAlert: false,\n            timer: null\n        }\n    },\n    watch: {\n        msg: {\n            handler(val) {\n                if (val && val.payload) {\n                    this.displayText = val.payload;\n                    this.hasAlert = val.payload.includes('DETECTED:') || val.payload.includes('ALARM');\n                    if (this.timer) clearTimeout(this.timer);\n                    this.timer = setTimeout(() => {\n                        this.displayText = '';\n                        this.hasAlert = false;\n                    }, 10000);\n                }\n            },\n            immediate: true\n        }\n    }\n}\n</script>\n\n<style>\n.hacker-terminal {\n    background: #0f172a;\n    padding: 15px;\n    height: 600px;\n    min-height: 600px;\n    overflow-y: auto;\n    font-family: monospace;\n    color: #10b981;\n}\n.terminal-content pre {\n    margin: 0;\n    font-family: monospace;\n    font-size: 13px;\n    white-space: pre-wrap;\n    line-height: 1.5;\n}\n.alert-text { color: #f87171; }\n.secure-text { color: #4ade80; }\n</style>",
         "storeOutMessages": true,
         "passthru": true,
         "resendOnRefresh": true,

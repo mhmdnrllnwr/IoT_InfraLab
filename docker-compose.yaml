@@ -265,6 +265,8 @@ services:
       - ./infrastructure/suricata/local.rules:/etc/suricata/rules/local.rules
       - ./infrastructure/suricata/local.rules.ids:/etc/suricata/rules/local.rules.ids
       - ./infrastructure/suricata/local.rules.vuln:/etc/suricata/rules/local.rules.vuln
+      - ./infrastructure/suricata/local.rules.ips:/etc/suricata/rules/local.rules.ips
+      - ./infrastructure/suricata/local.rules.custom:/etc/suricata/rules/local.rules.custom
       - ./infrastructure/suricata/run:/var/run/suricata
     command: -i eth0
     restart: unless-stopped

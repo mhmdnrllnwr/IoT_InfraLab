@@ -25,7 +25,7 @@
     {
         "id": "4fb8248f637db493",
         "type": "tab",
-        "label": "Test Page",
+        "label": "Testing Page",
         "disabled": false,
         "info": "",
         "env": []
@@ -667,6 +667,76 @@
         "width": "12",
         "order": 1,
         "showTitle": true,
+        "groupType": "default"
+    },
+    {
+        "id": "tp_page",
+        "type": "ui-page",
+        "name": "Testing Page",
+        "ui": "8bcc34ca17387ebb",
+        "path": "/test-page",
+        "icon": "mdi-flask-outline",
+        "layout": "grid",
+        "theme": "c382198a61249f47",
+        "breakpoints": [
+            {
+                "name": "Default",
+                "px": "0",
+                "cols": "3"
+            },
+            {
+                "name": "Tablet",
+                "px": "576",
+                "cols": "6"
+            },
+            {
+                "name": "Small Desktop",
+                "px": "768",
+                "cols": "9"
+            },
+            {
+                "name": "Desktop",
+                "px": "1024",
+                "cols": "12"
+            }
+        ],
+        "order": 7,
+        "className": "",
+        "visible": true,
+        "disabled": false
+    },
+    {
+        "id": "tp_profile_group",
+        "type": "ui-group",
+        "name": "Suricata Profile",
+        "page": "tp_page",
+        "width": "6",
+        "order": 1,
+        "showTitle": true,
+        "groupType": "default"
+    },
+    {
+        "id": "tp_terminal_group",
+        "type": "ui-group",
+        "name": "Rules Terminal",
+        "page": "tp_page",
+        "width": "6",
+        "order": 2,
+        "showTitle": true,
+        "groupType": "default"
+    },
+    {
+        "id": "e20cfd3b0364c5bc",
+        "type": "ui-group",
+        "name": "Suricata Rules Configs",
+        "page": "5a633147924a28d1",
+        "width": 6,
+        "height": 1,
+        "order": 6,
+        "showTitle": true,
+        "className": "",
+        "visible": "true",
+        "disabled": "false",
         "groupType": "default"
     },
     {
@@ -3329,30 +3399,41 @@
     },
     {
         "id": "3710f20e7818afc3",
-        "type": "ui-switch",
+        "type": "ui-dropdown",
         "z": "53b83243ce3bfc91",
-        "name": "Change Suricata Profile",
-        "label": "Change Suricata Profile",
         "group": "8356bd12d00a4d35",
+        "name": "Suricata Profile Selector",
+        "label": "Suricata Profile",
         "order": 2,
         "width": 0,
         "height": 0,
         "passthru": true,
-        "decouple": false,
+        "multiple": false,
+        "options": [
+            {
+                "label": "Vulnerable (pass all)",
+                "value": "vuln",
+                "type": "str"
+            },
+            {
+                "label": "IDS (alert only)",
+                "value": "ids",
+                "type": "str"
+            },
+            {
+                "label": "IPS (block/drop)",
+                "value": "ips",
+                "type": "str"
+            },
+            {
+                "label": "Custom (user rules)",
+                "value": "custom",
+                "type": "str"
+            }
+        ],
+        "payload": "",
         "topic": "topic",
         "topicType": "msg",
-        "style": "",
-        "className": "",
-        "layout": "",
-        "clickableArea": "switch",
-        "onvalue": "true",
-        "onvalueType": "bool",
-        "onicon": "",
-        "oncolor": "",
-        "offvalue": "false",
-        "offvalueType": "bool",
-        "officon": "",
-        "offcolor": "",
         "x": 150,
         "y": 1080,
         "wires": [
@@ -3366,7 +3447,7 @@
         "type": "function",
         "z": "53b83243ce3bfc91",
         "name": "Prepare Rule Swap Exec",
-        "func": "if (msg.payload === true) {\n    msg.cmd = [\"cp\", \"/etc/suricata/rules/local.rules.ids\", \"/etc/suricata/rules/local.rules\"];\n    msg.mode_text = \"IDS Mode (Alert)\";\n} else {\n    msg.cmd = [\"cp\", \"/etc/suricata/rules/local.rules.vuln\", \"/etc/suricata/rules/local.rules\"];\n    msg.mode_text = \"Vulnerable Mode\";\n}\n\nmsg.url = \"http://docker-proxy:2375/containers/suricata-ids/exec\";\nmsg.method = \"POST\";\nmsg.payload = {\n    \"AttachStdout\": false,\n    \"AttachStderr\": false,\n    \"Tty\": false,\n    \"Cmd\": msg.cmd\n};\nreturn msg;",
+        "func": "var profile = msg.payload;\n\nif (profile === 'ids') {\n    msg.cmd = ['sh', '-c', 'cp /etc/suricata/rules/local.rules.ids /etc/suricata/rules/local.rules && suricatasc -c reload-rules'];\n    msg.mode_text = 'IDS Mode (Alert)';\n} else if (profile === 'ips') {\n    msg.cmd = ['sh', '-c', 'cp /etc/suricata/rules/local.rules.ips /etc/suricata/rules/local.rules && suricatasc -c reload-rules'];\n    msg.mode_text = 'IPS Mode (Drop)';\n} else if (profile === 'custom') {\n    msg.cmd = ['sh', '-c', 'cp /etc/suricata/rules/local.rules.custom /etc/suricata/rules/local.rules && suricatasc -c reload-rules'];\n    msg.mode_text = 'Custom Mode';\n} else {\n    msg.cmd = ['sh', '-c', 'cp /etc/suricata/rules/local.rules.vuln /etc/suricata/rules/local.rules && suricatasc -c reload-rules'];\n    msg.mode_text = 'Vulnerable Mode (Pass All)';\n}\n\nmsg.url = 'http://docker-proxy:2375/containers/suricata-ids/exec';\nmsg.method = 'POST';\nmsg.payload = {\n    'AttachStdout': false,\n    'AttachStderr': false,\n    'Tty': false,\n    'Cmd': msg.cmd\n};\nreturn msg;",
         "outputs": 1,
         "timeout": 0,
         "noerr": 0,
@@ -3976,6 +4057,344 @@
             ],
             [
                 "5a9e7b1d4c3ffce4"
+            ]
+        ]
+    },
+    {
+        "id": "85f4a10737403ba3",
+        "type": "ui-dropdown",
+        "z": "53b83243ce3bfc91",
+        "group": "e20cfd3b0364c5bc",
+        "name": "Profile Selector",
+        "label": "Suricata Profile",
+        "order": 1,
+        "width": 0,
+        "height": 0,
+        "passthru": true,
+        "multiple": false,
+        "chips": false,
+        "clearable": false,
+        "options": [
+            {
+                "label": "Custom (user rules)",
+                "value": "custom",
+                "type": "str"
+            }
+        ],
+        "payload": "",
+        "topic": "topic",
+        "topicType": "str",
+        "className": "",
+        "typeIsComboBox": true,
+        "msgTrigger": "onChange",
+        "x": 140,
+        "y": 1480,
+        "wires": [
+            [
+                "51a327502445370b"
+            ]
+        ]
+    },
+    {
+        "id": "51a327502445370b",
+        "type": "function",
+        "z": "53b83243ce3bfc91",
+        "name": "Save Selected Profile",
+        "func": "flow.set('tp_selected_profile', msg.payload);\nreturn {payload: msg.payload};",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 340,
+        "y": 1480,
+        "wires": [
+            [
+                "e0d573e9774ddac8"
+            ]
+        ]
+    },
+    {
+        "id": "e0d573e9774ddac8",
+        "type": "ui-template",
+        "z": "53b83243ce3bfc91",
+        "group": "e20cfd3b0364c5bc",
+        "page": "",
+        "ui": "",
+        "name": "Custom Rules Editor",
+        "order": 2,
+        "width": 0,
+        "height": 0,
+        "format": "<template><div v-if=\"showEditor\"><textarea v-model=\"customRules\" class=\"rule-editor\" @input=\"onInput\" placeholder=\"Enter custom Suricata rules here...\"></textarea></div></template><script>export default{data(){return{customRules:'',showEditor:false,_debounce:null}},methods:{onInput(){clearTimeout(this._debounce);this._debounce=setTimeout(()=>{this.send({payload:{_customRules:this.customRules}})},500)}},watch:{msg:{handler(v){if(v&&v.payload==='custom')this.showEditor=true;else if(v&&v.payload)this.showEditor=false},immediate:true}}}</script><style>.rule-editor{width:100%;height:300px;background:#0f172a;color:#10b981;font-family:monospace;font-size:13px;border:1px solid #334155;border-radius:4px;padding:10px;resize:vertical}.rule-editor:focus{outline:none;border-color:#38bdf8}</style>",
+        "storeOutMessages": true,
+        "passthru": true,
+        "resendOnRefresh": false,
+        "templateScope": "local",
+        "className": "",
+        "x": 140,
+        "y": 1580,
+        "wires": [
+            [
+                "508ec1981d19dc0f"
+            ]
+        ]
+    },
+    {
+        "id": "508ec1981d19dc0f",
+        "type": "function",
+        "z": "53b83243ce3bfc91",
+        "name": "Store Custom Rules",
+        "func": "if (msg.payload && msg.payload._customRules !== undefined) {\n    flow.set('tp_custom_rules', msg.payload._customRules);\n}\nreturn;",
+        "outputs": 0,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 420,
+        "y": 1580,
+        "wires": []
+    },
+    {
+        "id": "438790ed946d29da",
+        "type": "ui-button",
+        "z": "53b83243ce3bfc91",
+        "group": "e20cfd3b0364c5bc",
+        "name": "Apply Profile",
+        "label": "Apply Profile",
+        "order": 3,
+        "width": 0,
+        "height": 0,
+        "emulateClick": false,
+        "tooltip": "Apply selected profile",
+        "color": "white",
+        "bgcolor": "#10b981",
+        "className": "",
+        "icon": "check",
+        "iconPosition": "left",
+        "payload": "",
+        "payloadType": "str",
+        "topic": "topic",
+        "topicType": "msg",
+        "buttonColor": "",
+        "textColor": "",
+        "iconColor": "",
+        "enableClick": true,
+        "enablePointerdown": false,
+        "pointerdownPayload": "",
+        "pointerdownPayloadType": "str",
+        "enablePointerup": false,
+        "pointerupPayload": "",
+        "pointerupPayloadType": "str",
+        "x": 140,
+        "y": 1680,
+        "wires": [
+            [
+                "f12ea3bec24b9327"
+            ]
+        ]
+    },
+    {
+        "id": "f12ea3bec24b9327",
+        "type": "function",
+        "z": "53b83243ce3bfc91",
+        "name": "Prepare Apply Exec",
+        "func": "var profile = flow.get('tp_selected_profile') || 'vuln';\n\nif (profile === 'custom') {\n    var customRules = flow.get('tp_custom_rules') || '';\n    var b64 = Buffer.from(customRules).toString('base64');\n    msg.cmd = ['sh', '-c', 'echo ' + b64 + ' | base64 -d > /etc/suricata/rules/local.rules.custom && cp /etc/suricata/rules/local.rules.custom /etc/suricata/rules/local.rules && suricatasc -c reload-rules'];\n    msg.mode_text = 'Custom Mode';\n} else if (profile === 'ids') {\n    msg.cmd = ['sh', '-c', 'cp /etc/suricata/rules/local.rules.ids /etc/suricata/rules/local.rules && suricatasc -c reload-rules'];\n    msg.mode_text = 'IDS Mode (Alert)';\n} else if (profile === 'ips') {\n    msg.cmd = ['sh', '-c', 'cp /etc/suricata/rules/local.rules.ips /etc/suricata/rules/local.rules && suricatasc -c reload-rules'];\n    msg.mode_text = 'IPS Mode (Drop)';\n} else {\n    msg.cmd = ['sh', '-c', 'cp /etc/suricata/rules/local.rules.vuln /etc/suricata/rules/local.rules && suricatasc -c reload-rules'];\n    msg.mode_text = 'Vulnerable Mode';\n}\n\nmsg.url = 'http://docker-proxy:2375/containers/suricata-ids/exec';\nmsg.method = 'POST';\nmsg.payload = {\n    'AttachStdout': false,\n    'AttachStderr': false,\n    'Tty': false,\n    'Cmd': msg.cmd\n};\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 340,
+        "y": 1680,
+        "wires": [
+            [
+                "78692cead474f82f"
+            ]
+        ]
+    },
+    {
+        "id": "78692cead474f82f",
+        "type": "http request",
+        "z": "53b83243ce3bfc91",
+        "name": "Create Exec",
+        "method": "use",
+        "ret": "obj",
+        "paytoqs": "ignore",
+        "url": "",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "insecureHTTPParser": false,
+        "authType": "",
+        "senderr": false,
+        "headers": [],
+        "x": 540,
+        "y": 1680,
+        "wires": [
+            [
+                "fdf2276a23e12312"
+            ]
+        ]
+    },
+    {
+        "id": "fdf2276a23e12312",
+        "type": "function",
+        "z": "53b83243ce3bfc91",
+        "name": "Start Exec",
+        "func": "if (!msg.payload || !msg.payload.Id) {\n    return null;\n}\nmsg.url = 'http://docker-proxy:2375/exec/' + msg.payload.Id + '/start';\nmsg.method = 'POST';\nmsg.payload = {\n    'Detach': false,\n    'Tty': false\n};\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 740,
+        "y": 1680,
+        "wires": [
+            [
+                "2cf40ee6b5cdbfa0"
+            ]
+        ]
+    },
+    {
+        "id": "2cf40ee6b5cdbfa0",
+        "type": "http request",
+        "z": "53b83243ce3bfc91",
+        "name": "Run Exec",
+        "method": "use",
+        "ret": "txt",
+        "paytoqs": "ignore",
+        "url": "",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "insecureHTTPParser": false,
+        "authType": "",
+        "senderr": false,
+        "headers": [],
+        "x": 940,
+        "y": 1680,
+        "wires": [
+            [
+                "07d79169802004c7"
+            ]
+        ]
+    },
+    {
+        "id": "07d79169802004c7",
+        "type": "function",
+        "z": "53b83243ce3bfc91",
+        "name": "Prepare Cat Exec",
+        "func": "msg.url = 'http://docker-proxy:2375/containers/suricata-ids/exec';\nmsg.method = 'POST';\nmsg.payload = {\n    'AttachStdout': true,\n    'AttachStderr': false,\n    'Tty': true,\n    'Cmd': ['cat', '/etc/suricata/rules/local.rules']\n};\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 340,
+        "y": 1780,
+        "wires": [
+            [
+                "6ecf3c5ac4870920"
+            ]
+        ]
+    },
+    {
+        "id": "6ecf3c5ac4870920",
+        "type": "http request",
+        "z": "53b83243ce3bfc91",
+        "name": "Create Cat Exec",
+        "method": "use",
+        "ret": "obj",
+        "paytoqs": "ignore",
+        "url": "",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "insecureHTTPParser": false,
+        "authType": "",
+        "senderr": false,
+        "headers": [],
+        "x": 540,
+        "y": 1780,
+        "wires": [
+            [
+                "b4cb898fca4304f6"
+            ]
+        ]
+    },
+    {
+        "id": "b4cb898fca4304f6",
+        "type": "function",
+        "z": "53b83243ce3bfc91",
+        "name": "Start Cat Exec",
+        "func": "if (!msg.payload || !msg.payload.Id) {\n    return null;\n}\nmsg.url = 'http://docker-proxy:2375/exec/' + msg.payload.Id + '/start';\nmsg.method = 'POST';\nmsg.payload = {\n    'Detach': false,\n    'Tty': true\n};\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 740,
+        "y": 1780,
+        "wires": [
+            [
+                "c2036021ea6d55e2"
+            ]
+        ]
+    },
+    {
+        "id": "c2036021ea6d55e2",
+        "type": "http request",
+        "z": "53b83243ce3bfc91",
+        "name": "Run Cat Exec",
+        "method": "use",
+        "ret": "txt",
+        "paytoqs": "ignore",
+        "url": "",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "insecureHTTPParser": false,
+        "authType": "",
+        "senderr": false,
+        "headers": [],
+        "x": 940,
+        "y": 1780,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "98e1863d4838c85e",
+        "type": "inject",
+        "z": "53b83243ce3bfc91",
+        "name": "On Start Fetch Rules",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": true,
+        "onceDelay": 2,
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 140,
+        "y": 1820,
+        "wires": [
+            [
+                "07d79169802004c7"
             ]
         ]
     },
@@ -4875,6 +5294,413 @@
         "y": 860,
         "wires": [
             []
+        ]
+    },
+    {
+        "id": "tp_dropdown",
+        "type": "ui-dropdown",
+        "z": "4fb8248f637db493",
+        "group": "tp_profile_group",
+        "name": "Profile Selector",
+        "label": "Suricata Profile",
+        "order": 1,
+        "width": 0,
+        "height": 0,
+        "passthru": true,
+        "multiple": false,
+        "options": [
+            {
+                "label": "Vulnerable (pass all)",
+                "value": "vuln",
+                "type": "str"
+            },
+            {
+                "label": "IDS (alert only)",
+                "value": "ids",
+                "type": "str"
+            },
+            {
+                "label": "IPS (block/drop)",
+                "value": "ips",
+                "type": "str"
+            },
+            {
+                "label": "Custom (user rules)",
+                "value": "custom",
+                "type": "str"
+            }
+        ],
+        "payload": "",
+        "topic": "topic",
+        "x": 100,
+        "y": 100,
+        "wires": [
+            [
+                "tp_dropdown_handler"
+            ]
+        ]
+    },
+    {
+        "id": "tp_dropdown_handler",
+        "type": "function",
+        "z": "4fb8248f637db493",
+        "name": "Save Selected Profile",
+        "func": "flow.set('tp_selected_profile', msg.payload);\nreturn {payload: msg.payload};",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 300,
+        "y": 100,
+        "wires": [
+            [
+                "tp_custom_editor"
+            ]
+        ]
+    },
+    {
+        "id": "tp_custom_editor",
+        "type": "ui-template",
+        "z": "4fb8248f637db493",
+        "group": "tp_profile_group",
+        "name": "Custom Rules Editor",
+        "order": 2,
+        "width": 0,
+        "height": 0,
+        "format": "<template><div v-if=\"showEditor\"><textarea v-model=\"customRules\" class=\"rule-editor\" @input=\"onInput\" placeholder=\"Enter custom Suricata rules here...\"></textarea></div></template><script>export default{data(){return{customRules:'',showEditor:false,_debounce:null}},methods:{onInput(){clearTimeout(this._debounce);this._debounce=setTimeout(()=>{this.send({payload:{_customRules:this.customRules}})},500)}},watch:{msg:{handler(v){if(v&&v.payload==='custom')this.showEditor=true;else if(v&&v.payload)this.showEditor=false},immediate:true}}}</script><style>.rule-editor{width:100%;height:300px;background:#0f172a;color:#10b981;font-family:monospace;font-size:13px;border:1px solid #334155;border-radius:4px;padding:10px;resize:vertical}.rule-editor:focus{outline:none;border-color:#38bdf8}</style>",
+        "storeOutMessages": true,
+        "passthru": true,
+        "resendOnRefresh": false,
+        "templateScope": "local",
+        "className": "",
+        "x": 100,
+        "y": 200,
+        "wires": [
+            [
+                "tp_flow_var_setter"
+            ]
+        ]
+    },
+    {
+        "id": "tp_flow_var_setter",
+        "type": "function",
+        "z": "4fb8248f637db493",
+        "name": "Store Custom Rules",
+        "func": "if (msg.payload && msg.payload._customRules !== undefined) {\n    flow.set('tp_custom_rules', msg.payload._customRules);\n}\nreturn;",
+        "outputs": 0,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 300,
+        "y": 200,
+        "wires": []
+    },
+    {
+        "id": "tp_apply_btn",
+        "type": "ui-button",
+        "z": "4fb8248f637db493",
+        "group": "tp_profile_group",
+        "name": "Apply Profile",
+        "label": "Apply Profile",
+        "order": 3,
+        "width": 0,
+        "height": 0,
+        "emulateClick": false,
+        "tooltip": "Apply selected profile",
+        "color": "white",
+        "bgcolor": "#10b981",
+        "className": "",
+        "icon": "check",
+        "iconPosition": "left",
+        "payload": "",
+        "payloadType": "str",
+        "topic": "topic",
+        "topicType": "msg",
+        "x": 100,
+        "y": 300,
+        "wires": [
+            [
+                "tp_prepare_apply"
+            ]
+        ]
+    },
+    {
+        "id": "tp_prepare_apply",
+        "type": "function",
+        "z": "4fb8248f637db493",
+        "name": "Prepare Apply Exec",
+        "func": "var profile = flow.get('tp_selected_profile') || 'vuln';\n\nif (profile === 'custom') {\n    var customRules = flow.get('tp_custom_rules') || '';\n    var b64 = Buffer.from(customRules).toString('base64');\n    msg.cmd = ['sh', '-c', 'echo ' + b64 + ' | base64 -d > /etc/suricata/rules/local.rules.custom && cp /etc/suricata/rules/local.rules.custom /etc/suricata/rules/local.rules && suricatasc -c reload-rules'];\n    msg.mode_text = 'Custom Mode';\n} else if (profile === 'ids') {\n    msg.cmd = ['sh', '-c', 'cp /etc/suricata/rules/local.rules.ids /etc/suricata/rules/local.rules && suricatasc -c reload-rules'];\n    msg.mode_text = 'IDS Mode (Alert)';\n} else if (profile === 'ips') {\n    msg.cmd = ['sh', '-c', 'cp /etc/suricata/rules/local.rules.ips /etc/suricata/rules/local.rules && suricatasc -c reload-rules'];\n    msg.mode_text = 'IPS Mode (Drop)';\n} else {\n    msg.cmd = ['sh', '-c', 'cp /etc/suricata/rules/local.rules.vuln /etc/suricata/rules/local.rules && suricatasc -c reload-rules'];\n    msg.mode_text = 'Vulnerable Mode';\n}\n\nmsg.url = 'http://docker-proxy:2375/containers/suricata-ids/exec';\nmsg.method = 'POST';\nmsg.payload = {\n    'AttachStdout': false,\n    'AttachStderr': false,\n    'Tty': false,\n    'Cmd': msg.cmd\n};\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 300,
+        "y": 300,
+        "wires": [
+            [
+                "tp_create_exec"
+            ]
+        ]
+    },
+    {
+        "id": "tp_create_exec",
+        "type": "http request",
+        "z": "4fb8248f637db493",
+        "name": "Create Exec",
+        "method": "use",
+        "ret": "obj",
+        "paytoqs": "ignore",
+        "url": "",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "insecureHTTPParser": false,
+        "authType": "",
+        "senderr": false,
+        "headers": [],
+        "x": 500,
+        "y": 300,
+        "wires": [
+            [
+                "tp_start_exec"
+            ]
+        ]
+    },
+    {
+        "id": "tp_start_exec",
+        "type": "function",
+        "z": "4fb8248f637db493",
+        "name": "Start Exec",
+        "func": "if (!msg.payload || !msg.payload.Id) {\n    return null;\n}\nmsg.url = 'http://docker-proxy:2375/exec/' + msg.payload.Id + '/start';\nmsg.method = 'POST';\nmsg.payload = {\n    'Detach': false,\n    'Tty': false\n};\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 700,
+        "y": 300,
+        "wires": [
+            [
+                "tp_run_exec"
+            ]
+        ]
+    },
+    {
+        "id": "tp_run_exec",
+        "type": "http request",
+        "z": "4fb8248f637db493",
+        "name": "Run Exec",
+        "method": "use",
+        "ret": "txt",
+        "paytoqs": "ignore",
+        "url": "",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "insecureHTTPParser": false,
+        "authType": "",
+        "senderr": false,
+        "headers": [],
+        "x": 900,
+        "y": 300,
+        "wires": [
+            [
+                "tp_prepare_cat"
+            ]
+        ]
+    },
+    {
+        "id": "tp_prepare_cat",
+        "type": "function",
+        "z": "4fb8248f637db493",
+        "name": "Prepare Cat Exec",
+        "func": "msg.url = 'http://docker-proxy:2375/containers/suricata-ids/exec';\nmsg.method = 'POST';\nmsg.payload = {\n    'AttachStdout': true,\n    'AttachStderr': false,\n    'Tty': true,\n    'Cmd': ['cat', '/etc/suricata/rules/local.rules']\n};\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 300,
+        "y": 400,
+        "wires": [
+            [
+                "tp_create_cat_exec"
+            ]
+        ]
+    },
+    {
+        "id": "tp_create_cat_exec",
+        "type": "http request",
+        "z": "4fb8248f637db493",
+        "name": "Create Cat Exec",
+        "method": "use",
+        "ret": "obj",
+        "paytoqs": "ignore",
+        "url": "",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "insecureHTTPParser": false,
+        "authType": "",
+        "senderr": false,
+        "headers": [],
+        "x": 500,
+        "y": 400,
+        "wires": [
+            [
+                "tp_start_cat_exec"
+            ]
+        ]
+    },
+    {
+        "id": "tp_start_cat_exec",
+        "type": "function",
+        "z": "4fb8248f637db493",
+        "name": "Start Cat Exec",
+        "func": "if (!msg.payload || !msg.payload.Id) {\n    return null;\n}\nmsg.url = 'http://docker-proxy:2375/exec/' + msg.payload.Id + '/start';\nmsg.method = 'POST';\nmsg.payload = {\n    'Detach': false,\n    'Tty': true\n};\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 700,
+        "y": 400,
+        "wires": [
+            [
+                "tp_run_cat_exec"
+            ]
+        ]
+    },
+    {
+        "id": "tp_run_cat_exec",
+        "type": "http request",
+        "z": "4fb8248f637db493",
+        "name": "Run Cat Exec",
+        "method": "use",
+        "ret": "txt",
+        "paytoqs": "ignore",
+        "url": "",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "insecureHTTPParser": false,
+        "authType": "",
+        "senderr": false,
+        "headers": [],
+        "x": 900,
+        "y": 400,
+        "wires": [
+            [
+                "tp_format_cat"
+            ]
+        ]
+    },
+    {
+        "id": "tp_format_cat",
+        "type": "function",
+        "z": "4fb8248f637db493",
+        "name": "Format Rules Display",
+        "func": "var profile = flow.get('tp_selected_profile') || 'vuln';\nvar profileNames = {\n    'vuln': 'Vulnerable (pass all)',\n    'ids': 'IDS (alert only)',\n    'ips': 'IPS (block/drop)',\n    'custom': 'Custom (user rules)'\n};\nvar profileName = profileNames[profile] || profile;\nvar rules = msg.payload || '[empty]';\nmsg.payload = '<span class=\"output-success\">=== Current Profile: ' + profileName + ' ===</span><br><br>' + rules;\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1100,
+        "y": 400,
+        "wires": [
+            [
+                "tp_terminal"
+            ]
+        ]
+    },
+    {
+        "id": "tp_refresh_btn",
+        "type": "ui-button",
+        "z": "4fb8248f637db493",
+        "group": "tp_profile_group",
+        "name": "Refresh Rules",
+        "label": "Refresh Rules",
+        "order": 4,
+        "width": 0,
+        "height": 0,
+        "emulateClick": false,
+        "tooltip": "Refresh current rules display",
+        "color": "white",
+        "bgcolor": "#64748b",
+        "className": "",
+        "icon": "refresh",
+        "iconPosition": "left",
+        "payload": "",
+        "payloadType": "str",
+        "topic": "topic",
+        "topicType": "msg",
+        "x": 100,
+        "y": 360,
+        "wires": [
+            [
+                "tp_prepare_cat"
+            ]
+        ]
+    },
+    {
+        "id": "tp_terminal",
+        "type": "ui-template",
+        "z": "4fb8248f637db493",
+        "group": "tp_terminal_group",
+        "name": "Rules Terminal",
+        "order": 1,
+        "width": 0,
+        "height": 0,
+        "format": "<template><div class=\"hacker-terminal\"><div v-html=\"displayHtml\"></div></div></template><script>export default{data(){return{buffer:''}},computed:{displayHtml(){return this.buffer||'<span class=\"prompt\">test:~#</span>'}},watch:{msg:{handler(v){if(v&&v.payload&&typeof v.payload==='string')this.buffer=v.payload;if(v&&v.payload&&v.payload._clear)this.buffer=''},immediate:true}}}</script><style>.hacker-terminal{background:#0f172a;padding:15px;height:700px;min-height:700px;overflow-y:auto;font-family:monospace;color:#10b981}.prompt{color:#38bdf8;font-weight:bold}.output-success{color:#10b981;white-space:pre-wrap}</style>",
+        "storeOutMessages": false,
+        "passthru": false,
+        "resendOnRefresh": false,
+        "templateScope": "local",
+        "className": "",
+        "x": 1500,
+        "y": 380,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "tp_inject",
+        "type": "inject",
+        "z": "4fb8248f637db493",
+        "name": "On Start Fetch Rules",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": true,
+        "onceDelay": 2,
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 100,
+        "y": 440,
+        "wires": [
+            [
+                "tp_prepare_cat"
+            ]
         ]
     },
     {
